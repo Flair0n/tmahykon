@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, Timestamp, setDoc, doc } from "firebase/firestore";
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./formScrollbar.css";
@@ -147,7 +147,8 @@ export default function App() {
     setStatus("Submitting...");
     try {
       const payload = { ...formData, submittedAt: Timestamp.now() };
-      await addDoc(collection(db, "registrations"), payload);
+  const teamLeaderName = formData.FullName || "UnknownTeamLeader";
+  await setDoc(doc(db, "registrations", teamLeaderName), payload);
       setStatus("✅ Submission successful!");
       setFormData({});
       localStorage.removeItem("projectForm");
