@@ -120,30 +120,7 @@ export default function App() {
     setStatus("Opening payment page in new tab...");
     // Open the Razorpay payment page link only
   window.location.href = "https://rzp.io/rzp/HKi39maX";
-    // For dynamic: Uncomment below to use backend-generated payment link
-    /*
-    try {
-      const res = await fetch("http://localhost:5001/api/create-payment-link", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: 10000,
-          name: formData.FullName,
-          email: formData.Email,
-          contact: formData.Phone,
-          description: "TMA-Hykon Registration Fee"
-        })
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.open(data.url, "_blank");
-      } else {
-        setStatus("❌ Failed to create payment link.");
-      }
-    } catch (err) {
-      setStatus("❌ Error creating payment link.");
-    }
-    */
+    
   };
 
   const toggleSection = (section) => {
