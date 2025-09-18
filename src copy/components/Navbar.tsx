@@ -106,21 +106,11 @@ const Navbar: React.FC = () => {
                   <li>
                     <a href="#footer" onClick={e => {
                       e.preventDefault();
-                      if (location.pathname !== "/") {
-                        navigate("/", { state: { scrollToFooter: true } });
-                        setTimeout(() => {
-                          const footer = document.getElementById('footer');
-                          if (footer) {
-                            footer.scrollIntoView({ behavior: 'smooth' });
-                          }
-                        }, 500);
+                      const footer = document.getElementById('footer');
+                      if (footer) {
+                        footer.scrollIntoView({ behavior: 'smooth' });
                       } else {
-                        const footer = document.getElementById('footer');
-                        if (footer) {
-                          footer.scrollIntoView({ behavior: 'smooth' });
-                        } else {
-                          window.location.hash = '#footer';
-                        }
+                        window.location.hash = 'footer';
                       }
                     }}>Contact Us</a>
                   </li>
