@@ -1,6 +1,7 @@
 import { db } from "./firebase";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import "./formScrollbar.css";
 import Confetti from "react-confetti";
 import { motion } from "framer-motion";
@@ -13,6 +14,10 @@ import Footer from "../src copy/components/Footer";
 import heroBg from "../src copy/assets/hero-bg.svg";
 
 export default function App() {
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
   const [status, setStatus] = useState("");
   const [formData, setFormData] = useState({});
   const [progress, setProgress] = useState(0);
