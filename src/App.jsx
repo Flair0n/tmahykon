@@ -151,6 +151,7 @@ export default function App() {
       setStatus("✅ Submission successful!");
       setFormData({});
       localStorage.removeItem("projectForm");
+      setPaymentDone(false); // Reset payment button after submit
       if (e.target && typeof e.target.reset === 'function') {
         e.target.reset();
       }
