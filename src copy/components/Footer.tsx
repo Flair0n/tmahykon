@@ -25,13 +25,7 @@ const Footer: React.FC = () => {
                     <a href="/purpose">Challenge Purpose</a>
                   </li>
                   <li>
-                    <a href="/process">How It Works</a>
-                  </li>
-                  <li>
                     <a href="/awards">Awards & Support</a>
-                  </li>
-                  <li>
-                    <a href="/contact">Contact Us</a>
                   </li>
                 </ul>
               </div>
