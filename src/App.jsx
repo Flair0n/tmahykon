@@ -96,7 +96,7 @@ export default function App() {
 
   // Two-step: Pay, then Submit
 
-  const [paymentDone, setPaymentDone] = useState(false);
+  // Payment removed: direct submission only
 
   // Check if all required fields are filled
   const isFormComplete =
@@ -118,14 +118,24 @@ export default function App() {
     }
   };
 
-  // Razorpay payment and submission handler with backend verification
-  const handlePaymentAndSubmit = async (e) => {
+  // Direct submission handler
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isFormComplete) return;
-    setStatus("Opening payment page in new tab...");
-    // Open the Razorpay payment page link only
-  window.location.href = "https://rzp.io/rzp/HKi39maX";
-    
+    setStatus("Submitting...");
+    try {
+      const payload = { ...formData, submittedAt: Timestamp.now() };
+      await addDoc(collection(db, "registrations"), payload);
+      setStatus("✅ Submission successful!");
+      setFormData({});
+      localStorage.removeItem("projectForm");
+      if (e.target && typeof e.target.reset === 'function') {
+        e.target.reset();
+      }
+    } catch (err) {
+      setStatus("❌ Error submitting form. Check console.");
+      console.error(err);
+    }
   };
 
   const toggleSection = (section) => {
@@ -292,7 +302,7 @@ export default function App() {
             gap: "20px",
             alignItems: "center",
           }}
-          onSubmit={handlePaymentAndSubmit}
+          onSubmit={handleSubmit}
         >
           {/* Render all sections, but inject mentor question/section right after TeamMembers */}
           {Object.entries(sections).map(([sectionName, sectionFields]) => (
@@ -379,7 +389,7 @@ export default function App() {
               )}
             </React.Fragment>
           ))}
-          {/* Razorpay payment button, then show submit button only after paymentDone */}
+          {/* Direct submit button only */}
           <button
             type="submit"
             style={{
