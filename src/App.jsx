@@ -100,8 +100,18 @@ export default function App() {
 
   // Check if all required fields are filled
   const isFormComplete =
-    fields.every((field) => (formData[field] || "").toString().trim() !== "") &&
-    (formData.HasMentor !== "Yes" || mentorFields.every((field) => (formData[field] || "").trim() !== ""));
+    fields
+      .filter(field => {
+        // TMAChapter is only required if TMAMember is 'Yes'
+        if (field === "TMAChapter") {
+          return formData.TMAMember && formData.TMAMember.startsWith("Yes");
+        }
+        return true;
+      })
+      .every((field) => (formData[field] || "").toString().trim() !== "") &&
+    (formData.HasMentor && formData.HasMentor === "Yes"
+      ? mentorFields.every((field) => (formData[field] || "").trim() !== "")
+      : true);
 
   const submitToFirebase = async () => {
     setStatus("Submitting...");
