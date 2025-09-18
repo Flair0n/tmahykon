@@ -313,7 +313,7 @@ export default function App() {
           overflowY: "auto",
           marginBottom: "48px", // space before footer
         }}
-        className="form-scrollbar-hide"
+        className="form-scrollbar"
       >
   <h1 style={{ color: "#fff" }}>TMA-Hykon Application Form</h1>
         <form
