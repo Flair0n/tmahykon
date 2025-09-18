@@ -19,7 +19,7 @@ const Awards: React.FC = () => {
           <h3 className="award-category-title">Cash Awards</h3>
           <div className="row">
             <div className="col-4">
-              <div className="single-award highlight-award">
+              <div className="single-award">
                 <div className="award-icon">
                   <i className="fa fa-trophy"></i>
                 </div>
