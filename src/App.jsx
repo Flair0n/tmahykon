@@ -7,6 +7,7 @@ import Confetti from "react-confetti";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import FormSection from "./components/FormSection";
+import { useRef } from "react";
 import ProgressBar from "./components/ProgressBar";
 // RazorpayButton will be replaced with inline Razorpay integration
 import Navbar from "../src copy/components/Navbar";
@@ -98,20 +99,20 @@ export default function App() {
 
   // Payment removed: direct submission only
 
-  // Check if all required fields are filled
-  const isFormComplete =
-    fields
-      .filter(field => {
-        // TMAChapter is only required if TMAMember is 'Yes'
-        if (field === "TMAChapter") {
-          return formData.TMAMember && formData.TMAMember.startsWith("Yes");
-        }
-        return true;
-      })
-      .every((field) => (formData[field] || "").toString().trim() !== "") &&
-    (formData.HasMentor && formData.HasMentor === "Yes"
-      ? mentorFields.every((field) => (formData[field] || "").trim() !== "")
-      : true);
+  // Track missing required fields for highlighting
+  const [missingFields, setMissingFields] = useState([]);
+  const formRef = useRef();
+  const requiredFields = fields.filter(field => {
+    if (field === "TMAChapter") {
+      return formData.TMAMember && formData.TMAMember.startsWith("Yes");
+    }
+    return true;
+  });
+  if (formData.HasMentor && formData.HasMentor === "Yes") {
+    requiredFields.push(...mentorFields);
+  }
+  const missing = requiredFields.filter(field => !(formData[field] && formData[field].toString().trim() !== ""));
+  const isFormComplete = missing.length === 0;
 
   const submitToFirebase = async () => {
     setStatus("Submitting...");
@@ -131,7 +132,17 @@ export default function App() {
   // Direct submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isFormComplete) return;
+    if (!isFormComplete) {
+      setMissingFields(missing);
+      setStatus("❌ Please fill all required fields.");
+      // Scroll to first missing field
+      if (missing.length > 0) {
+        const el = formRef.current?.querySelector(`[name="${missing[0]}"]`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+    setMissingFields([]);
     setStatus("Submitting...");
     try {
       const payload = { ...formData, submittedAt: Timestamp.now() };
@@ -306,6 +317,7 @@ export default function App() {
       >
   <h1 style={{ color: "#fff" }}>TMA-Hykon Application Form</h1>
         <form
+          ref={formRef}
           style={{
             display: "flex",
             flexDirection: "column",
@@ -328,6 +340,7 @@ export default function App() {
                 fieldStyle={fieldStyle}
                 textareaStyle={textareaStyle}
                 labelStyle={labelStyle}
+                missingFields={missingFields}
               />
               {/* After TeamMembers, show mentor question/section */}
               {sectionFields.includes("TeamMembers") && (
@@ -404,17 +417,16 @@ export default function App() {
             type="submit"
             style={{
               padding: "10px 20px",
-              background: isFormComplete ? "#528FF0" : "#888",
+              background: "#528FF0",
               color: "white",
               border: "none",
               borderRadius: "5px",
               marginTop: "10px",
-              cursor: isFormComplete ? "pointer" : "not-allowed",
-              opacity: isFormComplete ? 1 : 0.6,
+              cursor: "pointer",
+              opacity: 1,
             }}
-            disabled={!isFormComplete}
           >
-            Pay & Submit Registration
+            Submit Registration
           </button>
           {/* Animated status message and confetti on success */}
           {status && (

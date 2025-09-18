@@ -27,7 +27,8 @@ export default function FormSection({
   fieldStyle,
   textareaStyle,
   labelStyle,
-  fieldMeta
+  fieldMeta,
+  missingFields = []
 }) {
   return (
     <motion.div
@@ -67,9 +68,22 @@ export default function FormSection({
               question={questions[field.name]}
               value={formData[field.name] || ""}
               onChange={onChange}
-              fieldStyle={fieldStyle}
-              textareaStyle={field.textareaStyle || textareaStyle}
+              fieldStyle={{
+                ...fieldStyle,
+                borderColor: missingFields.includes(field.name) ? '#FF5252' : fieldStyle.borderColor,
+                background: missingFields.includes(field.name) ? '#fff6f6' : fieldStyle.backgroundColor,
+              }}
+              textareaStyle={{
+                ...textareaStyle,
+                borderColor: missingFields.includes(field.name) ? '#FF5252' : textareaStyle.borderColor,
+                background: missingFields.includes(field.name) ? '#fff6f6' : textareaStyle.backgroundColor,
+              }}
             />
+            {missingFields.includes(field.name) && (
+              <div style={{ color: '#FF5252', fontSize: 13, marginTop: 2, marginLeft: 2 }}>
+                This field is required
+              </div>
+            )}
           </motion.div>
         ))}
       </motion.div>
