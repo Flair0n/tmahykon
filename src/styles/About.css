@@ -1,0 +1,36 @@
+
+  /* Full width section */
+.about-us-area {
+  position: relative;
+  z-index: 1;
+  background-color: #ffffff;
+  width: 100vw;
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+
+
+.about-content-text {
+  position: relative;
+  z-index: 1;
+}
+
+.about-content-text p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.about-btn {
+  margin-top: 30px;
+}
+
+.about-btn .confer-btn {
+  background: linear-gradient(to right, #df42b1, #505add);
+  color: #ffffff;
+}
+
+.about-btn .confer-btn:hover {
+  background: linear-gradient(to right, #505add, #df42b1);
+}
