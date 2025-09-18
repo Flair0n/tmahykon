@@ -108,6 +108,12 @@ const Navbar: React.FC = () => {
                       e.preventDefault();
                       if (location.pathname !== "/") {
                         navigate("/", { state: { scrollToFooter: true } });
+                        setTimeout(() => {
+                          const footer = document.getElementById('footer');
+                          if (footer) {
+                            footer.scrollIntoView({ behavior: 'smooth' });
+                          }
+                        }, 500);
                       } else {
                         const footer = document.getElementById('footer');
                         if (footer) {

@@ -16,8 +16,17 @@ import heroBg from "../src copy/assets/hero-bg.svg";
 export default function App() {
   const location = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
+    if (location.state && location.state.scrollToFooter) {
+      setTimeout(() => {
+        const footer = document.getElementById('footer');
+        if (footer) {
+          footer.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 400);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location]);
   const [status, setStatus] = useState("");
   const [formData, setFormData] = useState({});
   const [progress, setProgress] = useState(0);
