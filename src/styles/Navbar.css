@@ -6,6 +6,8 @@
   transition: all 0.3s ease-in-out;
   background-color: rgba(0, 0, 0, 0.6);
   /* transparent black by default */
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 .header-area.sticky {
@@ -161,8 +163,28 @@
 }
 
 @media screen and (max-width: 991px) {
+  .header-area {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .classy-nav-container {
+    padding: 0 10px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+  }
+
   .classy-navbar {
     height: 70px;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .classy-navbar-toggler {
