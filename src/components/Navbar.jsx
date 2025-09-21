@@ -46,6 +46,11 @@ const Navbar = () => {
                 </div>
               </div>
 
+              <div className="mobile-brand-header">
+                <h3>TMA HYKON</h3>
+                <p>Innovation Challenge</p>
+              </div>
+
               <div className="classynav">
                 <ul>
                   <li>

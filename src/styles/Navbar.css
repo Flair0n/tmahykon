@@ -203,11 +203,42 @@
     width: 280px;
     max-width: 85vw;
     height: 100%;
-    background-color: #111343;
-    padding: 60px 30px 30px;
-    transition: all 0.4s;
+    background: linear-gradient(135deg, #1e2a5a 0%, #0f1a3a 100%);
+    padding: 80px 25px 30px;
+    transition: all 0.4s ease-in-out;
     overflow-y: auto;
     z-index: 9999;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border-left: 2px solid rgba(59, 130, 246, 0.3);
+  }
+
+  .mobile-brand-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+  }
+
+  .mobile-brand-header h3 {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .mobile-brand-header p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-transform: uppercase;
   }
 
   .classy-menu.menu-on {
@@ -217,8 +248,41 @@
   .classycloseIcon {
     display: block;
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 25px;
+    right: 25px;
+    width: 35px;
+    height: 35px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .classycloseIcon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+  }
+
+  .classycloseIcon::before,
+  .classycloseIcon::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 2px;
+    background: #ffffff;
+    border-radius: 1px;
+  }
+
+  .classycloseIcon::before {
+    transform: rotate(45deg);
+  }
+
+  .classycloseIcon::after {
+    transform: rotate(-45deg);
   }
 
   .classynav {
@@ -227,21 +291,90 @@
 
   .classynav ul {
     flex-direction: column;
+    gap: 5px;
   }
 
   .classynav ul li {
     margin: 0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .classynav ul li:hover {
+    background: rgba(59, 130, 246, 0.1);
+    transform: translateX(5px);
   }
 
   .classynav ul li a {
-    padding: 15px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 18px 15px;
+    border-bottom: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 16px;
+    color: #ffffff;
+    transition: all 0.3s ease;
+    display: block;
+    position: relative;
+  }
+
+  .classynav ul li a:hover {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+  }
+
+  .classynav ul li a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    background: #3b82f6;
+    transition: height 0.3s ease;
+    border-radius: 2px;
+  }
+
+  .classynav ul li a:hover::before {
+    height: 60%;
   }
 
   .btn.confer-btn {
-    margin: 30px 0 0;
+    margin: 40px 0 0;
     width: 100%;
     text-align: center;
     justify-content: center;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border: none;
+    padding: 15px 25px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 16px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn.confer-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  }
+
+  .btn.confer-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .btn.confer-btn:hover::before {
+    left: 100%;
   }
 }
