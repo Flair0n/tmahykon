@@ -13,7 +13,6 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
   text-transform: uppercase;
 }
 .innovation-readiness-section {
@@ -30,7 +29,7 @@
 .horizontal-timeline {
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: center;
   gap: 56px;
   position: relative;
@@ -60,27 +59,37 @@
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 6px 24px rgba(80,90,221,0.13);
-  padding: 20px 28px 16px 28px;
-  min-width: 150px;
+  padding: 20px 15px 16px 15px;
+  min-width: 180px;
+  max-width: 180px;
+  width: 180px;
+  min-height: 120px;
   text-align: center;
   margin-top: 12px;
   border: 1.5px solid #e0e4ed;
   transition: box-shadow 0.2s, border 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .horizontal-timeline-title {
-  font-size: 1.22rem;
+  font-size: 1.1rem;
   font-weight: 800;
   color: #232b39;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   letter-spacing: 0.3px;
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  text-align: center;
+  line-height: 1.3;
 }
 .horizontal-timeline-date {
-  font-size: 1.07rem;
+  font-size: 1rem;
   color: #505add;
   font-weight: 600;
   letter-spacing: 0.2px;
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  text-align: center;
 }
 .horizontal-timeline::before {
   content: "";
@@ -99,9 +108,20 @@
     gap: 16px;
     padding-left: 8px;
     padding-right: 8px;
+    align-items: flex-start;
   }
   .horizontal-timeline-content {
-    min-width: 90px;
-    padding: 8px 8px;
+    min-width: 140px;
+    max-width: 140px;
+    width: 140px;
+    min-height: 100px;
+    padding: 15px 8px;
+  }
+  .horizontal-timeline-title {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+  .horizontal-timeline-date {
+    font-size: 0.9rem;
   }
 }

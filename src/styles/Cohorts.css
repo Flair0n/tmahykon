@@ -65,6 +65,21 @@
   margin: 0;
 }
 
+.cohort-features {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.cohort-features span {
+  font-size: 14px;
+  color: #6b7280;
+  padding: 4px 0;
+  border-left: 3px solid #df42b1;
+  padding-left: 12px;
+}
+
 @media screen and (max-width: 991px) {
   .single-cohort h3 {
     font-size: 18px;

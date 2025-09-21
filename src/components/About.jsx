@@ -34,7 +34,7 @@ const About = () => {
 
             <div className="about-btn">
               <a href="/how-it-works" className="btn confer-btn">
-                Learn More <i className="fa fa-long-arrow-right"></i>
+                Learn More <i className="fas fa-long-arrow-right"></i>
               </a>
             </div>
           </div>

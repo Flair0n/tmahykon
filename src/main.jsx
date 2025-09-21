@@ -5,6 +5,7 @@ import './index.css';
 import App from './App.jsx';
 import PaymentSuccess from './PaymentSuccess.jsx';
 import Home from './Home.jsx';
+import HowItWorks from './components/HowItWorks.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/" element={<Home />} />
         <Route path="/form" element={<App />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
