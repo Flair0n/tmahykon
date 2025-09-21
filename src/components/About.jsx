@@ -7,7 +7,7 @@ const About = () => {
       <div className="about-container">
         <div className="about-content-wrapper">
           <div className="section-heading">
-            <h4>About Us</h4>
+            <h4>Challenge Details</h4>
             <h2>TMA HYKON Innovation Challenge</h2>
           </div>
 

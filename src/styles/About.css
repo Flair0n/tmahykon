@@ -20,7 +20,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(2rem, 4vw, 3rem);
+  gap: clamp(0.5rem, 1vw, 1rem);
 }
 
 .section-heading {
@@ -30,7 +30,7 @@
 }
 
 .section-heading h4 {
-  color: #ec4899;
+  color: #3b82f6;
   font-size: clamp(1rem, 2vw, 1.2rem);
   font-weight: 600;
   text-transform: uppercase;

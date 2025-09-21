@@ -1,7 +1,13 @@
-import React from "react";
-import "../styles/AwardsNew.css";
+import React, { useState } from "react";
+import "../styles/Awards.css";
 
 const Awards = () => {
+  const [expandedSection, setExpandedSection] = useState('cash');
+
+  const toggleSection = (section) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
+
   return (
     <section className="awards-area section-padding-100" id="awards">
       <div className="awards-container">
@@ -11,134 +17,208 @@ const Awards = () => {
             <h2>Recognizing Innovation Excellence</h2>
           </div>
 
+          {/* Navigation Tabs */}
+          <div className="awards-tabs">
+            <button 
+              className={`tab-button ${expandedSection === 'cash' ? 'active' : ''}`}
+              onClick={() => toggleSection('cash')}
+            >
+              Cash Awards
+            </button>
+            <button 
+              className={`tab-button ${expandedSection === 'institutional' ? 'active' : ''}`}
+              onClick={() => toggleSection('institutional')}
+            >
+              Institutional
+            </button>
+            <button 
+              className={`tab-button ${expandedSection === 'cohort' ? 'active' : ''}`}
+              onClick={() => toggleSection('cohort')}
+            >
+              Cohort Awards
+            </button>
+            <button 
+              className={`tab-button ${expandedSection === 'support' ? 'active' : ''}`}
+              onClick={() => toggleSection('support')}
+            >
+              Support Services
+            </button>
+          </div>
+
           {/* Cash Awards Section */}
-          <div className="award-category-section">
-            <h3 className="award-category-title">Cash Awards</h3>
-            <div className="awards-grid">
-              <div className="single-award">
+          <div className={`award-category-section cash-awards ${expandedSection === 'cash' ? 'expanded' : ''}`}>
+            <div className="awards-grid cash-grid">
+              <div className="single-award premium-card gold-tier">
+                <div className="card-glow"></div>
+                <div className="award-rank">1st</div>
                 <div className="award-icon">
                   <i className="fas fa-trophy"></i>
                 </div>
-                <h5>1ST PRIZE</h5>
+                <h5>Winner</h5>
                 <p className="award-amount">₹50,000</p>
+                <div className="award-benefits">
+                  <span>+ Industry Mentorship</span>
+                  <span>+ Fast-track Incubation</span>
+                </div>
               </div>
 
-              <div className="single-award">
+              <div className="single-award premium-card silver-tier">
+                <div className="card-glow"></div>
+                <div className="award-rank">2nd</div>
                 <div className="award-icon">
                   <i className="fas fa-medal"></i>
                 </div>
-                <h5>2ND PRIZE</h5>
+                <h5>Runner-up</h5>
                 <p className="award-amount">₹20,000</p>
+                <div className="award-benefits">
+                  <span>+ Internship Opportunities</span>
+                  <span>+ IPR Support</span>
+                </div>
               </div>
 
-              <div className="single-award">
+              <div className="single-award premium-card bronze-tier">
+                <div className="card-glow"></div>
+                <div className="award-rank">3rd</div>
                 <div className="award-icon">
                   <i className="fas fa-award"></i>
                 </div>
-                <h5>3RD PRIZE</h5>
+                <h5>Third Place</h5>
                 <p className="award-amount">₹10,000</p>
+                <div className="award-benefits">
+                  <span>+ Media Coverage</span>
+                  <span>+ Certificate</span>
+                </div>
               </div>
             </div>
 
-            <div className="seed-funding">
+            <div className="seed-funding premium-card seed-tier">
+              <div className="card-glow"></div>
               <div className="award-icon">
                 <i className="fas fa-seedling"></i>
               </div>
               <h5>Seed Funding</h5>
-              <p>Prototyping support of ₹3,000 for selected 15 teams</p>
+              <p className="award-amount">₹3,000</p>
+              <p className="award-description">Prototyping support for selected 15 teams</p>
             </div>
           </div>
 
           {/* Institutional Awards Section */}
-          <div className="award-category-section">
-            <h3 className="award-category-title">Institutional Awards</h3>
-            <div className="awards-grid institutional">
-              <div className="single-award">
+          <div className={`award-category-section institutional-awards ${expandedSection === 'institutional' ? 'expanded' : ''}`}>
+            <div className="awards-grid institutional-grid">
+              <div className="single-award premium-card institutional-tier">
+                <div className="card-glow"></div>
                 <div className="award-icon">
                   <i className="fas fa-university"></i>
                 </div>
                 <h5>Idea Powerhouse</h5>
-                <p>Institution with most valid project submissions</p>
+                <p className="award-description">Institution with most valid project submissions</p>
+                <div className="award-benefits">
+                  <span>Recognition Certificate</span>
+                  <span>Media Coverage</span>
+                </div>
               </div>
 
-              <div className="single-award">
+              <div className="single-award premium-card institutional-tier">
+                <div className="card-glow"></div>
                 <div className="award-icon">
                   <i className="fas fa-users"></i>
                 </div>
                 <h5>Chapter Powerhouse</h5>
-                <p>TMA Chapter with most valid project submissions</p>
+                <p className="award-description">TMA Chapter with most valid project submissions</p>
+                <div className="award-benefits">
+                  <span>Chapter Recognition</span>
+                  <span>Special Mention</span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Cohort Awards Section */}
-          <div className="award-category-section">
-            <h3 className="award-category-title">Cohort Awards</h3>
-            <div className="awards-grid">
-              <div className="single-award">
+          <div className={`award-category-section cohort-awards ${expandedSection === 'cohort' ? 'expanded' : ''}`}>
+            <div className="awards-grid cohort-grid">
+              <div className="single-award premium-card cohort-tier">
+                <div className="card-glow"></div>
                 <div className="award-icon">
                   <i className="fas fa-laptop-code"></i>
                 </div>
                 <h5>Cohort Champion — Coder</h5>
-                <p>Excellence in software development</p>
+                <p className="award-description">Excellence in software development</p>
+                <div className="award-benefits">
+                  <span>Tech Industry Connections</span>
+                  <span>Coding Bootcamp Access</span>
+                </div>
               </div>
 
-              <div className="single-award">
+              <div className="single-award premium-card cohort-tier">
+                <div className="card-glow"></div>
                 <div className="award-icon">
                   <i className="fas fa-tools"></i>
                 </div>
                 <h5>Cohort Champion — Maker</h5>
-                <p>Excellence in prototype creation</p>
+                <p className="award-description">Excellence in prototype creation</p>
+                <div className="award-benefits">
+                  <span>Maker Space Access</span>
+                  <span>Hardware Partnerships</span>
+                </div>
               </div>
 
-              <div className="single-award">
+              <div className="single-award premium-card cohort-tier">
+                <div className="card-glow"></div>
                 <div className="award-icon">
                   <i className="fas fa-chess-king"></i>
                 </div>
                 <h5>Cohort Champion — Leader</h5>
-                <p>Excellence in project management</p>
+                <p className="award-description">Excellence in project management</p>
+                <div className="award-benefits">
+                  <span>Leadership Programs</span>
+                  <span>Management Training</span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Product Support Section */}
-          <div className="award-category-section">
-            <h3 className="award-category-title">Product Support</h3>
-            <div className="product-support-grid">
-              <div className="single-award">
+          <div className={`award-category-section support-services ${expandedSection === 'support' ? 'expanded' : ''}`}>
+            <div className="support-grid">
+              <div className="single-award premium-card support-tier">
+                <div className="card-glow"></div>
                 <div className="award-icon">
                   <i className="fas fa-briefcase"></i>
                 </div>
                 <h5>Industry Internships</h5>
-                <p>Opportunities at TMA member firms</p>
+                <p className="award-description">Opportunities at TMA member firms</p>
               </div>
-              <div className="single-award">
+              <div className="single-award premium-card support-tier">
+                <div className="card-glow"></div>
                 <div className="award-icon">
                   <i className="fas fa-rocket"></i>
                 </div>
                 <h5>Fast-track Incubation</h5>
-                <p>Access to Ecosystem Partners</p>
+                <p className="award-description">Access to Ecosystem Partners</p>
               </div>
-              <div className="single-award">
+              <div className="single-award premium-card support-tier">
+                <div className="card-glow"></div>
                 <div className="award-icon">
                   <i className="fas fa-gavel"></i>
                 </div>
                 <h5>IPR Support</h5>
-                <p>Patent-drafting assistance</p>
+                <p className="award-description">Patent-drafting assistance</p>
               </div>
-              <div className="single-award">
+              <div className="single-award premium-card support-tier">
+                <div className="card-glow"></div>
                 <div className="award-icon">
                   <i className="fas fa-newspaper"></i>
                 </div>
                 <h5>Media Feature</h5>
-                <p>Coverage in TMA journal & local press</p>
+                <p className="award-description">Coverage in TMA journal & local press</p>
               </div>
-              <div className="single-award">
+              <div className="single-award premium-card support-tier">
+                <div className="card-glow"></div>
                 <div className="award-icon">
                   <i className="fas fa-handshake"></i>
                 </div>
                 <h5>Investor Access</h5>
-                <p>Connect with potential investors</p>
+                <p className="award-description">Connect with potential investors</p>
               </div>
             </div>
           </div>

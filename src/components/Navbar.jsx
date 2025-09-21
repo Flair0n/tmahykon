@@ -86,7 +86,7 @@ const Navbar = () => {
                           window.location.hash = '#about';
                         }
                       }
-                    }}>About Us</a>
+                    }}>Challenge Details</a>
                   </li>
                   <li>
                     <a href="#awards" onClick={e => {
