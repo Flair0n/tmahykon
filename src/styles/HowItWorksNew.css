@@ -11,6 +11,8 @@
   position: relative;
   overflow: hidden;
   padding-top: 120px; /* Use padding instead of margin to avoid white gap */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .challenge-different-section::before {
@@ -935,9 +937,24 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .challenge-different-section {
+    width: 100%;
+    overflow-x: hidden;
+    padding-top: 100px; /* Adjust for mobile navbar */
+  }
+  
+  .challenge-different-section .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 15px;
+    overflow-x: hidden;
+  }
+  
   .challenge-different-section .section-heading h2 {
     font-size: 2rem;
     margin-bottom: 30px;
+    width: 100%;
+    overflow-wrap: break-word;
   }
   
   .different-cards-container {
