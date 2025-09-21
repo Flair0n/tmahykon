@@ -6,6 +6,7 @@ import Hero from "./components/Hero";
 import Purpose from "./components/Purpose";
 import About from "./components/About";
 import Awards from "./components/Awards";
+import Partners from "./components/Partners";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
@@ -64,6 +65,7 @@ const Home = () => {
           <Purpose />
           <About />
           <Awards />
+          <Partners />
         </div>
         <Footer />
       </motion.div>
