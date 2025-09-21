@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
+import "./App.css";
 import Hero from "./components/Hero";
 import Purpose from "./components/Purpose";
 import About from "./components/About";
@@ -54,6 +55,7 @@ const Home = () => {
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 40 }}
         transition={{ duration: 0.5 }}
+        className="home-page-wrapper"
         style={{ 
           minHeight: "100vh", 
           overflowY: "auto",
@@ -61,7 +63,7 @@ const Home = () => {
         }}
       >
         <Hero />
-        <div className="main-content">
+        <div className="main-content-gradient">
           <Purpose />
           <About />
           <Awards />

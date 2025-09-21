@@ -122,6 +122,26 @@
   cursor: not-allowed;
 }
 
+.successMessage {
+  background: #2d5a2d;
+  border: 2px solid #4a8a4a;
+  color: #90ee90;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.successMessage p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.successMessage p:first-child {
+  font-weight: bold;
+  font-size: 18px;
+}
+
 .statusSuccess {
   display: flex;
   flex-direction: column;

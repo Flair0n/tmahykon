@@ -3,6 +3,34 @@
   min-height: 100vh;
 }
 
+/* Alternating Section Backgrounds */
+.home-page-wrapper {
+  background: transparent;
+  min-height: 100vh;
+}
+
+.main-content-gradient {
+  position: relative;
+  z-index: 1;
+}
+
+/* Remove gradient override and set alternating backgrounds */
+.main-content-gradient .purpose-area {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+}
+
+.main-content-gradient .about-us-area {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+}
+
+.main-content-gradient .awards-area {
+  background: linear-gradient(135deg, #f1f5f9 0%, #ffffff 100%) !important;
+}
+
+.main-content-gradient .partners-area {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

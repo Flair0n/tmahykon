@@ -33,7 +33,7 @@
 
 .section-heading h4 {
   font-size: 16px;
-  color: rgba(75, 85, 99, 0.8);
+  color: rgba(168, 195, 247, 0.8);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -46,8 +46,8 @@
 .section-heading h2 {
   font-size: 3rem;
   font-weight: 700;
-  color: #1f2937;
-  background: linear-gradient(135deg, #374151 0%, #111827 100%);
+  color: #ffffff;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -58,7 +58,7 @@
 }
 
 .section-heading p {
-  color: #6b7280;
+  color: #d1d5db;
   font-size: 18px;
   line-height: 1.6;
   margin: 0;
