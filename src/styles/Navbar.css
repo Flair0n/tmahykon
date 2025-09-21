@@ -200,11 +200,11 @@
     position: fixed;
     top: 0;
     right: -100%;
-    width: 100%;
-    max-width: 300px;
+    width: 250px;
+    max-width: 75vw;
     height: 100%;
     background: linear-gradient(135deg, #1e2a5a 0%, #0f1a3a 100%);
-    padding: 80px 0 30px 0;
+    padding: 70px 0 30px 0;
     transition: all 0.4s ease-in-out;
     overflow-y: auto;
     z-index: 9999;
@@ -259,8 +259,8 @@
 
   .classynav {
     display: block;
-    padding: 0 25px;
-    margin-top: 20px;
+    padding: 0 20px;
+    margin-top: 15px;
   }
 
   .classynav ul {
@@ -317,16 +317,16 @@
   }
 
   .btn.confer-btn {
-    margin: 40px 25px 0 25px;
-    width: calc(100% - 50px);
+    margin: 30px 20px 0 20px;
+    width: calc(100% - 40px);
     text-align: center;
     justify-content: center;
     background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
     border: none;
-    padding: 15px 25px;
-    border-radius: 12px;
+    padding: 12px 20px;
+    border-radius: 10px;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 15px;
     color: white;
     box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
     transition: all 0.3s ease;
