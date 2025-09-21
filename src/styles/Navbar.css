@@ -163,6 +163,11 @@
 }
 
 @media screen and (max-width: 991px) {
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+
   .header-area {
     overflow-x: hidden;
     max-width: 100vw;
@@ -194,13 +199,15 @@
   .classy-menu {
     position: fixed;
     top: 0;
-    right: -320px;
-    width: 320px;
+    right: -100%;
+    width: 280px;
+    max-width: 85vw;
     height: 100%;
     background-color: #111343;
     padding: 60px 30px 30px;
     transition: all 0.4s;
     overflow-y: auto;
+    z-index: 9999;
   }
 
   .classy-menu.menu-on {
