@@ -38,7 +38,7 @@ const Navbar = () => {
               <span className="navbarToggler"></span>
             </div>
 
-            <div className={`classy-menu ${mobileMenu ? "menu-on" : ""}`} style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', marginRight: 32 }}>
+            <div className={`classy-menu ${mobileMenu ? "menu-on" : ""}`}>
               <div className="classycloseIcon" onClick={toggleMobileMenu}>
                 <div className="cross-wrap">
                   <span></span>
