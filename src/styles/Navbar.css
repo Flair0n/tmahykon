@@ -200,45 +200,17 @@
     position: fixed;
     top: 0;
     right: -100%;
-    width: 280px;
-    max-width: 85vw;
+    width: 100%;
+    max-width: 300px;
     height: 100%;
     background: linear-gradient(135deg, #1e2a5a 0%, #0f1a3a 100%);
-    padding: 80px 25px 30px;
+    padding: 80px 0 30px 0;
     transition: all 0.4s ease-in-out;
     overflow-y: auto;
     z-index: 9999;
     box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
     border-left: 2px solid rgba(59, 130, 246, 0.3);
-  }
-
-  .mobile-brand-header {
-    text-align: center;
-    margin-bottom: 40px;
-    padding-bottom: 25px;
-    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-  }
-
-  .mobile-brand-header h3 {
-    color: #ffffff;
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0 0 8px 0;
-    letter-spacing: 2px;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .mobile-brand-header p {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 12px;
-    margin: 0;
-    font-weight: 400;
-    letter-spacing: 1px;
-    text-transform: uppercase;
   }
 
   .classy-menu.menu-on {
@@ -287,11 +259,15 @@
 
   .classynav {
     display: block;
+    padding: 0 25px;
+    margin-top: 20px;
   }
 
   .classynav ul {
     flex-direction: column;
     gap: 5px;
+    padding: 0;
+    margin: 0;
   }
 
   .classynav ul li {
@@ -306,7 +282,7 @@
   }
 
   .classynav ul li a {
-    padding: 18px 15px;
+    padding: 18px 0;
     border-bottom: none;
     border-radius: 8px;
     font-weight: 500;
@@ -315,6 +291,7 @@
     transition: all 0.3s ease;
     display: block;
     position: relative;
+    padding-left: 15px;
   }
 
   .classynav ul li a:hover {
@@ -340,8 +317,8 @@
   }
 
   .btn.confer-btn {
-    margin: 40px 0 0;
-    width: 100%;
+    margin: 40px 25px 0 25px;
+    width: calc(100% - 50px);
     text-align: center;
     justify-content: center;
     background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
