@@ -6,6 +6,18 @@
 .how-it-works-intro {
   background-color: #ffffff;
 }
+.section-heading h2 {
+  background: linear-gradient(90deg, #df42b1 0%, #505add 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  /* text-fill-color: transparent; */
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-size: 2.3rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 18px;
+}
 
 .intro-content {
   text-align: center;

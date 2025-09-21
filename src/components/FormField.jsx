@@ -1,13 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
+import styles from "../styles/FormField.module.css";
 
 export default function FormField({
   field,
   question,
   value,
-  onChange,
-  fieldStyle,
-  textareaStyle
+  onChange
 }) {
   // Custom onChange to restrict phone fields to numbers only
   const handleChange = (e) => {
@@ -33,16 +32,9 @@ export default function FormField({
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-      style={{
-        width: "100%",
-        maxWidth: "600px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "stretch",
-        margin: "0 auto",
-      }}
+      className={styles.fieldContainer}
     >
-      <label htmlFor={field.name} style={field.labelStyle}>{question}</label>
+      <label htmlFor={field.name} className={styles.fieldLabel}>{question}</label>
 
       {field.type === "select" ? (
         <motion.select
@@ -51,7 +43,7 @@ export default function FormField({
           value={value}
           onChange={onChange}
           whileFocus={{ scale: 1.02 }}
-          style={fieldStyle}
+          className={styles.fieldSelect}
         >
           {field.options.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -65,18 +57,14 @@ export default function FormField({
             value={value}
             onChange={onChange}
             whileFocus={{ scale: 1.02 }}
-            style={textareaStyle}
+            className={`${styles.fieldTextarea} ${isWordLimit ? styles.fieldTextareaLarge : ''}`}
             {...(isWordLimit ? { maxLength: 2000 } : {})}
           />
           {isWordLimit && (
             <motion.div
               initial={false}
               animate={{ color: wordCount > 200 ? "#FF5252" : "#aaa" }}
-              style={{
-                fontSize: "12px",
-                textAlign: "right",
-                marginTop: "2px",
-              }}
+              className={`${styles.wordCount} ${wordCount > 200 ? styles.wordCountOver : ''}`}
             >
               {wordCount} / 200 words
             </motion.div>
@@ -90,7 +78,7 @@ export default function FormField({
           value={value}
           onChange={handleChange}
           whileFocus={{ scale: 1.02 }}
-          style={fieldStyle}
+          className={styles.fieldInput}
           {...(["Phone", "MentorPhone"].includes(field.name) ? {
             minLength: 10,
             maxLength: 10,

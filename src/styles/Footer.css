@@ -1,7 +1,7 @@
 .footer-area {
   position: relative;
   z-index: 1;
-  background-color: #111343;
+  background-color: #0b0d29;
   padding: 70px 0;
 }
 
@@ -17,8 +17,8 @@
   height: 100%;
   top: 0;
   left: 0;
-  background-color: #111343;
-  opacity: 0.9;
+  background-color: #0b0d29;
+  opacity: 0.92;
   z-index: -1;
 }
 

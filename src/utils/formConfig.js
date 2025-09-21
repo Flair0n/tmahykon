@@ -1,0 +1,62 @@
+export const formQuestions = {
+  Cohort: "Which cohort does your project belong to (Coder / Maker / Leader)?",
+  Track: "Are you applying under College Track (UG / PG / PhD) or Fresher Track (2025 pass-out)?",
+  FullName: "Team Leader",
+  Institution: "Institution",
+  Course: "Course",
+  Year: "Year",
+  Email: "Contact Email",
+  Phone: "Contact Phone",
+  ProjectTitle: "What is your project title?",
+  ProblemStatement: "What is the problem you are solving?",
+  Context: "Why is this problem important or relevant today?",
+  Stakeholders: "Who are the key stakeholders/beneficiaries affected by this problem?",
+  Solution: "Describe your solution in simple words.",
+  WorkingPrinciple: "What is the working principle of your solution?",
+  Novelty: "How does your solution stand out from existing alternatives?",
+  Impact: "What impact will your solution create (social, environmental, business)?",
+  Budget: "Budget (in ₹)",
+  Timeline: "Outline a 90-day timeline with major milestones.",
+  TeamMembers: "List your team members (name, discipline, year).",
+  HasMentor: "Do you have a mentor?",
+  MentorName: "Mentor's Full Name",
+  MentorEmail: "Mentor's Email Address",
+  MentorDepartment: "Mentor's Department",
+  MentorInstitution: "Mentor's Institution",
+  MentorPhone: "Mentor's Contact Number",
+  TMAMember: "Are you a member of a TMA student chapter?",
+  TMAChapter: "If yes, which TMA student chapter do you belong to?"
+};
+
+export const formSections = {
+  "Basic Information": [
+    "Cohort", "Track", "FullName", "Institution", "Course", "Year",
+    "Email", "Phone", "ProjectTitle"
+  ],
+  "Problem & Need-Gap": ["ProblemStatement", "Context", "Stakeholders"],
+  "Solution & Working": ["Solution", "WorkingPrinciple", "Novelty"],
+  "Impact": ["Impact"],
+  "Budget & Timeline": ["Budget", "Timeline"],
+  "Team & Mentors": ["TeamMembers"],
+  "Membership": ["TMAMember"]
+};
+
+export const tmaChapterOptions = [
+  "College of Cooperation Banking and Management (KAU) Agri Business Management, Vellanikkara, Thrissur",
+  "Jyothi Engineering College, Cheruthuruthy, Thrissur",
+  "Sahrdaya College of Advanced Studies, Kodakara",
+  "Sahrdaya Institute of Management Studies (SIMS), Kodakara, Thrissur",
+  "Sahrdaya College of Engineering and Technology(Autonomous)",
+  "Government Engineering College, Thrissur",
+  "Holy Grace Academy of Management Studies, Mala, Thrissur",
+  "IES College of Engineering, Chittilappilly, Thrissur",
+  "Nirmala College of Management Studies, Chalakkudy, Thrissur",
+  "St.Mary's College, Thrissur",
+  "Nirmala Engineering college",
+  "LIttle Flower College, Guruvayoor",
+  "Christ College (Autonomous), Irinjalakuda, Thrissur",
+  "Nehru School of Management, Pampady, Thrissur",
+  "Mar Dionysius College, Pazhanji",
+  "Dr John Matthai Centre, Thrissur",
+  "Prajyoti Niketan College, Pudukad, Thrissur"
+];

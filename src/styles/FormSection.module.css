@@ -1,0 +1,30 @@
+/* Form Section Styles */
+.sectionContainer {
+  width: 100%;
+}
+
+.sectionHeader {
+  background: #333;
+  color: #fff;
+  padding: 10px;
+  width: 100%;
+  max-width: 600px;
+  margin: 10px auto;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: left;
+  transition: background-color 0.3s ease;
+}
+
+.sectionHeader:hover {
+  background: #404040;
+}
+
+.sectionContent {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.fieldWrapper {
+  margin-bottom: 16px;
+}

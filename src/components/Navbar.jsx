@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "../styles/Navbar.css";
 
-const Navbar: React.FC = () => {
+const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
         <div className="container">
           <div className="classy-navbar">
             <Link to="/" className="nav-brand">
-              TMA Hykon
+              TMA HYKON
             </Link>
 
             <div className="classy-navbar-toggler" onClick={toggleMobileMenu}>

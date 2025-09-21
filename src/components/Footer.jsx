@@ -1,9 +1,9 @@
 import React from "react";
 import "../styles/Footer.css";
 
-const Footer: React.FC = () => {
+const Footer = () => {
   return (
-  <footer id="footer" className="footer-area bg-img">
+    <footer id="footer" className="footer-area bg-img">
       <div className="container">
         <div className="row">
           <div className="col-12">

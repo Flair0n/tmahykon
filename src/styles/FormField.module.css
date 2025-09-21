@@ -1,0 +1,119 @@
+/* Form Field Styles */
+.fieldContainer {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin: 0 auto;
+}
+
+.fieldLabel {
+  width: 100%;
+  max-width: 600px;
+  text-align: left;
+  color: #ccc;
+  font-size: 14px;
+  margin-bottom: 12px;
+  padding-left: 8px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.fieldInput {
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background-color: #222;
+  color: #eee;
+  display: block;
+  height: 44px;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fieldInput:focus {
+  border-color: #528ff0;
+  box-shadow: 0 0 0 2px rgba(82, 143, 240, 0.2);
+  outline: none;
+}
+
+.fieldSelect {
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background-color: #222;
+  color: #eee;
+  display: block;
+  height: 44px;
+  box-sizing: border-box;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fieldSelect:focus {
+  border-color: #528ff0;
+  box-shadow: 0 0 0 2px rgba(82, 143, 240, 0.2);
+  outline: none;
+}
+
+.fieldTextarea {
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background-color: #222;
+  color: #eee;
+  display: block;
+  height: 44px;
+  box-sizing: border-box;
+  resize: none;
+  font-family: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fieldTextarea:focus {
+  border-color: #528ff0;
+  box-shadow: 0 0 0 2px rgba(82, 143, 240, 0.2);
+  outline: none;
+}
+
+.fieldTextareaLarge {
+  height: 120px;
+}
+
+.wordCount {
+  font-size: 12px;
+  text-align: right;
+  margin-top: 2px;
+  color: #aaa;
+  transition: color 0.3s ease;
+}
+
+.wordCountOver {
+  color: #ff5252;
+}
+
+/* Field validation states */
+.fieldInput.error,
+.fieldSelect.error,
+.fieldTextarea.error {
+  border-color: #ff5252;
+  box-shadow: 0 0 0 2px rgba(255, 82, 82, 0.2);
+}
+
+.fieldInput.success,
+.fieldSelect.success,
+.fieldTextarea.success {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}

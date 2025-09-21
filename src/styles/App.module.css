@@ -1,0 +1,173 @@
+/* App Component Styles */
+.appContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.progressBarContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+}
+
+.mainContent {
+  flex: 1;
+  color: #eee;
+  padding: 40px 20px 0 20px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.formContainer {
+  max-width: 800px;
+  margin: 100px auto 0;
+  background: #1e1e1e;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  height: calc(100vh - 140px);
+  overflow-y: auto;
+  margin-bottom: 48px;
+}
+
+.formTitle {
+  color: #fff;
+  margin-bottom: 30px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.mentorQuestion {
+  width: 100%;
+  max-width: 600px;
+  margin: 16px 0;
+  text-align: left;
+}
+
+.mentorLabel {
+  color: #ccc;
+  font-size: 16px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.mentorSelect {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #222;
+  color: #eee;
+}
+
+.tmaChapterContainer {
+  width: 100%;
+  max-width: 600px;
+  margin: 16px 0;
+  text-align: left;
+}
+
+.tmaChapterLabel {
+  color: #ccc;
+  font-size: 16px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.tmaChapterSelect {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #222;
+  color: #eee;
+}
+
+.formActions {
+  margin-top: 24px;
+}
+
+.submitButton {
+  padding: 10px 20px;
+  background: #528ff0;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-top: 10px;
+  cursor: pointer;
+  opacity: 1;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+  background: #4681e0;
+}
+
+.submitButton:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.statusSuccess {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.statusSuccessText {
+  color: #4caf50;
+  font-size: 20px;
+  margin-top: 12px;
+}
+
+.statusError {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #ff5252;
+}
+
+.disclaimer {
+  max-width: 600px;
+  margin: 32px auto 0;
+  background: #232526;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  border: 1px solid #2c2c2c;
+  padding: 28px 32px;
+  text-align: left;
+  color: #eee;
+  font-family: inherit;
+}
+
+.disclaimerTitle {
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  color: #ff5252;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.disclaimerText {
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 18px;
+  color: #e0e0e0;
+  text-align: center;
+}

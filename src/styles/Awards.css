@@ -1,16 +1,29 @@
+/* Product Support grid for alignment */
+.product-support-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 32px;
+  margin-top: 32px;
+}
 
-  /* Full width section */
+.product-support-grid .single-award {
+  flex: 1 1 260px;
+  max-width: 300px;
+  min-width: 300px;
+  min-height: 270px;
+  max-height: 270px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
 .awards-area {
   position: relative;
   z-index: 1;
   background-color: #ffffff;
-  width: 100%;
-  margin: 0;
-  box-sizing: border-box;
-  padding: 0;
 }
-
-
 
 .award-category-section {
   margin-bottom: 50px;

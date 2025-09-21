@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import FormField from "./FormField";
+import styles from "../styles/FormSection.module.css";
 
 const containerVariants = {
   hidden: {},
@@ -24,31 +25,18 @@ export default function FormSection({
   questions,
   formData,
   onChange,
-  fieldStyle,
-  textareaStyle,
-  labelStyle,
-  fieldMeta
+  missingFields
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      style={{ width: "100%" }}
+      className={styles.sectionContainer}
     >
       <motion.div
         layout
-        style={{
-          background: "#333",
-          color: "#fff",
-          padding: "10px",
-          width: "100%",
-          maxWidth: "600px",
-          margin: "10px auto",
-          borderRadius: "5px",
-          fontWeight: "bold",
-          textAlign: "left",
-        }}
+        className={styles.sectionHeader}
       >
         {sectionName}
       </motion.div>
@@ -58,17 +46,15 @@ export default function FormSection({
         initial="hidden"
         animate="visible"
         layout
-        style={{ marginTop: "10px", marginBottom: "20px" }}
+        className={styles.sectionContent}
       >
         {sectionFields.map((field) => (
-          <motion.div key={field.name} variants={fieldVariants}>
+          <motion.div key={field.name} variants={fieldVariants} className={styles.fieldWrapper}>
             <FormField
               field={field}
               question={questions[field.name]}
               value={formData[field.name] || ""}
               onChange={onChange}
-              fieldStyle={fieldStyle}
-              textareaStyle={field.textareaStyle || textareaStyle}
             />
           </motion.div>
         ))}
