@@ -1,128 +1,181 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../styles/Partners.css';
 
 const Partners = () => {
-  const [activeTab, setActiveTab] = useState('technical');
-
-  const partnerCategories = {
-    technical: {
-      title: 'Technical Partner',
-      icon: 'fas fa-code',
-      color: '#8b5cf6',
+  const partnerCategories = [
+    {
+      title: 'Associate Partner',
+      color: '#1a73e8',
       partners: [
-        { name: 'Cloud Solutions Partner', icon: 'fas fa-cloud', description: 'Technology Solutions' },
-        { name: 'Platform Partner', icon: 'fas fa-server', description: 'Cloud Infrastructure' },
-        { name: 'Infrastructure Partner', icon: 'fas fa-database', description: 'Platform Services' }
+        { 
+          name: 'Educational Institute', 
+          logo: '/api/placeholder/150/80',
+          description: 'Educational Partner'
+        }
       ]
     },
-    community: {
-      title: 'Community Partner',
-      icon: 'fas fa-users',
-      color: '#f59e0b',
+    {
+      title: 'Skill Partners',
+      color: '#00c853',
       partners: [
-        { name: 'Community Partner 1', icon: 'fas fa-handshake', description: 'Developer Community' },
-        { name: 'Community Partner 2', icon: 'fas fa-user-friends', description: 'Innovation Network' },
-        { name: 'Community Partner 3', icon: 'fas fa-globe', description: 'Global Outreach' }
+        { 
+          name: 'Developer Community',
+          logo: '/api/placeholder/150/80',
+          description: 'Developer Community'
+        },
+        { 
+          name: 'Training Academy',
+          logo: '/api/placeholder/150/80',
+          description: 'Training Partner'
+        },
+        { 
+          name: 'Learning Platform',
+          logo: '/api/placeholder/150/80',
+          description: 'Learning Platform'
+        },
+        { 
+          name: 'Skills Development Center',
+          logo: '/api/placeholder/150/80',
+          description: 'Educational Support'
+        },
+        { 
+          name: 'Innovation Hub',
+          logo: '/api/placeholder/150/80',
+          description: 'Government Initiative'
+        },
+        { 
+          name: 'Technology Institute',
+          logo: '/api/placeholder/150/80',
+          description: 'Technology Training'
+        },
+        { 
+          name: 'Professional Academy',
+          logo: '/api/placeholder/150/80',
+          description: 'Administrative Training'
+        },
+        { 
+          name: 'Management Center',
+          logo: '/api/placeholder/150/80',
+          description: 'Performance Management'
+        }
       ]
     },
-    media: {
-      title: 'Media Partner',
-      icon: 'fas fa-broadcast-tower',
-      color: '#8b5cf6',
+    {
+      title: 'Industry Partners',
+      color: '#ff6b35',
       partners: [
-        { name: 'Media Partner 1', icon: 'fas fa-newspaper', description: 'Press Coverage' },
-        { name: 'Media Partner 2', icon: 'fas fa-tv', description: 'Broadcasting' },
-        { name: 'Media Partner 3', icon: 'fas fa-podcast', description: 'Digital Media' }
+        { 
+          name: 'Career Solutions',
+          logo: '/api/placeholder/150/80',
+          description: 'Recruitment Solutions'
+        },
+        { 
+          name: 'Industry Association',
+          logo: '/api/placeholder/150/80',
+          description: 'Industry Association'
+        }
       ]
     },
-    ecosystem: {
-      title: 'Ecosystem Partner',
-      icon: 'fas fa-network-wired',
-      color: '#f59e0b',
+    {
+      title: 'Ecosystem Partners',
+      color: '#9c27b0',
       partners: [
-        { name: 'Ecosystem Partner 1', icon: 'fas fa-building', description: 'Business Ecosystem' },
-        { name: 'Ecosystem Partner 2', icon: 'fas fa-seedling', description: 'Startup Incubator' },
-        { name: 'Ecosystem Partner 3', icon: 'fas fa-rocket', description: 'Innovation Hub' }
+        { 
+          name: 'Tech Solutions',
+          logo: '/api/placeholder/150/80',
+          description: 'Technology Integration'
+        },
+        { 
+          name: 'Innovation Center',
+          logo: '/api/placeholder/150/80',
+          description: 'Startup Ecosystem'
+        },
+        { 
+          name: 'Business Chamber',
+          logo: '/api/placeholder/150/80',
+          description: 'Chamber of Commerce'
+        },
+        { 
+          name: 'Tech Association',
+          logo: '/api/placeholder/150/80',
+          description: 'IT Industry Body'
+        },
+        { 
+          name: 'Diversity Network',
+          logo: '/api/placeholder/150/80',
+          description: 'Diversity Initiative'
+        },
+        { 
+          name: 'Social Foundation',
+          logo: '/api/placeholder/150/80',
+          description: 'Social Impact'
+        }
       ]
     },
-    industry: {
-      title: 'Industry Partner',
-      icon: 'fas fa-industry',
-      color: '#8b5cf6',
+    {
+      title: 'Knowledge Partners',
+      color: '#ff9800',
       partners: [
-        { name: 'Industry Partner 1', icon: 'fas fa-cogs', description: 'Manufacturing' },
-        { name: 'Industry Partner 2', icon: 'fas fa-microchip', description: 'Technology' },
-        { name: 'Industry Partner 3', icon: 'fas fa-chart-line', description: 'Analytics' }
-      ]
-    },
-    knowledge: {
-      title: 'Knowledge Partner',
-      icon: 'fas fa-graduation-cap',
-      color: '#f59e0b',
-      partners: [
-        { name: 'Knowledge Partner 1', icon: 'fas fa-university', description: 'Academic Institution' },
-        { name: 'Knowledge Partner 2', icon: 'fas fa-book', description: 'Research Center' },
-        { name: 'Knowledge Partner 3', icon: 'fas fa-lightbulb', description: 'Think Tank' }
+        { 
+          name: 'Professional Network',
+          logo: '/api/placeholder/150/80',
+          description: 'Professional Network'
+        },
+        { 
+          name: 'Online Learning Platform',
+          logo: '/api/placeholder/150/80',
+          description: 'Online Learning'
+        },
+        { 
+          name: 'Entrepreneurship Foundation',
+          logo: '/api/placeholder/150/80',
+          description: 'Entrepreneurship'
+        }
       ]
     }
-  };
-
-  const handleTabClick = (tabKey) => {
-    setActiveTab(tabKey);
-  };
+  ];
 
   return (
-    <section className="partners-area section-padding-100" id="partners">
+    <section className="partners-section" id="partners">
       <div className="partners-container">
-        <div className="section-heading">
-          <h4>Our Network</h4>
-          <h2>Partner Types</h2>
-          <p>Collaborating with industry leaders to create an innovation ecosystem</p>
+        <div className="partners-header">
+          <h6 className="section-subtitle">WHO HELPS US TO CREATE</h6>
+          <h2 className="section-title">Our Partners</h2>
         </div>
 
-        {/* Partner Tabs */}
-        <div className="partner-tabs">
-          {Object.entries(partnerCategories).map(([key, category]) => (
-            <button
-              key={key}
-              className={`tab-button ${activeTab === key ? 'active' : ''}`}
-              onClick={() => handleTabClick(key)}
-              style={{
-                '--tab-color': category.color
-              }}
-            >
-              <i className={category.icon}></i>
-              <span>{category.title}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Partner Content */}
-        <div className="partner-content">
-          {Object.entries(partnerCategories).map(([key, category]) => (
-            <div
-              key={key}
-              className={`partner-category-section ${activeTab === key ? 'expanded' : ''}`}
-            >
-              <div className="partner-grid">
-                {category.partners.map((partner, index) => (
-                  <div key={index} className="partner-card">
-                    <div className="card-glow"></div>
-                    <div 
-                      className="partner-icon"
-                      style={{
-                        background: `linear-gradient(135deg, ${category.color}, ${category.color}80)`
-                      }}
-                    >
-                      <i className={partner.icon}></i>
+        <div className="partner-categories">
+          {partnerCategories.map((category, categoryIndex) => (
+            <div key={categoryIndex} className="partner-category">
+              <div 
+                className="category-header"
+                style={{ backgroundColor: category.color }}
+              >
+                <h3>{category.title}</h3>
+              </div>
+              <div className="category-content">
+                <div className="partners-grid">
+                  {category.partners.map((partner, partnerIndex) => (
+                    <div key={partnerIndex} className="partner-card">
+                      <div className="partner-logo">
+                        <img 
+                          src={partner.logo} 
+                          alt={partner.name}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
+                        />
+                        <div className="logo-placeholder" style={{ display: 'none' }}>
+                          {partner.name}
+                        </div>
+                      </div>
+                      <div className="partner-info">
+                        <h4>{partner.name}</h4>
+                        <p>{partner.description}</p>
+                      </div>
                     </div>
-                    <h5>{partner.name}</h5>
-                    <p className="partner-description">{partner.description}</p>
-                    <div className="partner-type-badge" style={{ background: category.color }}>
-                      {category.title}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           ))}

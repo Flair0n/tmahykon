@@ -90,7 +90,7 @@ const Footer = () => {
 
               <div className="copyright-text">
                 <p>
-                  © 2023 TMA HYKON Innovation Challenge. All Rights Reserved.
+                  © 2025 TMA HYKON Innovation Challenge. All Rights Reserved.
                 </p>
               </div>
             </div>
