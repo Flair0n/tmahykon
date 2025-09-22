@@ -1,5 +1,5 @@
 // backend/razorpay.cjs
-require("dotenv").config();
+require("dotenv").config({ path: __dirname + '/.env' });
 const express = require('express');
 const cors = require("cors");
 const crypto = require('crypto');
@@ -12,6 +12,9 @@ app.use(cors());
 app.use(express.json());
 
 // Load Razorpay keys from .env
+console.log('RAZORPAY_KEY_ID:', process.env.RAZORPAY_KEY_ID);
+console.log('RAZORPAY_KEY_SECRET:', process.env.RAZORPAY_KEY_SECRET ? '***HIDDEN***' : 'MISSING');
+
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET

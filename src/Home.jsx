@@ -67,7 +67,7 @@ const Home = () => {
           <Purpose />
           <About />
           <Awards />
-          <Partners />
+          {/* <Partners /> */}
         </div>
         <Footer />
       </motion.div>
