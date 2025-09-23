@@ -3,8 +3,11 @@ export const formQuestions = {
   Track: "Are you applying under College Track (UG / PG / PhD) or Fresher Track (2025 pass-out)?",
   FullName: "Team Leader",
   Institution: "Institution",
+  InstitutionType: "Type of Institution",
   Course: "Course",
   Year: "Year",
+  City: "City",
+  State: "State",
   Email: "Contact Email",
   Phone: "Contact Phone",
   ProjectTitle: "What is your project title?",
@@ -30,8 +33,8 @@ export const formQuestions = {
 
 export const formSections = {
   "Basic Information": [
-    "Cohort", "Track", "FullName", "Institution", "Course", "Year",
-    "Email", "Phone", "ProjectTitle"
+    "Cohort", "Track", "FullName", "Institution", "InstitutionType", "Course", "Year",
+    "City", "State", "Email", "Phone", "ProjectTitle"
   ],
   "Problem & Need-Gap": ["ProblemStatement", "Context", "Stakeholders"],
   "Solution & Working": ["Solution", "WorkingPrinciple", "Novelty"],
@@ -59,4 +62,55 @@ export const tmaChapterOptions = [
   "Mar Dionysius College, Pazhanji",
   "Dr John Matthai Centre, Thrissur",
   "Prajyoti Niketan College, Pudukad, Thrissur"
+];
+
+export const institutionTypeOptions = [
+  "Engineering College",
+  "Medical College", 
+  "Management Institute",
+  "Technology Institute",
+  "Arts & Science College",
+  "University",
+  "Research Institute",
+  "Polytechnic",
+  "Other"
+];
+
+export const indianStates = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh", 
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Andaman and Nicobar Islands",
+  "Chandigarh",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi",
+  "Jammu and Kashmir",
+  "Ladakh",
+  "Lakshadweep",
+  "Puducherry"
 ];

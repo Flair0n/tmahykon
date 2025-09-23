@@ -191,7 +191,7 @@ const AdminDashboard = () => {
         
         // Check each expected field
         const expectedFields = [
-          'Cohort', 'Track', 'FullName', 'Institution', 'Course', 'Year', 'Email', 'Phone',
+          'Cohort', 'Track', 'FullName', 'Institution', 'InstitutionType', 'Course', 'Year', 'City', 'State', 'Email', 'Phone',
           'ProjectTitle', 'ProblemStatement', 'Context', 'Stakeholders', 'Solution', 
           'WorkingPrinciple', 'Novelty', 'Impact', 'Budget', 'Timeline', 'TeamMembers',
           'HasMentor', 'MentorName', 'MentorEmail', 'MentorDepartment', 'MentorInstitution', 
@@ -328,7 +328,7 @@ const AdminDashboard = () => {
       return;
     }
 
-    const headers = ['Full Name', 'Email', 'Phone', 'Institution', 'Course', 'Year', 'Cohort', 'Track', 'Project Title', 'Problem Statement', 'Context', 'Stakeholders', 'Solution', 'Working Principle', 'Novelty', 'Impact', 'Budget', 'Timeline', 'Team Members', 'Has Mentor', 'Mentor Name', 'Mentor Email', 'Mentor Department', 'Mentor Institution', 'Mentor Phone', 'TMA Member', 'TMA Chapter', 'Payment Status', 'Payment ID', 'Order ID', 'Registration Date'];
+    const headers = ['Full Name', 'Email', 'Phone', 'Institution', 'Institution Type', 'Course', 'Year', 'City', 'State', 'Cohort', 'Track', 'Project Title', 'Problem Statement', 'Context', 'Stakeholders', 'Solution', 'Working Principle', 'Novelty', 'Impact', 'Budget', 'Timeline', 'Team Members', 'Has Mentor', 'Mentor Name', 'Mentor Email', 'Mentor Department', 'Mentor Institution', 'Mentor Phone', 'TMA Member', 'TMA Chapter', 'Payment Status', 'Payment ID', 'Order ID', 'Registration Date'];
     const csvContent = [
       headers.join(','),
       ...dataToExport.map(reg => [
@@ -336,8 +336,11 @@ const AdminDashboard = () => {
         reg.Email || '',
         reg.Phone || '',
         reg.Institution || '',
+        reg.InstitutionType || '',
         reg.Course || '',
         reg.Year || '',
+        reg.City || '',
+        reg.State || '',
         reg.Cohort || '',
         reg.Track || '',
         reg.ProjectTitle || '',
@@ -426,8 +429,16 @@ const AdminDashboard = () => {
 
       const topStates = Object.entries(
         dataForPDF.reduce((acc, reg) => {
-          const state = reg.State || reg.Region || 'Unknown State';
+          const state = reg.State || 'Unknown State';
           acc[state] = (acc[state] || 0) + 1;
+          return acc;
+        }, {})
+      ).sort(([,a], [,b]) => b - a);
+
+      const institutionTypes = Object.entries(
+        dataForPDF.reduce((acc, reg) => {
+          const type = reg.InstitutionType || 'Unknown Type';
+          acc[type] = (acc[type] || 0) + 1;
           return acc;
         }, {})
       ).sort(([,a], [,b]) => b - a);
@@ -776,7 +787,22 @@ const AdminDashboard = () => {
               </div>
 
               <div class="leaderboard">
-                <h3>🎓 Academic Year Distribution</h3>
+                <h3>� Institution Type Distribution</h3>
+                <div class="leaderboard-content">
+                  ${institutionTypes.map(([type, count], index) => 
+                    `<div class="leaderboard-item">
+                      <div class="item-info">
+                        <span class="rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''}">${index + 1}.</span>
+                        <span class="item-name">${type}</span>
+                      </div>
+                      <span class="item-value">${count} registrations</span>
+                    </div>`
+                  ).join('')}
+                </div>
+              </div>
+
+              <div class="leaderboard">
+                <h3>�🎓 Academic Year Distribution</h3>
                 <div class="leaderboard-content">
                   ${academicYears.map(([year, count], index) => 
                     `<div class="leaderboard-item">
@@ -1076,8 +1102,11 @@ const AdminDashboard = () => {
                   <th className="basic-info">Email Address</th>
                   <th className="basic-info">Phone</th>
                   <th className="basic-info">Institution</th>
+                  <th className="basic-info">Institution Type</th>
                   <th className="basic-info">Course</th>
                   <th className="basic-info">Year</th>
+                  <th className="basic-info">City</th>
+                  <th className="basic-info">State</th>
                   <th className="basic-info">Cohort</th>
                   <th className="basic-info">Track</th>
                   
@@ -1127,8 +1156,11 @@ const AdminDashboard = () => {
                     <td title={reg.Email}>{reg.Email || 'N/A'}</td>
                     <td title={reg.Phone}>{reg.Phone || 'N/A'}</td>
                     <td title={reg.Institution}>{reg.Institution || 'N/A'}</td>
+                    <td title={reg.InstitutionType}>{reg.InstitutionType || 'N/A'}</td>
                     <td title={reg.Course}>{reg.Course || 'N/A'}</td>
                     <td title={reg.Year}>{reg.Year || 'N/A'}</td>
+                    <td title={reg.City}>{reg.City || 'N/A'}</td>
+                    <td title={reg.State}>{reg.State || 'N/A'}</td>
                     <td title={reg.Cohort}>{reg.Cohort || 'N/A'}</td>
                     <td title={reg.Track}>{reg.Track || 'N/A'}</td>
                     

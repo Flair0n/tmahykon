@@ -4,8 +4,8 @@ export const useFormValidation = (formData) => {
   const [missingFields, setMissingFields] = useState([]);
 
   const fields = [
-    "Cohort", "Track", "FullName", "Institution", "Course", "Year",
-    "Email", "Phone", "ProjectTitle", "ProblemStatement", "Context",
+    "Cohort", "Track", "FullName", "Institution", "InstitutionType", "Course", "Year",
+    "City", "State", "Email", "Phone", "ProjectTitle", "ProblemStatement", "Context",
     "Stakeholders", "Solution", "WorkingPrinciple", "Novelty", "Impact",
     "Budget", "Timeline", "TeamMembers", "HasMentor", "TMAMember"
   ];

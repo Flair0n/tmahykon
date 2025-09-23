@@ -1,3 +1,5 @@
+import { institutionTypeOptions, indianStates } from './formConfig';
+
 export const getFieldMeta = (field) => {
   if (field === "Cohort") {
     return {
@@ -18,6 +20,24 @@ export const getFieldMeta = (field) => {
         { value: "", label: "Select Track" },
         { value: "College Track", label: "College Track" },
         { value: "Fresher Track", label: "Fresher Track" },
+      ],
+    };
+  } else if (field === "InstitutionType") {
+    return {
+      name: "InstitutionType",
+      type: "select",
+      options: [
+        { value: "", label: "Select Institution Type" },
+        ...institutionTypeOptions.map(type => ({ value: type, label: type }))
+      ],
+    };
+  } else if (field === "State") {
+    return {
+      name: "State",
+      type: "select",
+      options: [
+        { value: "", label: "Select State" },
+        ...indianStates.map(state => ({ value: state, label: state }))
       ],
     };
   } else if (field === "TMAMember") {
@@ -47,7 +67,7 @@ export const getFieldMeta = (field) => {
       ],
     };
   } else if ([
-    "Course", "FullName", "Institution", "ProjectTitle",
+    "Course", "FullName", "Institution", "ProjectTitle", "City",
     "MentorName", "MentorDepartment", "MentorInstitution"
   ].includes(field)) {
     return { name: field, type: "text" };
