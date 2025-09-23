@@ -10,7 +10,7 @@
   justify-content: center;
   position: relative;
   overflow: hidden;
-  padding: 80px 20px;
+  padding: 100px 20px 60px 20px;
   box-sizing: border-box;
 }
 
@@ -232,7 +232,7 @@
 /* Enhanced Mobile Responsiveness */
 @media (max-width: 768px) {
   .hero-container {
-    padding: 60px 15px;
+    padding: 80px 15px 50px 15px;
     min-height: 100vh;
     min-height: 100dvh;
   }
@@ -266,7 +266,7 @@
 
 @media (max-width: 480px) {
   .hero-container {
-    padding: 40px 10px;
+    padding: 70px 10px 30px 10px;
   }
   
   .countdown-timer {
@@ -302,5 +302,55 @@
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .cta-button {
     border: 0.5px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Sponsor Logos */
+.sponsor-logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(2.5rem, 6vw, 4rem);
+  margin-top: clamp(0.25rem, 0.5vw, 0.4rem);
+  margin-bottom: clamp(0.25rem, 0.5vw, 0.4rem);
+  flex-wrap: wrap;
+}
+
+.sponsor-logo {
+  height: clamp(120px, 14vw, 160px);
+  width: clamp(120px, 14vw, 160px);
+  object-fit: contain;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+.sponsor-logo:hover {
+  opacity: 1;
+}
+
+/* Mobile responsiveness for sponsor logos */
+@media (max-width: 768px) {
+  .sponsor-logos {
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+    margin-top: clamp(0.2rem, 0.4vw, 0.3rem);
+    margin-bottom: clamp(0.2rem, 0.4vw, 0.3rem);
+  }
+  
+  .sponsor-logo {
+    height: clamp(100px, 12vw, 120px);
+    width: clamp(100px, 12vw, 120px);
+  }
+}
+
+@media (max-width: 480px) {
+  .sponsor-logos {
+    gap: 1.5rem;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+  }
+  
+  .sponsor-logo {
+    height: 100px;
+    width: 100px;
   }
 }

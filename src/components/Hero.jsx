@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../styles/HeroNew.css";
+import hykonLogo from "../assets/Hykon.png";
+import tmaLogo from "../assets/tma-removebg-preview.png";
+import aimaLogo from "../assets/aima.png";
 
 const Hero = () => {
   const [timeLeft, setTimeLeft] = useState({
@@ -130,6 +133,13 @@ const Hero = () => {
                     </div>
                     <span className="countdown-label">SECONDS</span>
                   </div>
+                </div>
+                
+                {/* Sponsor Logos */}
+                <div className="sponsor-logos">
+                  <img src={hykonLogo} alt="Hykon Logo" className="sponsor-logo" />
+                  <img src={tmaLogo} alt="TMA Logo" className="sponsor-logo" />
+                  <img src={aimaLogo} alt="AIMA Logo" className="sponsor-logo" />
                 </div>
               </motion.div>
             </div>

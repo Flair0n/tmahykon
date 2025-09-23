@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
+import '../styles/AdminDashboard.css';
 import { collection, getDocs, deleteDoc, doc, addDoc, query, orderBy, limit, Timestamp } from 'firebase/firestore';
 
 // Login Component
@@ -31,7 +32,7 @@ const LoginPage = ({ onLogin }) => {
   return (
     <div className="login-container">
       <div className="login-form">
-        <h1>Admin Dashboard</h1>
+        <h1>Dashboard</h1>
         <h2>Login</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleLogin}>
@@ -61,7 +62,7 @@ const LoginPage = ({ onLogin }) => {
           <p>Use one of the following credentials:</p>
           <div className="user-credentials">
             <div className="credential-item">
-              <h4>Admin User (Full Access)</h4>
+              <h4>Full Access User</h4>
               <p><strong>Username:</strong> admin</p>
               <p><strong>Password:</strong> tma@2025</p>
             </div>
@@ -73,102 +74,6 @@ const LoginPage = ({ onLogin }) => {
           </div>
         </div>
       </div>
-      <style jsx>{`
-        .login-container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-          background-color: #f5f7fa;
-        }
-        
-        .login-form {
-          background-color: white;
-          padding: 2rem;
-          border-radius: 8px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          width: 100%;
-          max-width: 400px;
-        }
-        
-        .login-form h1 {
-          color: #3f51b5;
-          text-align: center;
-          margin-bottom: 0.5rem;
-        }
-        
-        .login-form h2 {
-          text-align: center;
-          margin-bottom: 1.5rem;
-          color: #333;
-        }
-        
-        .form-group {
-          margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-        }
-        
-        .form-group input {
-          width: 100%;
-          padding: 0.75rem;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 1rem;
-        }
-        
-        .login-btn {
-          width: 100%;
-          padding: 0.75rem;
-          margin-top: 1rem;
-        }
-        
-        .error-message {
-          background-color: #ffebee;
-          color: #c62828;
-          padding: 0.75rem;
-          border-radius: 4px;
-          margin-bottom: 1rem;
-          text-align: center;
-        }
-        
-        .login-info {
-          margin-top: 1.5rem;
-          padding-top: 1rem;
-          border-top: 1px solid #eee;
-          font-size: 0.9rem;
-          color: #666;
-        }
-
-        .user-credentials {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          margin-top: 1rem;
-        }
-
-        .credential-item {
-          background-color: #f8f9fa;
-          padding: 1rem;
-          border-radius: 6px;
-          border-left: 4px solid #3f51b5;
-        }
-
-        .credential-item h4 {
-          margin: 0 0 0.5rem 0;
-          color: #333;
-          font-size: 0.9rem;
-        }
-
-        .credential-item p {
-          margin: 0.25rem 0;
-          font-size: 0.85rem;
-        }
-      `}</style>
     </div>
   );
 };
@@ -178,38 +83,16 @@ const AdminDashboard = () => {
   // Mandatory Firebase Connection Check
   if (!db) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#f5f5f5',
-        padding: '20px'
-      }}>
-        <div style={{
-          backgroundColor: 'white',
-          borderRadius: '12px',
-          padding: '40px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-          maxWidth: '600px',
-          textAlign: 'center'
-        }}>
-          <div style={{ fontSize: '64px', color: '#ff4444', marginBottom: '20px' }}>⚠️</div>
-          <h1 style={{ color: '#333', marginBottom: '16px' }}>Firebase Connection Required</h1>
-          <p style={{ color: '#666', marginBottom: '24px', lineHeight: '1.6' }}>
-            The Admin Dashboard requires a Firebase connection to function. Please ensure Firebase is properly configured.
+      <div className="firebase-error">
+        <div className="error-container">
+          <div className="error-icon">⚠️</div>
+          <h1 className="error-title">Firebase Connection Required</h1>
+          <p className="error-message">
+            The Dashboard requires a Firebase connection to function. Please ensure Firebase is properly configured.
           </p>
           <button 
             onClick={() => window.location.reload()} 
-            style={{
-              backgroundColor: '#3f51b5',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '6px',
-              fontSize: '16px',
-              cursor: 'pointer'
-            }}
+            className="btn-primary retry-btn"
           >
             Retry Connection
           </button>
@@ -241,28 +124,10 @@ const AdminDashboard = () => {
     enabled: false
   });
 
-  // Add custom scrollbar styles for better horizontal scrolling
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      .table-container::-webkit-scrollbar {
-        height: 12px;
-      }
-      .table-container::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 6px;
-      }
-      .table-container::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 6px;
-      }
-      .table-container::-webkit-scrollbar-thumb:hover {
-        background: #555;
-      }
-    `;
-    document.head.appendChild(style);
-    return () => document.head.removeChild(style);
-  }, []);
+  // Search functionality state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchFilter, setSearchFilter] = useState('all');
+  const [filteredRegistrations, setFilteredRegistrations] = useState([]);
 
   // Create a log entry in Firestore
   const createLog = async (action, details = '') => {
@@ -566,17 +431,6 @@ const AdminDashboard = () => {
           return acc;
         }, {})
       ).sort(([,a], [,b]) => b - a);
-
-      const revenueByCohort = Object.entries(
-        dataForPDF.reduce((acc, reg) => {
-          const cohort = reg.Cohort || 'Unknown';
-          const amount = parseFloat(reg.payment_amount || reg.amount || 0);
-          if (!acc[cohort]) acc[cohort] = { count: 0, revenue: 0 };
-          acc[cohort].count += 1;
-          acc[cohort].revenue += amount;
-          return acc;
-        }, {})
-      ).sort(([,a], [,b]) => b.revenue - a.revenue);
 
       const academicYears = Object.entries(
         dataForPDF.reduce((acc, reg) => {
@@ -922,21 +776,6 @@ const AdminDashboard = () => {
               </div>
 
               <div class="leaderboard">
-                <h3>💵 Revenue Analysis by Cohort</h3>
-                <div class="leaderboard-content">
-                  ${revenueByCohort.map(([cohort, data], index) => 
-                    `<div class="leaderboard-item">
-                      <div class="item-info">
-                        <span class="rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''}">${index + 1}.</span>
-                        <span class="item-name">${cohort}</span>
-                      </div>
-                      <span class="item-value">₹${data.revenue.toLocaleString()} (${data.count} reg.)</span>
-                    </div>`
-                  ).join('')}
-                </div>
-              </div>
-
-              <div class="leaderboard">
                 <h3>🎓 Academic Year Distribution</h3>
                 <div class="leaderboard-content">
                   ${academicYears.map(([year, count], index) => 
@@ -971,8 +810,8 @@ const AdminDashboard = () => {
             <div class="footer">
               <p><strong>TMA Hykon Innovation Challenge - Comprehensive Analytics Report</strong></p>
               <p>This report contains complete leaderboard data and performance metrics</p>
-              <p>Generated from Admin Dashboard | © ${new Date().getFullYear()} TMA Hykon - All rights reserved</p>
-              <p>For questions about this report, contact the admin team</p>
+              <p>Generated from Dashboard | © ${new Date().getFullYear()} TMA Hykon - All rights reserved</p>
+              <p>For questions about this report, contact the support team</p>
             </div>
           </div>
         </body>
@@ -1051,284 +890,308 @@ const AdminDashboard = () => {
     setSystemOperation('');
   };
 
+  // Search functionality
+  const handleSearch = (term, filter) => {
+    if (!term.trim()) {
+      setFilteredRegistrations(registrations);
+      return;
+    }
+
+    const searchResults = registrations.filter(reg => {
+      const searchFields = {
+        all: [
+          reg.FullName, reg.Email, reg.Phone, reg.Institution, reg.Course, 
+          reg.Cohort, reg.Track, reg.ProjectTitle, reg.ProblemStatement,
+          reg.TeamMembers, reg.TMAMember, reg.payment_status
+        ],
+        name: [reg.FullName],
+        email: [reg.Email],
+        institution: [reg.Institution],
+        cohort: [reg.Cohort],
+        track: [reg.Track],
+        project: [reg.ProjectTitle, reg.ProblemStatement],
+        payment: [reg.payment_status, reg.payment_id]
+      };
+
+      const fieldsToSearch = searchFields[filter] || searchFields.all;
+      return fieldsToSearch.some(field => 
+        field?.toString().toLowerCase().includes(term.toLowerCase())
+      );
+    });
+
+    setFilteredRegistrations(searchResults);
+  };
+
+  // Effect to handle search when searchTerm or searchFilter changes
+  useEffect(() => {
+    handleSearch(searchTerm, searchFilter);
+  }, [searchTerm, searchFilter, registrations]);
+
+  // Initialize filtered registrations
+  useEffect(() => {
+    setFilteredRegistrations(registrations);
+  }, [registrations]);
+
   // Render Registration Management Section
   const renderUserManagement = () => (
     <div className="section">
-      <div className="section-header">
-        <h2>Registration Management - Complete View</h2>
-        <p style={{fontSize: '14px', color: '#666', margin: '5px 0'}}>
-          Showing all registration form fields. Scroll horizontally to view all columns. Table width: ~5000px
-        </p>
-        <div style={{display: 'flex', gap: '10px', margin: '10px 0', fontSize: '12px'}}>
-          <span style={{backgroundColor: '#e3f2fd', padding: '4px 8px', borderRadius: '4px'}}>🔵 Basic Info</span>
-          <span style={{backgroundColor: '#fff3e0', padding: '4px 8px', borderRadius: '4px'}}>🟡 Project Details</span>
-          <span style={{backgroundColor: '#e8f5e8', padding: '4px 8px', borderRadius: '4px'}}>🟢 Team & Mentor {hasMentorData ? '(+Details)' : ''}</span>
-          <span style={{backgroundColor: '#fce4ec', padding: '4px 8px', borderRadius: '4px'}}>🔴 Membership {hasTMAChapterData ? '(+Chapter)' : ''}</span>
-          <span style={{backgroundColor: '#f3e5f5', padding: '4px 8px', borderRadius: '4px'}}>🟣 Payment/System</span>
+      {/* Professional Header */}
+      <div className="professional-section-header">
+        <div className="header-title-row">
+          <div>
+            <h2 className="header-title">Registration Management</h2>
+            <p className="header-subtitle">
+              Complete view of all registration data with {registrations.length} total records. 
+              Use horizontal scroll to view all {hasMentorData && hasTMAChapterData ? '31' : hasMentorData ? '29' : hasTMAChapterData ? '27' : '25'} data fields.
+            </p>
+          </div>
+          <div className="header-actions">
+            <button className="btn-header-action primary" onClick={fetchRegistrations}>
+              🔄 Refresh Data
+            </button>
+            <button className="btn-header-action" onClick={fetchLogs}>
+              📋 Refresh Logs
+            </button>
+            <button className="btn-header-action" onClick={exportToCSV}>
+              📊 Export CSV
+            </button>
+          </div>
         </div>
-        <div className="actions">
-          <button className="btn-primary" onClick={fetchRegistrations}>Refresh Data</button>
-          <button className="btn-secondary" onClick={fetchLogs}>Refresh Logs</button>
-          <button className="btn-accent" onClick={exportToCSV}>Export CSV</button>
+        
+        {/* Enhanced Legend */}
+        <div className="enhanced-table-legend">
+          <div className="legend-item">
+            <div className="legend-icon basic"></div>
+            <span>Basic Information</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-icon project"></div>
+            <span>Project Details</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-icon team"></div>
+            <span>Team & Mentorship{hasMentorData ? ' (+Details)' : ''}</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-icon membership"></div>
+            <span>TMA Membership{hasTMAChapterData ? ' (+Chapter)' : ''}</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-icon payment"></div>
+            <span>Payment & System</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Statistics Bar */}
+      <div className="table-stats-bar">
+        <div className="stats-item">
+          <div className="stats-value">
+            {searchTerm ? `${filteredRegistrations.length}/${registrations.length}` : registrations.length}
+          </div>
+          <div className="stats-label">{searchTerm ? 'Filtered/Total' : 'Total Records'}</div>
+        </div>
+        <div className="stats-item">
+          <div className="stats-value">
+            {(searchTerm ? filteredRegistrations : registrations).filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length}
+          </div>
+          <div className="stats-label">Paid</div>
+        </div>
+        <div className="stats-item">
+          <div className="stats-value">
+            {(searchTerm ? filteredRegistrations : registrations).filter(r => !r.payment_status || r.payment_status === 'pending').length}
+          </div>
+          <div className="stats-label">Pending</div>
+        </div>
+        <div className="stats-item">
+          <div className="stats-value">
+            {(searchTerm ? filteredRegistrations : registrations).length > 0 ? Math.round(((searchTerm ? filteredRegistrations : registrations).filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length / (searchTerm ? filteredRegistrations : registrations).length) * 100) : 0}%
+          </div>
+          <div className="stats-label">Success Rate</div>
+        </div>
+        <div className="stats-item">
+          <div className="stats-value">{new Set((searchTerm ? filteredRegistrations : registrations).map(r => r.Cohort)).size}</div>
+          <div className="stats-label">Cohorts</div>
         </div>
       </div>
       
       {loading ? (
-        <div className="loading">
-          <div className="spinner"></div>
-          Loading registrations from Firestore...
+        <div className="professional-loading">
+          <div className="loading-spinner"></div>
+          <div className="loading-text">Loading registrations from Firestore...</div>
+        </div>
+      ) : registrations.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-icon">📋</div>
+          <div className="empty-title">No Registrations Found</div>
+          <div className="empty-subtitle">No registration data available in Firestore database.</div>
         </div>
       ) : (
-        <div className="table-container" style={{
-          overflowX: 'auto', 
-          maxWidth: '100%',
-          width: '100%',
-          border: '1px solid #ddd',
-          borderRadius: '8px',
-          // Enhanced scrollbar styling
-          scrollbarWidth: 'auto',
-          scrollbarColor: '#888 #f1f1f1'
-        }}>
-          <div className="data-table-flex" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: '5000px', // Increased from 3500px to accommodate all columns
-            width: 'max-content',
-            border: '1px solid #ddd',
-            borderRadius: '8px',
-            overflow: 'visible'
-          }}>
-            {/* Scroll indicator */}
-            <div style={{
-              position: 'sticky',
-              top: 0,
-              right: 0,
-              zIndex: 10,
-              backgroundColor: '#fff3cd',
-              padding: '5px 10px',
-              fontSize: '12px',
-              color: '#856404',
-              borderBottom: '1px solid #ffeaa7',
-              textAlign: 'center'
-            }}>
-              ← Scroll horizontally to see all {hasMentorData && hasTMAChapterData ? '31' : hasMentorData ? '29' : hasTMAChapterData ? '27' : '25'} columns →
+        <div className="table-container">
+          {/* Search Interface */}
+          <div className="table-search-container">
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search registrations... (name, email, institution, project, etc.)"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <div className="search-filters">
+              <select 
+                className="filter-select"
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+              >
+                <option value="all">All Fields</option>
+                <option value="name">Name</option>
+                <option value="email">Email</option>
+                <option value="institution">Institution</option>
+                <option value="cohort">Cohort</option>
+                <option value="track">Track</option>
+                <option value="project">Project</option>
+                <option value="payment">Payment</option>
+              </select>
             </div>
-            {/* Header Row with Grouped Sections */}
-            <div className="table-header-flex" style={{
-              display: 'flex',
-              backgroundColor: '#f8f9fa',
-              fontWeight: 'bold',
-              borderBottom: '2px solid #ddd',
-              minHeight: '50px',
-              alignItems: 'center'
-            }}>
-              {/* Basic Information Section */}
-              <div style={{flex: '0 0 150px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e3f2fd'}}>Full Name</div>
-              <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e3f2fd'}}>Email</div>
-              <div style={{flex: '0 0 120px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e3f2fd'}}>Phone</div>
-              <div style={{flex: '0 0 180px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e3f2fd'}}>Institution</div>
-              <div style={{flex: '0 0 120px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e3f2fd'}}>Course</div>
-              <div style={{flex: '0 0 80px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e3f2fd'}}>Year</div>
-              <div style={{flex: '0 0 100px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e3f2fd'}}>Cohort</div>
-              <div style={{flex: '0 0 120px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e3f2fd'}}>Track</div>
-              
-              {/* Project Information Section */}
-              <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#fff3e0'}}>Project Title</div>
-              <div style={{flex: '0 0 250px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#fff3e0'}}>Problem Statement</div>
-              <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#fff3e0'}}>Context</div>
-              <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#fff3e0'}}>Stakeholders</div>
-              <div style={{flex: '0 0 250px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#fff3e0'}}>Solution</div>
-              <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#fff3e0'}}>Working Principle</div>
-              <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#fff3e0'}}>Novelty</div>
-              <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#fff3e0'}}>Impact</div>
-              <div style={{flex: '0 0 100px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#fff3e0'}}>Budget</div>
-              <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#fff3e0'}}>Timeline</div>
-              
-              {/* Team & Mentor Section */}
-              <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e8f5e8'}}>Team Members</div>
-              <div style={{flex: '0 0 100px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e8f5e8'}}>Has Mentor</div>
-              {hasMentorData && (
-                <>
-                  <div style={{flex: '0 0 150px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e8f5e8'}}>Mentor Name</div>
-                  <div style={{flex: '0 0 180px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e8f5e8'}}>Mentor Email</div>
-                  <div style={{flex: '0 0 150px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e8f5e8'}}>Mentor Department</div>
-                  <div style={{flex: '0 0 180px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e8f5e8'}}>Mentor Institution</div>
-                  <div style={{flex: '0 0 120px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#e8f5e8'}}>Mentor Phone</div>
-                </>
-              )}
-              
-              {/* Membership Section */}
-              <div style={{flex: '0 0 100px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#fce4ec'}}>TMA Member</div>
-              {hasTMAChapterData && (
-                <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#fce4ec'}}>TMA Chapter</div>
-              )}
-              
-              {/* System/Payment Section */}
-              <div style={{flex: '0 0 120px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#f3e5f5'}}>Payment Status</div>
-              <div style={{flex: '0 0 150px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#f3e5f5'}}>Payment ID</div>
-              <div style={{flex: '0 0 150px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#f3e5f5'}}>Order ID</div>
-              <div style={{flex: '0 0 120px', padding: '10px', borderRight: '1px solid #ddd', backgroundColor: '#f3e5f5'}}>Registration Date</div>
-              <div style={{flex: '0 0 100px', padding: '10px', backgroundColor: '#ffebee'}}>Actions</div>
-            </div>
+          </div>
 
-            {/* Data Rows */}
-            <div className="table-body-flex">
-              {registrations.length > 0 ? registrations.map((reg, index) => (
-                <div key={reg.id} className="table-row-flex" style={{
-                  display: 'flex',
-                  backgroundColor: index % 2 === 0 ? '#fff' : '#f8f9fa',
-                  borderBottom: '1px solid #eee',
-                  minHeight: '60px',
-                  alignItems: 'center',
-                  transition: 'background-color 0.3s',
-                  cursor: 'default'
-                }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#e3f2fd'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = index % 2 === 0 ? '#fff' : '#f8f9fa'}
-                >
-                  <div style={{flex: '0 0 150px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.FullName}>
-                    {reg.FullName || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Email}>
-                    {reg.Email || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 120px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Phone}>
-                    {reg.Phone || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 180px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Institution}>
-                    {reg.Institution || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 120px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Course}>
-                    {reg.Course || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 80px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Year}>
-                    {reg.Year || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 100px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Cohort}>
-                    {reg.Cohort || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 120px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Track}>
-                    {reg.Track || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.ProjectTitle}>
-                    {reg.ProjectTitle || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 250px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.ProblemStatement}>
-                    {reg.ProblemStatement || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Context}>
-                    {reg.Context || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Stakeholders}>
-                    {reg.Stakeholders || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 250px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Solution}>
-                    {reg.Solution || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.WorkingPrinciple}>
-                    {reg.WorkingPrinciple || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Novelty}>
-                    {reg.Novelty || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Impact}>
-                    {reg.Impact || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 100px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Budget}>
-                    {reg.Budget || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.Timeline}>
-                    {reg.Timeline || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.TeamMembers}>
-                    {reg.TeamMembers || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 100px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.HasMentor}>
-                    {reg.HasMentor || 'N/A'}
-                  </div>
+          {/* Search Results Info */}
+          {searchTerm && (
+            <div className="search-results-info">
+              Found {filteredRegistrations.length} of {registrations.length} registrations matching "{searchTerm}"
+              {searchFilter !== 'all' && ` in ${searchFilter}`}
+            </div>
+          )}
+
+          <div className="table-wrapper">
+            <div style={{background: '#fff3cd', color: '#856404', textAlign: 'center', fontSize: '12px', padding: '8px'}}>
+              ← Scroll horizontally to view all {hasMentorData && hasTMAChapterData ? '31' : hasMentorData ? '29' : hasTMAChapterData ? '27' : '25'} data fields →
+            </div>
+            
+            <table className="data-table">
+              <thead>
+                <tr>
+                  {/* Basic Information Section */}
+                  <th className="basic-info">Full Name</th>
+                  <th className="basic-info">Email Address</th>
+                  <th className="basic-info">Phone</th>
+                  <th className="basic-info">Institution</th>
+                  <th className="basic-info">Course</th>
+                  <th className="basic-info">Year</th>
+                  <th className="basic-info">Cohort</th>
+                  <th className="basic-info">Track</th>
+                  
+                  {/* Project Information Section */}
+                  <th className="project-info">Project Title</th>
+                  <th className="project-info">Problem Statement</th>
+                  <th className="project-info">Context</th>
+                  <th className="project-info">Stakeholders</th>
+                  <th className="project-info">Solution</th>
+                  <th className="project-info">Working Principle</th>
+                  <th className="project-info">Novelty</th>
+                  <th className="project-info">Impact</th>
+                  <th className="project-info">Budget</th>
+                  <th className="project-info">Timeline</th>
+                  
+                  {/* Team & Mentor Section */}
+                  <th className="team-info">Team Members</th>
+                  <th className="team-info">Has Mentor</th>
                   {hasMentorData && (
                     <>
-                      <div style={{flex: '0 0 150px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.MentorName}>
-                        {reg.MentorName || 'N/A'}
-                      </div>
-                      <div style={{flex: '0 0 180px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.MentorEmail}>
-                        {reg.MentorEmail || 'N/A'}
-                      </div>
-                      <div style={{flex: '0 0 150px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.MentorDepartment}>
-                        {reg.MentorDepartment || 'N/A'}
-                      </div>
-                      <div style={{flex: '0 0 180px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.MentorInstitution}>
-                        {reg.MentorInstitution || 'N/A'}
-                      </div>
-                      <div style={{flex: '0 0 120px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.MentorPhone}>
-                        {reg.MentorPhone || 'N/A'}
-                      </div>
+                      <th className="team-info">Mentor Name</th>
+                      <th className="team-info">Mentor Email</th>
+                      <th className="team-info">Department</th>
+                      <th className="team-info">Mentor Institution</th>
+                      <th className="team-info">Mentor Phone</th>
                     </>
                   )}
-                  <div style={{flex: '0 0 100px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.TMAMember}>
-                    {reg.TMAMember || 'N/A'}
-                  </div>
+                  
+                  {/* Membership Section */}
+                  <th className="membership-info">TMA Member</th>
                   {hasTMAChapterData && (
-                    <div style={{flex: '0 0 200px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.TMAChapter}>
-                      {reg.TMAChapter || 'N/A'}
-                    </div>
+                    <th className="membership-info">TMA Chapter</th>
                   )}
-                  <div style={{flex: '0 0 120px', padding: '10px', borderRight: '1px solid #eee', display: 'flex', alignItems: 'center'}}>
-                    <span className={`status ${reg.payment_status === 'captured' || reg.payment_status === 'authorized' ? 'completed' : 'pending'}`} style={{
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      fontSize: '12px',
-                      fontWeight: 'bold',
-                      backgroundColor: reg.payment_status === 'captured' || reg.payment_status === 'authorized' ? '#d4edda' : '#fff3cd',
-                      color: reg.payment_status === 'captured' || reg.payment_status === 'authorized' ? '#155724' : '#856404'
-                    }}>
-                      {reg.payment_status || 'Pending'}
-                    </span>
-                  </div>
-                  <div style={{flex: '0 0 150px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.payment_id}>
-                    {reg.payment_id || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 150px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={reg.order_id}>
-                    {reg.order_id || 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 120px', padding: '10px', borderRight: '1px solid #eee', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
-                    {reg.submittedAt ? new Date(reg.submittedAt.seconds * 1000).toLocaleDateString() : 'N/A'}
-                  </div>
-                  <div style={{flex: '0 0 100px', padding: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                    <button 
-                      className="btn-danger btn-sm" 
-                      onClick={() => removeUser(reg.id)}
-                      style={{
-                        padding: '6px 12px',
-                        backgroundColor: '#dc3545',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.3s'
-                      }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#c82333'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = '#dc3545'}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              )) : (
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '40px',
-                  fontSize: '16px',
-                  color: '#666',
-                  backgroundColor: '#f8f9fa'
-                }}>
-                  No registrations found in Firestore.
-                </div>
-              )}
-            </div>
+                  
+                  {/* System/Payment Section */}
+                  <th className="payment-info">Payment Status</th>
+                  <th className="payment-info">Payment ID</th>
+                  <th className="payment-info">Order ID</th>
+                  <th className="payment-info">Reg. Date</th>
+                  <th className="actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRegistrations.map((reg, index) => (
+                  <tr key={reg.id}>
+                    <td title={reg.FullName}>{reg.FullName || 'N/A'}</td>
+                    <td title={reg.Email}>{reg.Email || 'N/A'}</td>
+                    <td title={reg.Phone}>{reg.Phone || 'N/A'}</td>
+                    <td title={reg.Institution}>{reg.Institution || 'N/A'}</td>
+                    <td title={reg.Course}>{reg.Course || 'N/A'}</td>
+                    <td title={reg.Year}>{reg.Year || 'N/A'}</td>
+                    <td title={reg.Cohort}>{reg.Cohort || 'N/A'}</td>
+                    <td title={reg.Track}>{reg.Track || 'N/A'}</td>
+                    
+                    <td title={reg.ProjectTitle}>{reg.ProjectTitle || 'N/A'}</td>
+                    <td title={reg.ProblemStatement}>{reg.ProblemStatement || 'N/A'}</td>
+                    <td title={reg.Context}>{reg.Context || 'N/A'}</td>
+                    <td title={reg.Stakeholders}>{reg.Stakeholders || 'N/A'}</td>
+                    <td title={reg.Solution}>{reg.Solution || 'N/A'}</td>
+                    <td title={reg.WorkingPrinciple}>{reg.WorkingPrinciple || 'N/A'}</td>
+                    <td title={reg.Novelty}>{reg.Novelty || 'N/A'}</td>
+                    <td title={reg.Impact}>{reg.Impact || 'N/A'}</td>
+                    <td title={reg.Budget}>{reg.Budget || 'N/A'}</td>
+                    <td title={reg.Timeline}>{reg.Timeline || 'N/A'}</td>
+                    
+                    <td title={reg.TeamMembers}>{reg.TeamMembers || 'N/A'}</td>
+                    <td title={reg.HasMentor}>{reg.HasMentor || 'N/A'}</td>
+                    {hasMentorData && (
+                      <>
+                        <td title={reg.MentorName}>{reg.MentorName || 'N/A'}</td>
+                        <td title={reg.MentorEmail}>{reg.MentorEmail || 'N/A'}</td>
+                        <td title={reg.MentorDepartment}>{reg.MentorDepartment || 'N/A'}</td>
+                        <td title={reg.MentorInstitution}>{reg.MentorInstitution || 'N/A'}</td>
+                        <td title={reg.MentorPhone}>{reg.MentorPhone || 'N/A'}</td>
+                      </>
+                    )}
+                    
+                    <td title={reg.TMAMember}>{reg.TMAMember || 'N/A'}</td>
+                    {hasTMAChapterData && (
+                      <td title={reg.TMAChapter}>{reg.TMAChapter || 'N/A'}</td>
+                    )}
+                    
+                    <td className="center">
+                      <span className={`status-badge ${
+                        reg.payment_status === 'captured' || reg.payment_status === 'authorized' 
+                          ? 'status-completed' 
+                          : reg.payment_status === 'failed' 
+                          ? 'status-failed' 
+                          : 'status-pending'
+                      }`}>
+                        {reg.payment_status === 'captured' && '✓ Paid'}
+                        {reg.payment_status === 'authorized' && '✓ Auth'}
+                        {reg.payment_status === 'failed' && '✗ Failed'}
+                        {(!reg.payment_status || reg.payment_status === 'pending') && '⏳ Pending'}
+                      </span>
+                    </td>
+                    <td title={reg.payment_id}>{reg.payment_id || 'N/A'}</td>
+                    <td title={reg.order_id}>{reg.order_id || 'N/A'}</td>
+                    <td>
+                      {reg.submittedAt ? new Date(reg.submittedAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+                    </td>
+                    <td className="center">
+                      <button 
+                        className="btn-table-action btn-delete" 
+                        onClick={() => removeUser(reg.id)}
+                        title="Delete Registration"
+                      >
+                        🗑️ Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
@@ -1574,32 +1437,6 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
-              {/* Revenue by Cohort */}
-              <div className="leaderboard-card">
-                <h4>💵 Revenue by Cohort</h4>
-                <div className="leaderboard-list">
-                  {Object.entries(
-                    getFilteredRegistrations().reduce((acc, reg) => {
-                      const cohort = reg.Cohort || 'Unknown';
-                      const amount = parseFloat(reg.payment_amount || reg.amount || 0);
-                      if (!acc[cohort]) acc[cohort] = { count: 0, revenue: 0 };
-                      acc[cohort].count += 1;
-                      acc[cohort].revenue += amount;
-                      return acc;
-                    }, {})
-                  )
-                  .sort(([,a], [,b]) => b.revenue - a.revenue)
-                  .slice(0, 5)
-                  .map(([cohort, data], index) => (
-                    <div key={cohort} className="leaderboard-item">
-                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
-                      <span className="name">{cohort}</span>
-                      <span className="score">₹{data.revenue.toLocaleString()}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               {/* Academic Year/Level */}
               <div className="leaderboard-card">
                 <h4>🎓 Academic Year/Level</h4>
@@ -1661,7 +1498,7 @@ const AdminDashboard = () => {
   // Render Analytics Section
   const renderAnalytics = () => (
     <div className="section">
-      <h2>Analytics & Reports</h2>
+      <h2>📊 Analytics & Insights</h2>
       
       {/* Date Filter Section for Analytics */}
       <div className="date-filter-section" style={{
@@ -1773,9 +1610,10 @@ const AdminDashboard = () => {
         </div>
       ) : (
         <>
-          {/* Real-time Analytics KPIs based on filtered data */}
+          {/* Professional Analytics KPIs based on filtered data */}
           <div className="kpi-cards">
             <div className="kpi-card">
+              <div className="kpi-icon">👥</div>
               <h3>Total Registrations</h3>
               <div className="kpi-value">{getFilteredRegistrations().length}</div>
               <div className="kpi-change positive">
@@ -1783,6 +1621,7 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div className="kpi-card">
+              <div className="kpi-icon">✅</div>
               <h3>Completion Rate</h3>
               <div className="kpi-value">
                 {getFilteredRegistrations().length > 0 
@@ -1790,23 +1629,76 @@ const AdminDashboard = () => {
                   : 0}%
               </div>
               <div className="kpi-change">
-                {getFilteredRegistrations().filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length} paid
+                {getFilteredRegistrations().filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length} completed
               </div>
             </div>
             <div className="kpi-card">
-              <h3>Total Revenue</h3>
-              <div className="kpi-value">
-                ₹{getFilteredRegistrations().reduce((sum, reg) => sum + parseFloat(reg.payment_amount || reg.amount || 0), 0).toLocaleString()}
-              </div>
-              <div className="kpi-change positive">
-                Revenue Generated
-              </div>
-            </div>
-            <div className="kpi-card">
+              <div className="kpi-icon">🎯</div>
               <h3>Active Cohorts</h3>
               <div className="kpi-value">{new Set(getFilteredRegistrations().map(r => r.Cohort)).size}</div>
               <div className="kpi-change">
                 Different Programs
+              </div>
+            </div>
+          </div>
+
+          {/* Professional Analytics Insights */}
+          <div className="analytics-insights">
+            <h3>📈 Key Insights</h3>
+            <div className="insights-grid">
+              <div className="insight-card">
+                <div className="insight-icon">🎓</div>
+                <div className="insight-content">
+                  <h4>TMA Membership</h4>
+                  <div className="insight-stats">
+                    <span className="insight-value">
+                      {Math.round((getFilteredRegistrations().filter(r => r.TMAMember === 'Yes' || r.TMAMember === true).length / getFilteredRegistrations().length) * 100) || 0}%
+                    </span>
+                    <span className="insight-label">are TMA members</span>
+                  </div>
+                </div>
+              </div>
+              <div className="insight-card">
+                <div className="insight-icon">🌟</div>
+                <div className="insight-content">
+                  <h4>Top Cohort</h4>
+                  <div className="insight-stats">
+                    <span className="insight-value">
+                      {Object.entries(
+                        getFilteredRegistrations().reduce((acc, reg) => {
+                          const cohort = reg.Cohort || 'Unknown';
+                          acc[cohort] = (acc[cohort] || 0) + 1;
+                          return acc;
+                        }, {})
+                      ).sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A'}
+                    </span>
+                    <span className="insight-label">most popular</span>
+                  </div>
+                </div>
+              </div>
+              <div className="insight-card">
+                <div className="insight-icon">💳</div>
+                <div className="insight-content">
+                  <h4>Payment Success</h4>
+                  <div className="insight-stats">
+                    <span className="insight-value">
+                      {Math.round((getFilteredRegistrations().filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length / getFilteredRegistrations().length) * 100) || 0}%
+                    </span>
+                    <span className="insight-label">completion rate</span>
+                  </div>
+                </div>
+              </div>
+              <div className="insight-card">
+                <div className="insight-icon">🏛️</div>
+                <div className="insight-content">
+                  <h4>Institutions</h4>
+                  <div className="insight-stats">
+                    <span className="insight-value">
+                      {new Set(getFilteredRegistrations().map(r => r.Institution || r.CollegeName || 'Unknown')).size}
+                    </span>
+                    <span className="insight-label">unique institutions</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1875,32 +1767,6 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
-              {/* Revenue Analysis */}
-              <div className="leaderboard-card">
-                <h4>💵 Revenue by Cohort</h4>
-                <div className="leaderboard-list">
-                  {Object.entries(
-                    getFilteredRegistrations().reduce((acc, reg) => {
-                      const cohort = reg.Cohort || 'Unknown';
-                      const amount = parseFloat(reg.payment_amount || reg.amount || 0);
-                      if (!acc[cohort]) acc[cohort] = { count: 0, revenue: 0 };
-                      acc[cohort].count += 1;
-                      acc[cohort].revenue += amount;
-                      return acc;
-                    }, {})
-                  )
-                  .sort(([,a], [,b]) => b.revenue - a.revenue)
-                  .slice(0, 5)
-                  .map(([cohort, data], index) => (
-                    <div key={cohort} className="leaderboard-item">
-                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
-                      <span className="name">{cohort}</span>
-                      <span className="score">₹{data.revenue.toLocaleString()}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               {/* Institution Analysis */}
               <div className="leaderboard-card">
                 <h4>🏛️ Top Institutions</h4>
@@ -1950,53 +1816,101 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* Recent Activity Section */}
-          <div className="recent-activity" style={{ marginTop: '30px' }}>
-            <h3>Recent Activity</h3>
+          {/* Professional Recent Activity Section */}
+          <div className="recent-activity-section">
+            <div className="section-header">
+              <div className="section-title">
+                <div className="section-icon">⚡</div>
+                <h3>Recent Activity</h3>
+              </div>
+              <div className="activity-count">
+                {logs.length} total logs
+              </div>
+            </div>
             {logsLoading ? (
-              <div className="loading">
+              <div className="loading-state">
                 <div className="spinner"></div>
-                Loading recent activities...
+                <span>Loading recent activities...</span>
               </div>
             ) : logs.length > 0 ? (
-              <ul className="activity-list">
-                {logs.slice(0, 5).map(log => (
-                  <li key={log.id} className="activity-item">
-                    <span className="activity-time">
-                      {log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString() : 'Unknown time'}
-                    </span>
-                    <span className="activity-text">
-                      <strong>{log.action}</strong>: {log.details}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No recent activity found. Activity logs will appear here when actions are performed.</p>
-            )}
-          </div>
-
-          {/* Recent Registrations Section */}
-          <div className="recent-activity" style={{ marginTop: '30px' }}>
-            <h3>Recent Registrations {dateFilter.enabled ? '(Filtered)' : ''}</h3>
-            {getFilteredRegistrations().length > 0 ? (
-              <div className="activity-list">
-                {getFilteredRegistrations().slice(-5).reverse().map(reg => (
-                  <div key={reg.id} className="activity-item">
-                    <div className="activity-info">
-                      <strong>{reg.FullName || 'Unknown'}</strong> registered for <strong>{reg.Cohort || 'Unknown cohort'}</strong>
-                      <span className="activity-time">
-                        {reg.submittedAt ? new Date(reg.submittedAt.seconds * 1000).toLocaleDateString() : 'Date unknown'}
-                      </span>
+              <div className="activity-timeline">
+                {logs.slice(0, 5).map((log, index) => (
+                  <div key={log.id} className="activity-timeline-item">
+                    <div className="activity-marker">
+                      <div className="activity-dot"></div>
+                      {index < 4 && <div className="activity-line"></div>}
                     </div>
-                    <span className={`status ${reg.payment_status === 'captured' || reg.payment_status === 'authorized' ? 'completed' : 'pending'}`}>
-                      {reg.payment_status || 'pending'}
-                    </span>
+                    <div className="activity-content">
+                      <div className="activity-header">
+                        <span className="activity-action">{log.action}</span>
+                        <span className="activity-timestamp">
+                          {log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString() : 'Unknown time'}
+                        </span>
+                      </div>
+                      <div className="activity-details">
+                        {log.details}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p>{dateFilter.enabled ? 'No registrations found for the selected date range.' : 'No registrations found. The Firestore \'registrations\' collection appears to be empty.'}</p>
+              <div className="empty-state">
+                <div className="empty-icon">📭</div>
+                <p>No recent activity found</p>
+                <span>Activity logs will appear here when actions are performed</span>
+              </div>
+            )}
+          </div>
+
+          {/* Professional Recent Registrations Section */}
+          <div className="recent-registrations-section">
+            <div className="section-header">
+              <div className="section-title">
+                <div className="section-icon">👥</div>
+                <h3>Recent Registrations {dateFilter.enabled ? '(Filtered)' : ''}</h3>
+              </div>
+              <div className="registrations-count">
+                {getFilteredRegistrations().length} registrations
+              </div>
+            </div>
+            {getFilteredRegistrations().length > 0 ? (
+              <div className="registrations-grid">
+                {getFilteredRegistrations().slice(-5).reverse().map(reg => (
+                  <div key={reg.id} className="registration-card">
+                    <div className="registration-avatar">
+                      {(reg.FullName || 'U').charAt(0).toUpperCase()}
+                    </div>
+                    <div className="registration-info">
+                      <div className="registration-name">
+                        {reg.FullName || 'Unknown'}
+                      </div>
+                      <div className="registration-cohort">
+                        {reg.Cohort || 'Unknown cohort'}
+                      </div>
+                      <div className="registration-date">
+                        {reg.submittedAt ? new Date(reg.submittedAt.seconds * 1000).toLocaleDateString() : 'Date unknown'}
+                      </div>
+                    </div>
+                    <div className={`registration-status status-${reg.payment_status === 'captured' || reg.payment_status === 'authorized' ? 'completed' : 'pending'}`}>
+                      <div className="status-indicator"></div>
+                      <span className="status-text">
+                        {reg.payment_status === 'captured' || reg.payment_status === 'authorized' ? 'Completed' : 'Pending'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <div className="empty-icon">👤</div>
+                <p>No registrations found</p>
+                <span>
+                  {dateFilter.enabled 
+                    ? 'No registrations found for the selected date range' 
+                    : 'The Firestore registrations collection appears to be empty'}
+                </span>
+              </div>
             )}
           </div>
         </>
@@ -2005,52 +1919,130 @@ const AdminDashboard = () => {
   );
 
   // Render Logs Section
-  const renderLogs = () => (
-    <div className="section">
-      <h2>Activity Logs</h2>
-      <div className="section-header">
-        <p style={{fontSize: '14px', color: '#666', margin: '5px 0'}}>
-          Real-time activity logs from Firestore database
-        </p>
-        <div className="actions">
-          <button className="btn-primary" onClick={fetchLogs}>Refresh Logs</button>
-        </div>
-      </div>
-      
-      {logsLoading ? (
-        <div className="loading">
-          <div className="spinner"></div>
-          Loading logs from Firestore...
-        </div>
-      ) : (
-        <div className="log-container">
-          {logs.length > 0 ? logs.map(log => (
-            <div key={log.id} className="log-entry">
-              <span className="log-time">
-                {log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString() : 'Unknown time'}
-              </span>
-              <span className="log-action">
-                <strong>{log.action}</strong>
-                {log.details && `: ${log.details}`}
-              </span>
-              <span className="log-user" style={{
-                fontSize: '12px', 
-                color: '#666', 
-                fontStyle: 'italic',
-                marginLeft: '10px'
-              }}>
-                by {log.userId || 'system'}
-              </span>
+  const renderLogs = () => {
+    // Calculate log statistics
+    const logStats = {
+      total: logs.length,
+      today: logs.filter(log => {
+        if (!log.timestamp) return false;
+        const logDate = new Date(log.timestamp.seconds * 1000);
+        const today = new Date();
+        return logDate.toDateString() === today.toDateString();
+      }).length,
+      users: new Set(logs.map(log => log.userId || 'system')).size,
+      actions: new Set(logs.map(log => log.action)).size
+    };
+
+    // Get log icon based on action
+    const getLogIcon = (action) => {
+      if (action?.toLowerCase().includes('delete') || action?.toLowerCase().includes('remove')) {
+        return { icon: '🗑️', class: 'delete' };
+      } else if (action?.toLowerCase().includes('create') || action?.toLowerCase().includes('add')) {
+        return { icon: '➕', class: 'create' };
+      } else if (action?.toLowerCase().includes('update') || action?.toLowerCase().includes('edit')) {
+        return { icon: '✏️', class: 'update' };
+      } else {
+        return { icon: '⚙️', class: 'system' };
+      }
+    };
+
+    return (
+      <div className="section">
+        <div className="logs-section">
+          {/* Professional Header */}
+          <div className="logs-header">
+            <div className="logs-title">
+              📋 Activity Logs
             </div>
-          )) : (
-            <div className="log-entry">
-              <span className="log-action">No logs found. Activity will appear here as you use the dashboard.</span>
+            <div className="logs-subtitle">
+              Real-time system activity and user actions from Firestore database
+            </div>
+            
+            {/* Statistics */}
+            <div className="logs-stats">
+              <div className="logs-stat-item">
+                <div className="logs-stat-value">{logStats.total}</div>
+                <div className="logs-stat-label">Total Logs</div>
+              </div>
+              <div className="logs-stat-item">
+                <div className="logs-stat-value">{logStats.today}</div>
+                <div className="logs-stat-label">Today</div>
+              </div>
+              <div className="logs-stat-item">
+                <div className="logs-stat-value">{logStats.users}</div>
+                <div className="logs-stat-label">Users</div>
+              </div>
+              <div className="logs-stat-item">
+                <div className="logs-stat-value">{logStats.actions}</div>
+                <div className="logs-stat-label">Action Types</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Filter Bar */}
+          <div className="logs-filter-bar">
+            <input 
+              type="text" 
+              className="logs-filter-input" 
+              placeholder="Search logs by action, user, or details..."
+            />
+            <select className="logs-filter-select">
+              <option value="all">All Actions</option>
+              <option value="create">Create</option>
+              <option value="delete">Delete</option>
+              <option value="update">Update</option>
+              <option value="system">System</option>
+            </select>
+            <button className="btn-primary" onClick={fetchLogs}>
+              🔄 Refresh
+            </button>
+          </div>
+          
+          {logsLoading ? (
+            <div className="professional-loading">
+              <div className="loading-spinner"></div>
+              <div className="loading-text">Loading activity logs from Firestore...</div>
+            </div>
+          ) : (
+            <div className="logs-container">
+              {logs.length > 0 ? logs.map(log => {
+                const { icon, class: iconClass } = getLogIcon(log.action);
+                return (
+                  <div key={log.id} className="log-entry">
+                    <div className={`log-icon ${iconClass}`}>
+                      {icon}
+                    </div>
+                    <div className="log-content">
+                      <div className="log-action">{log.action}</div>
+                      {log.details && (
+                        <div className="log-details">{log.details}</div>
+                      )}
+                      <div className="log-meta">
+                        <span className="log-time">
+                          {log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString() : 'Unknown time'}
+                        </span>
+                        <span className="log-user">
+                          {log.userId || 'system'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }) : (
+                <div className="logs-empty">
+                  <div className="logs-empty-icon">📋</div>
+                  <div className="logs-empty-title">No Activity Logs</div>
+                  <div className="logs-empty-subtitle">
+                    System activity and user actions will appear here as you use the dashboard
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  };
 
   // Render Tools Section
   const renderTools = () => (
@@ -2314,7 +2306,7 @@ const AdminDashboard = () => {
       {/* Header */}
       <header className="header">
         <div className="logo">
-          <h1>HAdmin</h1>
+          <h1>Dashboard</h1>
         </div>
         <div className="user-info">
           <span className="user-role">{currentUser?.role === 'admin' ? '👑 Admin' : '👤 Dashboard User'}</span>
@@ -2386,886 +2378,8 @@ const AdminDashboard = () => {
       
       {/* Footer */}
       <footer className="footer">
-        <p>&copy; 2023 HAdmin Dashboard. All rights reserved.</p>
+        
       </footer>
-      
-      {/* CSS Styles */}
-      <style jsx>{`
-        /* Reset and Base Styles */
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-          background-color: #f5f7fa;
-          color: #333;
-          line-height: 1.6;
-        }
-        
-        /* Layout */
-        .admin-dashboard {
-          display: grid;
-          grid-template-areas:
-            "header header"
-            "sidebar main"
-            "footer footer";
-          grid-template-columns: 240px 1fr;
-          grid-template-rows: auto 1fr auto;
-          min-height: 100vh;
-        }
-        
-        /* Header */
-        .header {
-          grid-area: header;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1rem 2rem;
-          background-color: #fff;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          z-index: 10;
-        }
-        
-        .logo h1 {
-          color: #3f51b5;
-          font-size: 1.8rem;
-          font-weight: 700;
-        }
-        
-        .user-info {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .user-role {
-          background-color: #3f51b5;
-          color: white;
-          padding: 0.25rem 0.5rem;
-          border-radius: 12px;
-          font-size: 0.75rem;
-          font-weight: 600;
-        }
-
-        .user-name {
-          font-weight: 500;
-          color: #333;
-        }
-        
-        .user-avatar {
-          font-size: 1.5rem;
-        }
-        
-        .logout-btn {
-          background-color: #f5f5f5;
-          color: #333;
-          border: 1px solid #ddd;
-          padding: 0.4rem 0.8rem;
-          border-radius: 4px;
-          margin-left: 1rem;
-          cursor: pointer;
-          font-size: 0.9rem;
-          transition: all 0.3s;
-        }
-        
-        .logout-btn:hover {
-          background-color: #e0e0e0;
-        }
-        
-        /* Sidebar */
-        .sidebar {
-          grid-area: sidebar;
-          background-color: #3f51b5;
-          color: #fff;
-          padding: 1rem 0;
-          height: 100%;
-        }
-        
-        .nav-menu {
-          list-style: none;
-        }
-        
-        .nav-menu li {
-          margin-bottom: 0.5rem;
-        }
-        
-        .nav-menu li button {
-          display: flex;
-          align-items: center;
-          width: 100%;
-          padding: 0.75rem 1.5rem;
-          background: none;
-          border: none;
-          color: #fff;
-          text-align: left;
-          cursor: pointer;
-          transition: background-color 0.3s;
-        }
-        
-        .nav-menu li button:hover {
-          background-color: rgba(255,255,255,0.1);
-        }
-        
-        .nav-menu li.active button {
-          background-color: rgba(255,255,255,0.2);
-          font-weight: 600;
-        }
-        
-        .icon {
-          margin-right: 0.75rem;
-          font-size: 1.2rem;
-        }
-        
-        /* Main Content */
-        .main-content {
-          grid-area: main;
-          padding: 2rem;
-          overflow-y: auto;
-        }
-
-        /* Access Denied */
-        .access-denied {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 60vh;
-          text-align: center;
-        }
-
-        .access-denied-content {
-          max-width: 400px;
-        }
-
-        .access-denied-icon {
-          font-size: 4rem;
-          margin-bottom: 1rem;
-        }
-
-        .access-denied h2 {
-          color: #333;
-          margin-bottom: 1rem;
-        }
-
-        .access-denied p {
-          color: #666;
-          margin-bottom: 0.5rem;
-          line-height: 1.5;
-        }
-        
-        /* Footer */
-        .footer {
-          grid-area: footer;
-          text-align: center;
-          padding: 1rem;
-          background-color: #fff;
-          border-top: 1px solid #eee;
-        }
-        
-        /* Section Styles */
-        .section {
-          background-color: #fff;
-          border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          padding: 1.5rem;
-          margin-bottom: 2rem;
-        }
-        
-        .section-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1.5rem;
-        }
-        
-        .actions {
-          display: flex;
-          gap: 1rem;
-        }
-        
-        /* Form Styles */
-        .form-group {
-          margin-bottom: 1rem;
-        }
-        
-        .form-group label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-        }
-        
-        input, select, textarea {
-          width: 100%;
-          padding: 0.75rem;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 1rem;
-        }
-        
-        .checkbox-group {
-          display: flex;
-          gap: 1rem;
-        }
-        
-        .checkbox-group label {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-weight: normal;
-        }
-        
-        .checkbox-group input[type="checkbox"] {
-          width: auto;
-        }
-        
-        .form-actions {
-          display: flex;
-          gap: 1rem;
-          margin-top: 1.5rem;
-        }
-        
-        /* Button Styles */
-        .btn-primary {
-          background-color: #3f51b5;
-          color: #fff;
-          border: none;
-          padding: 0.75rem 1.5rem;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 500;
-          transition: background-color 0.3s;
-        }
-        
-        .btn-primary:hover {
-          background-color: #303f9f;
-        }
-        
-        .btn-primary:disabled {
-          background-color: #9fa8da;
-          cursor: not-allowed;
-        }
-        
-        .btn-secondary {
-          background-color: #f5f5f5;
-          color: #333;
-          border: 1px solid #ddd;
-          padding: 0.75rem 1.5rem;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 500;
-          transition: background-color 0.3s;
-        }
-        
-        .btn-secondary:hover {
-          background-color: #e0e0e0;
-        }
-        
-        .btn-icon {
-          background: none;
-          border: none;
-          font-size: 1.2rem;
-          cursor: pointer;
-          padding: 0.25rem;
-        }
-        
-        .btn-action {
-          background-color: #f5f7fa;
-          border: 1px solid #ddd;
-          padding: 0.75rem 1rem;
-          border-radius: 4px;
-          cursor: pointer;
-          transition: all 0.3s;
-        }
-        
-        .btn-action:hover {
-          background-color: #3f51b5;
-          color: #fff;
-          border-color: #3f51b5;
-        }
-
-        .btn-action.pdf-export {
-          background: linear-gradient(135deg, #dc3545, #c82333);
-          color: white;
-          border: none;
-          font-weight: 600;
-        }
-
-        .btn-action.pdf-export:hover {
-          background: linear-gradient(135deg, #c82333, #a71e2a);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
-        }
-        
-        /* Table Styles */
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        
-        th, td {
-          padding: 0.75rem 1rem;
-          text-align: left;
-          border-bottom: 1px solid #eee;
-        }
-        
-        th {
-          font-weight: 600;
-          background-color: #f5f7fa;
-        }
-        
-        .status {
-          display: inline-block;
-          padding: 0.25rem 0.5rem;
-          border-radius: 4px;
-          font-size: 0.875rem;
-        }
-        
-        .status.active {
-          background-color: #e8f5e9;
-          color: #2e7d32;
-        }
-        
-        .status.inactive {
-          background-color: #ffebee;
-          color: #c62828;
-        }
-        
-        /* Search Input */
-        .search-input {
-          padding: 0.75rem;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          width: 250px;
-        }
-        
-        /* KPI Cards */
-        .kpi-cards {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 2rem;
-        }
-        
-        .kpi-card {
-          background-color: #fff;
-          border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          padding: 1.5rem;
-          text-align: center;
-        }
-        
-        .kpi-value {
-          font-size: 2rem;
-          font-weight: 700;
-          margin: 0.5rem 0;
-        }
-        
-        .kpi-change {
-          font-size: 0.875rem;
-        }
-        
-        .kpi-change.positive {
-          color: #2e7d32;
-        }
-        
-        .kpi-change.negative {
-          color: #c62828;
-        }
-        
-        /* Charts */
-        .charts {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-          gap: 1.5rem;
-        }
-        
-        .chart {
-          background-color: #fff;
-          border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          padding: 1.5rem;
-        }
-        
-        .chart h3 {
-          margin-bottom: 1rem;
-        }
-        
-        .chart-container {
-          height: 300px;
-          position: relative;
-        }
-        
-        /* Bar Chart */
-        .bar-chart {
-          display: flex;
-          align-items: flex-end;
-          justify-content: space-between;
-          height: 100%;
-          padding-top: 20px;
-        }
-        
-        .bar-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          width: 100%;
-        }
-        
-        .bar {
-          width: 20px;
-          background-color: #3f51b5;
-          border-radius: 4px 4px 0 0;
-          transition: height 0.5s;
-        }
-        
-        .bar-label {
-          margin-top: 0.5rem;
-          font-size: 0.75rem;
-        }
-        
-        /* Pie Chart */
-        .pie-chart {
-          position: relative;
-          width: 200px;
-          height: 200px;
-          border-radius: 50%;
-          background: conic-gradient(
-            var(--segment-color, #3f51b5) 0% var(--segment-size, 25%),
-            var(--segment-color, #f44336) var(--segment-size, 25%) calc(var(--segment-size, 25%) + var(--segment-size, 25%)),
-            var(--segment-color, #4caf50) calc(var(--segment-size, 25%) + var(--segment-size, 25%)) calc(var(--segment-size, 25%) + var(--segment-size, 25%) + var(--segment-size, 25%)),
-            var(--segment-color, #ff9800) calc(var(--segment-size, 25%) + var(--segment-size, 25%) + var(--segment-size, 25%)) 100%
-          );
-          margin: 0 auto;
-        }
-        
-        .segment-label {
-          position: absolute;
-          font-size: 0.75rem;
-          white-space: nowrap;
-        }
-        
-        .pie-segment:nth-child(1) .segment-label {
-          top: -30px;
-          left: 50%;
-          transform: translateX(-50%);
-        }
-        
-        .pie-segment:nth-child(2) .segment-label {
-          top: 50%;
-          right: -120px;
-          transform: translateY(-50%);
-        }
-        
-        .pie-segment:nth-child(3) .segment-label {
-          bottom: -30px;
-          left: 50%;
-          transform: translateX(-50%);
-        }
-        
-        .pie-segment:nth-child(4) .segment-label {
-          top: 50%;
-          left: -120px;
-          transform: translateY(-50%);
-        }
-        
-        /* Tools Grid */
-        .tools-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-          gap: 1.5rem;
-        }
-        
-        .tool-card {
-          background-color: #fff;
-          border-radius: 12px;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-          padding: 1.5rem;
-          border: 1px solid #e5e7eb;
-          transition: all 0.3s ease;
-        }
-
-        .tool-card:hover {
-          box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-          transform: translateY(-2px);
-        }
-        
-        .tool-header {
-          margin-bottom: 1.5rem;
-          padding-bottom: 1rem;
-          border-bottom: 1px solid #f0f0f0;
-        }
-
-        .tool-header h3 {
-          margin: 0 0 0.5rem 0;
-          color: #3f51b5;
-          font-size: 1.1rem;
-          font-weight: 600;
-        }
-
-        .tool-header p {
-          margin: 0;
-          color: #666;
-          font-size: 0.9rem;
-          line-height: 1.4;
-        }
-
-        .tool-actions {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-
-        .info-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 0.75rem;
-        }
-
-        .info-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.5rem 0;
-          border-bottom: 1px solid #f5f5f5;
-        }
-
-        .info-item:last-child {
-          border-bottom: none;
-        }
-
-        .info-label {
-          color: #666;
-          font-size: 0.9rem;
-        }
-
-        .info-value {
-          color: #333;
-          font-weight: 600;
-          font-size: 0.9rem;
-        }
-
-        .btn-secondary {
-          background-color: #6c757d;
-          color: white;
-          border: none;
-          padding: 0.6rem 1rem;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 0.9rem;
-          transition: all 0.2s;
-        }
-
-        .btn-secondary:hover {
-          background-color: #5a6268;
-        }
-
-        .btn-warning {
-          background-color: #f59e0b;
-          color: white;
-          border: none;
-          padding: 0.6rem 1rem;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 0.9rem;
-          transition: all 0.2s;
-        }
-
-        .btn-warning:hover {
-          background-color: #d97706;
-        }
-
-        .btn-info {
-          background-color: #3b82f6;
-          color: white;
-          border: none;
-          padding: 0.6rem 1rem;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 0.9rem;
-          transition: all 0.2s;
-        }
-
-        .btn-info:hover {
-          background-color: #2563eb;
-        }
-        
-        /* Dashboard Overview */
-        .dashboard-overview {
-          display: grid;
-          gap: 1.5rem;
-        }
-
-        .date-display {
-          background-color: #f8f9fa;
-          border: 1px solid #e9ecef;
-          border-radius: 8px;
-          padding: 1rem;
-          text-align: center;
-        }
-
-        .current-date {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          font-size: 1.1rem;
-          font-weight: 500;
-          color: #333;
-        }
-
-        .date-icon {
-          font-size: 1.2rem;
-        }
-
-        .date-text {
-          color: #495057;
-        }
-
-        .welcome-message {
-          background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%);
-          color: white;
-          padding: 1.5rem;
-          border-radius: 12px;
-          margin-bottom: 1rem;
-        }
-
-        .welcome-message h3 {
-          margin: 0 0 0.5rem 0;
-          font-size: 1.5rem;
-        }
-
-        .welcome-message p {
-          margin: 0;
-          opacity: 0.9;
-          line-height: 1.5;
-        }
-        
-        .overview-stats {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-          gap: 1.5rem;
-        }
-        
-        .stat-card {
-          background-color: #fff;
-          border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          padding: 1.5rem;
-          text-align: center;
-        }
-        
-        .stat-value {
-          font-size: 2.5rem;
-          font-weight: 700;
-          margin: 0.5rem 0;
-          color: #3f51b5;
-        }
-        
-        .stat-label {
-          color: #666;
-          font-size: 0.875rem;
-        }
-
-        /* Leaderboards */
-        .leaderboards-section {
-          background-color: #fff;
-          border-radius: 12px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-          padding: 1.5rem;
-          margin: 1.5rem 0;
-        }
-
-        .leaderboards-section h3 {
-          margin: 0 0 1.5rem 0;
-          color: #333;
-          font-size: 1.5rem;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .leaderboards-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 1.5rem;
-        }
-
-        .leaderboard-card {
-          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-          border-radius: 8px;
-          padding: 1.25rem;
-          border: 1px solid #dee2e6;
-        }
-
-        .leaderboard-card h4 {
-          margin: 0 0 1rem 0;
-          color: #495057;
-          font-size: 1.1rem;
-          text-align: center;
-          padding-bottom: 0.5rem;
-          border-bottom: 2px solid #dee2e6;
-        }
-
-        .leaderboard-list {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-
-        .leaderboard-item {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0.75rem;
-          background: white;
-          border-radius: 6px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-          transition: transform 0.2s ease;
-        }
-
-        .leaderboard-item:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        }
-
-        .rank {
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          font-size: 0.8rem;
-          color: white;
-          flex-shrink: 0;
-        }
-
-        .rank-1 {
-          background: linear-gradient(135deg, #ffd700, #ffed4e);
-          color: #8b5a00;
-          box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
-        }
-
-        .rank-2 {
-          background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
-          color: #666;
-          box-shadow: 0 2px 4px rgba(192, 192, 192, 0.3);
-        }
-
-        .rank-3 {
-          background: linear-gradient(135deg, #cd7f32, #daa852);
-          color: white;
-          box-shadow: 0 2px 4px rgba(205, 127, 50, 0.3);
-        }
-
-        .rank:not(.rank-1):not(.rank-2):not(.rank-3) {
-          background: linear-gradient(135deg, #6c757d, #858e96);
-        }
-
-        .leaderboard-item .name {
-          flex: 1;
-          margin: 0 1rem;
-          font-weight: 500;
-          color: #333;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .leaderboard-item .score {
-          color: #3f51b5;
-          font-weight: 600;
-          font-size: 0.9rem;
-          flex-shrink: 0;
-        }
-        
-        .quick-actions, .recent-activity {
-          background-color: #fff;
-          border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          padding: 1.5rem;
-        }
-        
-        .action-buttons {
-          display: flex;
-          gap: 1rem;
-          margin-top: 1rem;
-          flex-wrap: wrap;
-        }
-        
-        .activity-list {
-          list-style: none;
-          margin-top: 1rem;
-        }
-        
-        .activity-item {
-          display: flex;
-          padding: 0.75rem 0;
-          border-bottom: 1px solid #eee;
-        }
-        
-        .activity-time {
-          width: 120px;
-          color: #666;
-          font-size: 0.875rem;
-        }
-        
-        /* Notification */
-        .notification {
-          position: fixed;
-          top: 1rem;
-          right: 1rem;
-          padding: 1rem 1.5rem;
-          border-radius: 4px;
-          z-index: 1000;
-          animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
-        }
-        
-        .notification.success {
-          background-color: #e8f5e9;
-          color: #2e7d32;
-          border-left: 4px solid #2e7d32;
-        }
-        
-        .notification.error {
-          background-color: #ffebee;
-          color: #c62828;
-          border-left: 4px solid #c62828;
-        }
-        
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes fadeOut {
-          from { opacity: 1; transform: translateY(0); }
-          to { opacity: 0; transform: translateY(-10px); }
-        }
-        
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-          .admin-dashboard {
-            grid-template-areas:
-              "header"
-              "sidebar"
-              "main"
-              "footer";
-            grid-template-columns: 1fr;
-          }
-          
-          .sidebar {
-            height: auto;
-          }
-          
-          .charts, .tools-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
     </div>
   );
 };
