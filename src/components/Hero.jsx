@@ -54,7 +54,7 @@ const Hero = () => {
                 <div className="title-line-1">
                   <span className="text-gradient">TMA Hykon</span>
                   <span className="edition-badge">
-                    <span className="edition-number">16<sup>th</sup></span>
+                    <span className="edition-number">17<sup>th</sup></span>
                     <span className="edition-text">EDITION</span>
                   </span>
                 </div>
