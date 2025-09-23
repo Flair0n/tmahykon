@@ -11,7 +11,7 @@ const Hero = () => {
     seconds: 0,
   });
 
-  const targetDate = new Date("2025-09-30T23:59:59");
+  const targetDate = new Date("2025-10-17T23:59:59");
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -48,7 +48,14 @@ const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                TMA <span className="text-gradient">HYKON</span><br/>INNOVATION CHALLENGE
+                <div className="title-line-1">
+                  <span className="text-gradient">TMA Hykon</span>
+                  <span className="edition-badge">
+                    <span className="edition-number">16<sup>th</sup></span>
+                    <span className="edition-text">EDITION</span>
+                  </span>
+                </div>
+                <div className="title-line-2">Innovation Challenge</div>
               </motion.h1>
 
               <motion.p
@@ -57,7 +64,7 @@ const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Empowering Innovation in Renewable Energy
+                Powering Ideas, Shaping Tomorrow
               </motion.p>
 
               <motion.div

@@ -8,11 +8,21 @@ const LoginPage = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  // User credentials with roles
+  const users = {
+    'admin': { password: 'tma@2025', role: 'admin', name: 'Administrator' },
+    'dashboard': { password: 'dashboard@2025', role: 'dashboard', name: 'Dashboard User' }
+  };
+
   const handleLogin = (e) => {
     e.preventDefault();
-    // Simple validation - updated to correct password
-    if (username === 'admin' && password === 'tma@2025') {
-      onLogin();
+    
+    if (users[username] && users[username].password === password) {
+      onLogin({
+        username: username,
+        role: users[username].role,
+        name: users[username].name
+      });
     } else {
       setError('Invalid username or password');
     }
@@ -48,9 +58,19 @@ const LoginPage = ({ onLogin }) => {
           <button type="submit" className="btn-primary login-btn">Login</button>
         </form>
         <div className="login-info">
-          <p>Use the following credentials:</p>
-          <p><strong>Username:</strong> admin</p>
-          <p><strong>Password:</strong> tma@2025</p>
+          <p>Use one of the following credentials:</p>
+          <div className="user-credentials">
+            <div className="credential-item">
+              <h4>Admin User (Full Access)</h4>
+              <p><strong>Username:</strong> admin</p>
+              <p><strong>Password:</strong> tma@2025</p>
+            </div>
+            <div className="credential-item">
+              <h4>Dashboard User (View Only)</h4>
+              <p><strong>Username:</strong> dashboard</p>
+              <p><strong>Password:</strong> dashboard@2025</p>
+            </div>
+          </div>
         </div>
       </div>
       <style jsx>{`
@@ -122,6 +142,31 @@ const LoginPage = ({ onLogin }) => {
           border-top: 1px solid #eee;
           font-size: 0.9rem;
           color: #666;
+        }
+
+        .user-credentials {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          margin-top: 1rem;
+        }
+
+        .credential-item {
+          background-color: #f8f9fa;
+          padding: 1rem;
+          border-radius: 6px;
+          border-left: 4px solid #3f51b5;
+        }
+
+        .credential-item h4 {
+          margin: 0 0 0.5rem 0;
+          color: #333;
+          font-size: 0.9rem;
+        }
+
+        .credential-item p {
+          margin: 0.25rem 0;
+          font-size: 0.85rem;
         }
       `}</style>
     </div>
@@ -407,6 +452,149 @@ const AdminDashboard = () => {
     document.body.removeChild(link);
     showNotification('CSV file downloaded successfully', 'success');
     createLog('CSV export', `Exported ${registrations.length} registrations to CSV`);
+  };
+
+  // Export Dashboard to PDF
+  const exportToPDF = () => {
+    try {
+      // Create a new window for PDF generation
+      const printWindow = window.open('', '_blank');
+      
+      // Calculate statistics for PDF
+      const totalRegistrations = registrations.length;
+      const paidRegistrations = registrations.filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length;
+      const activeCohorts = new Set(registrations.map(r => r.Cohort)).size;
+      const pendingPayments = registrations.filter(r => !r.payment_status || r.payment_status === 'pending').length;
+
+      // Generate leaderboard data
+      const topCohorts = Object.entries(
+        registrations.reduce((acc, reg) => {
+          const cohort = reg.Cohort || 'Unknown';
+          acc[cohort] = (acc[cohort] || 0) + 1;
+          return acc;
+        }, {})
+      ).sort(([,a], [,b]) => b - a).slice(0, 5);
+
+      const topStates = Object.entries(
+        registrations.reduce((acc, reg) => {
+          const state = reg.State || reg.Region || 'Unknown State';
+          acc[state] = (acc[state] || 0) + 1;
+          return acc;
+        }, {})
+      ).sort(([,a], [,b]) => b - a).slice(0, 5);
+
+      const revenueByCohort = Object.entries(
+        registrations.reduce((acc, reg) => {
+          const cohort = reg.Cohort || 'Unknown';
+          const amount = parseFloat(reg.payment_amount || reg.amount || 0);
+          if (!acc[cohort]) acc[cohort] = { count: 0, revenue: 0 };
+          acc[cohort].count += 1;
+          acc[cohort].revenue += amount;
+          return acc;
+        }, {})
+      ).sort(([,a], [,b]) => b.revenue - a.revenue).slice(0, 5);
+
+      // Create PDF content
+      const pdfContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>TMA Hykon Dashboard Report - ${new Date().toLocaleDateString()}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #3f51b5; padding-bottom: 15px; }
+            .header h1 { color: #3f51b5; margin: 0; }
+            .header p { margin: 5px 0; color: #666; }
+            .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+            .stat-card { background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; border-left: 4px solid #3f51b5; }
+            .stat-value { font-size: 2rem; font-weight: bold; color: #3f51b5; margin: 10px 0; }
+            .stat-label { color: #666; font-size: 0.9rem; }
+            .leaderboard { margin-bottom: 30px; }
+            .leaderboard h3 { color: #3f51b5; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+            .leaderboard-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+            .rank { font-weight: bold; color: #3f51b5; margin-right: 10px; }
+            .footer { margin-top: 40px; text-align: center; color: #666; font-size: 0.8rem; border-top: 1px solid #ddd; padding-top: 15px; }
+            @media print { body { margin: 0; } }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>TMA Hykon Innovation Challenge Dashboard</h1>
+            <p>Generated on: ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <p>Report Time: ${new Date().toLocaleTimeString()}</p>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value">${totalRegistrations}</div>
+              <div class="stat-label">Total Registrations</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${paidRegistrations}</div>
+              <div class="stat-label">Paid Registrations</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${activeCohorts}</div>
+              <div class="stat-label">Active Cohorts</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${pendingPayments}</div>
+              <div class="stat-label">Pending Payments</div>
+            </div>
+          </div>
+
+          <div class="leaderboard">
+            <h3>🏆 Top Cohorts</h3>
+            ${topCohorts.map(([cohort, count], index) => 
+              `<div class="leaderboard-item">
+                <span><span class="rank">${index + 1}.</span> ${cohort}</span>
+                <span>${count} registrations</span>
+              </div>`
+            ).join('')}
+          </div>
+
+          <div class="leaderboard">
+            <h3>🌍 Top States/Regions</h3>
+            ${topStates.map(([state, count], index) => 
+              `<div class="leaderboard-item">
+                <span><span class="rank">${index + 1}.</span> ${state}</span>
+                <span>${count} registrations</span>
+              </div>`
+            ).join('')}
+          </div>
+
+          <div class="leaderboard">
+            <h3>💵 Revenue by Cohort</h3>
+            ${revenueByCohort.map(([cohort, data], index) => 
+              `<div class="leaderboard-item">
+                <span><span class="rank">${index + 1}.</span> ${cohort}</span>
+                <span>₹${data.revenue.toLocaleString()}</span>
+              </div>`
+            ).join('')}
+          </div>
+
+          <div class="footer">
+            <p>This report was generated from the TMA Hykon Innovation Challenge Admin Dashboard</p>
+            <p>© ${new Date().getFullYear()} TMA Hykon - All rights reserved</p>
+          </div>
+        </body>
+        </html>
+      `;
+
+      printWindow.document.write(pdfContent);
+      printWindow.document.close();
+      
+      // Wait for content to load then print
+      setTimeout(() => {
+        printWindow.print();
+        showNotification('PDF export initiated - check your downloads', 'success');
+        createLog('PDF export', `Exported dashboard report to PDF`);
+      }, 500);
+
+    } catch (error) {
+      console.error('Error exporting to PDF:', error);
+      showNotification('Error exporting to PDF', 'error');
+    }
   };
 
   // User Management Functions (kept for backward compatibility)
@@ -754,6 +942,29 @@ const AdminDashboard = () => {
     <div className="dashboard-overview">
       <h2>Dashboard Overview</h2>
       
+      {/* Date Display */}
+      <div className="date-display">
+        <div className="current-date">
+          <span className="date-icon">📅</span>
+          <span className="date-text">Today: {new Date().toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}</span>
+        </div>
+      </div>
+      
+      {/* Role-based welcome message */}
+      <div className="welcome-message">
+        <h3>Welcome, {currentUser?.name}!</h3>
+        <p>
+          {currentUser?.role === 'admin' 
+            ? 'You have full administrative access to all system features.' 
+            : 'You have read-only access to dashboard statistics.'}
+        </p>
+      </div>
+      
       {loading ? (
         <div className="loading">
           <div className="spinner"></div>
@@ -788,6 +999,182 @@ const AdminDashboard = () => {
             </div>
           </div>
           
+          {/* Leaderboards Section */}
+          <div className="leaderboards-section">
+            <h3>Leaderboards</h3>
+            <div className="leaderboards-grid">
+              
+              {/* Cohorts Leaderboard */}
+              <div className="leaderboard-card">
+                <h4>🏆 Top Cohorts</h4>
+                <div className="leaderboard-list">
+                  {Object.entries(
+                    registrations.reduce((acc, reg) => {
+                      const cohort = reg.Cohort || 'Unknown';
+                      acc[cohort] = (acc[cohort] || 0) + 1;
+                      return acc;
+                    }, {})
+                  )
+                  .sort(([,a], [,b]) => b - a)
+                  .slice(0, 5)
+                  .map(([cohort, count], index) => (
+                    <div key={cohort} className="leaderboard-item">
+                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
+                      <span className="name">{cohort}</span>
+                      <span className="score">{count} registrations</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* TMA Members vs Non-Members */}
+              <div className="leaderboard-card">
+                <h4>👥 TMA Membership</h4>
+                <div className="leaderboard-list">
+                  {Object.entries(
+                    registrations.reduce((acc, reg) => {
+                      const isTMAMember = reg.TMAMember === 'Yes' || reg.TMAMember === true;
+                      const category = isTMAMember ? 'TMA Members' : 'Non-Members';
+                      acc[category] = (acc[category] || 0) + 1;
+                      return acc;
+                    }, {})
+                  )
+                  .sort(([,a], [,b]) => b - a)
+                  .map(([category, count], index) => (
+                    <div key={category} className="leaderboard-item">
+                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
+                      <span className="name">{category}</span>
+                      <span className="score">{count} registrations</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Institutional Leaderboard */}
+              <div className="leaderboard-card">
+                <h4>🏛️ Top Institutions</h4>
+                <div className="leaderboard-list">
+                  {Object.entries(
+                    registrations.reduce((acc, reg) => {
+                      const institution = reg.Institution || reg.CollegeName || 'Unknown Institution';
+                      acc[institution] = (acc[institution] || 0) + 1;
+                      return acc;
+                    }, {})
+                  )
+                  .sort(([,a], [,b]) => b - a)
+                  .slice(0, 5)
+                  .map(([institution, count], index) => (
+                    <div key={institution} className="leaderboard-item">
+                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
+                      <span className="name">{institution}</span>
+                      <span className="score">{count} registrations</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* States/Regions Leaderboard */}
+              <div className="leaderboard-card">
+                <h4>🌍 Top States/Regions</h4>
+                <div className="leaderboard-list">
+                  {Object.entries(
+                    registrations.reduce((acc, reg) => {
+                      const state = reg.State || reg.Region || 'Unknown State';
+                      acc[state] = (acc[state] || 0) + 1;
+                      return acc;
+                    }, {})
+                  )
+                  .sort(([,a], [,b]) => b - a)
+                  .slice(0, 5)
+                  .map(([state, count], index) => (
+                    <div key={state} className="leaderboard-item">
+                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
+                      <span className="name">{state}</span>
+                      <span className="score">{count} registrations</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Revenue by Cohort */}
+              <div className="leaderboard-card">
+                <h4>💵 Revenue by Cohort</h4>
+                <div className="leaderboard-list">
+                  {Object.entries(
+                    registrations.reduce((acc, reg) => {
+                      const cohort = reg.Cohort || 'Unknown';
+                      const amount = parseFloat(reg.payment_amount || reg.amount || 0);
+                      if (!acc[cohort]) acc[cohort] = { count: 0, revenue: 0 };
+                      acc[cohort].count += 1;
+                      acc[cohort].revenue += amount;
+                      return acc;
+                    }, {})
+                  )
+                  .sort(([,a], [,b]) => b.revenue - a.revenue)
+                  .slice(0, 5)
+                  .map(([cohort, data], index) => (
+                    <div key={cohort} className="leaderboard-item">
+                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
+                      <span className="name">{cohort}</span>
+                      <span className="score">₹{data.revenue.toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Academic Year/Level */}
+              <div className="leaderboard-card">
+                <h4>🎓 Academic Year/Level</h4>
+                <div className="leaderboard-list">
+                  {Object.entries(
+                    registrations.reduce((acc, reg) => {
+                      const year = reg.AcademicYear || reg.Year || reg.CurrentYear || 'Unknown Year';
+                      acc[year] = (acc[year] || 0) + 1;
+                      return acc;
+                    }, {})
+                  )
+                  .sort(([,a], [,b]) => b - a)
+                  .slice(0, 5)
+                  .map(([year, count], index) => (
+                    <div key={year} className="leaderboard-item">
+                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
+                      <span className="name">{year}</span>
+                      <span className="score">{count} students</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Registration Timeline */}
+              <div className="leaderboard-card">
+                <h4>📅 Registration Timeline</h4>
+                <div className="leaderboard-list">
+                  {Object.entries(
+                    registrations.reduce((acc, reg) => {
+                      if (reg.submittedAt && reg.submittedAt.seconds) {
+                        const date = new Date(reg.submittedAt.seconds * 1000).toLocaleDateString();
+                        acc[date] = (acc[date] || 0) + 1;
+                      } else {
+                        acc['Unknown Date'] = (acc['Unknown Date'] || 0) + 1;
+                      }
+                      return acc;
+                    }, {})
+                  )
+                  .sort(([,a], [,b]) => b - a)
+                  .slice(0, 5)
+                  .map(([date, count], index) => (
+                    <div key={date} className="leaderboard-item">
+                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
+                      <span className="name">{date}</span>
+                      <span className="score">{count} registrations</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </div>
+          
           <div className="recent-activity">
             <h3>Recent Registrations</h3>
             {registrations.length > 0 ? (
@@ -811,15 +1198,19 @@ const AdminDashboard = () => {
             )}
           </div>
           
-          <div className="quick-actions">
-            <h3>Quick Actions</h3>
-            <div className="action-buttons">
-              <button className="btn-action" onClick={() => setActiveTab('users')}>Manage Registrations</button>
-              <button className="btn-action" onClick={() => setActiveTab('analytics')}>View Analytics</button>
-              <button className="btn-action" onClick={fetchRegistrations}>Refresh Data</button>
-              <button className="btn-action" onClick={exportToCSV}>Export CSV</button>
+          {/* Quick Actions - Admin Only */}
+          {hasAccess('admin') && (
+            <div className="quick-actions">
+              <h3>Quick Actions</h3>
+              <div className="action-buttons">
+                <button className="btn-action" onClick={() => setActiveTab('users')}>Manage Registrations</button>
+                <button className="btn-action" onClick={() => setActiveTab('analytics')}>View Analytics</button>
+                <button className="btn-action" onClick={fetchRegistrations}>Refresh Data</button>
+                <button className="btn-action" onClick={exportToCSV}>Export CSV</button>
+                <button className="btn-action pdf-export" onClick={exportToPDF}>📄 Export PDF</button>
+              </div>
             </div>
-          </div>
+          )}
         </>
       )}
       
@@ -989,9 +1380,33 @@ const AdminDashboard = () => {
   );
 
   // Handle login
-  const handleLogin = () => {
+  const handleLogin = (userData) => {
     setIsLoggedIn(true);
-    showNotification('Login successful', 'success');
+    setCurrentUser(userData);
+    showNotification(`Welcome ${userData.name}!`, 'success');
+  };
+
+  // Role-based access control
+  const hasAccess = (requiredRole) => {
+    if (!currentUser) return false;
+    if (currentUser.role === 'admin') return true; // Admin has access to everything
+    return currentUser.role === requiredRole;
+  };
+
+  // Get available tabs based on user role
+  const getAvailableTabs = () => {
+    const allTabs = [
+      { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+      { id: 'analytics', label: 'Analytics', icon: '📈' },
+      { id: 'tools', label: 'Tools', icon: '🛠️' }
+    ];
+
+    if (currentUser?.role === 'admin') {
+      return allTabs; // Admin gets all tabs
+    } else if (currentUser?.role === 'dashboard') {
+      return allTabs.filter(tab => tab.id === 'dashboard'); // Dashboard user only gets dashboard
+    }
+    return [];
   };
 
   // If not logged in, show login page
@@ -1014,55 +1429,71 @@ const AdminDashboard = () => {
           <h1>HAdmin</h1>
         </div>
         <div className="user-info">
-          <span className="user-name">Admin User</span>
-          <span className="user-avatar">👤</span>
-          <button className="logout-btn" onClick={() => setIsLoggedIn(false)}>Logout</button>
+          <span className="user-role">{currentUser?.role === 'admin' ? '👑 Admin' : '👤 Dashboard User'}</span>
+          <span className="user-name">{currentUser?.name || 'User'}</span>
+          <span className="user-avatar">{currentUser?.role === 'admin' ? '🔐' : '�️'}</span>
+          <button className="logout-btn" onClick={() => {
+            setIsLoggedIn(false);
+            setCurrentUser(null);
+            setActiveTab('dashboard');
+          }}>Logout</button>
         </div>
       </header>
       
       {/* Sidebar Navigation */}
       <nav className="sidebar">
         <ul className="nav-menu">
-          <li className={activeTab === 'dashboard' ? 'active' : ''}>
-            <button onClick={() => setActiveTab('dashboard')}>
-              <span className="icon">📊</span>
-              <span className="label">Dashboard</span>
-            </button>
-          </li>
-          <li className={activeTab === 'users' ? 'active' : ''}>
-            <button onClick={() => setActiveTab('users')}>
-              <span className="icon">👥</span>
-              <span className="label">User Management</span>
-            </button>
-          </li>
-          <li className={activeTab === 'analytics' ? 'active' : ''}>
-            <button onClick={() => setActiveTab('analytics')}>
-              <span className="icon">📈</span>
-              <span className="label">Analytics</span>
-            </button>
-          </li>
-          <li className={activeTab === 'logs' ? 'active' : ''}>
-            <button onClick={() => setActiveTab('logs')}>
-              <span className="icon">📝</span>
-              <span className="label">System Logs</span>
-            </button>
-          </li>
-          <li className={activeTab === 'tools' ? 'active' : ''}>
-            <button onClick={() => setActiveTab('tools')}>
-              <span className="icon">🛠️</span>
-              <span className="label">Tools & Utilities</span>
-            </button>
-          </li>
+          {getAvailableTabs().map(tab => (
+            <li key={tab.id} className={activeTab === tab.id ? 'active' : ''}>
+              <button onClick={() => setActiveTab(tab.id)}>
+                <span className="icon">{tab.icon}</span>
+                <span className="label">{tab.label}</span>
+              </button>
+            </li>
+          ))}
+          
+          {/* Admin-only sections */}
+          {hasAccess('admin') && (
+            <>
+              <li className={activeTab === 'users' ? 'active' : ''}>
+                <button onClick={() => setActiveTab('users')}>
+                  <span className="icon">�</span>
+                  <span className="label">User Management</span>
+                </button>
+              </li>
+              <li className={activeTab === 'logs' ? 'active' : ''}>
+                <button onClick={() => setActiveTab('logs')}>
+                  <span className="icon">📝</span>
+                  <span className="label">System Logs</span>
+                </button>
+              </li>
+            </>
+          )}
         </ul>
       </nav>
       
       {/* Main Content */}
       <main className="main-content">
         {activeTab === 'dashboard' && renderDashboard()}
-        {activeTab === 'users' && renderUserManagement()}
-        {activeTab === 'analytics' && renderAnalytics()}
-        {activeTab === 'logs' && renderLogs()}
-        {activeTab === 'tools' && renderTools()}
+        {activeTab === 'analytics' && hasAccess('admin') && renderAnalytics()}
+        {activeTab === 'tools' && hasAccess('admin') && renderTools()}
+        {activeTab === 'users' && hasAccess('admin') && renderUserManagement()}
+        {activeTab === 'logs' && hasAccess('admin') && renderLogs()}
+        
+        {/* Access Denied Message */}
+        {!hasAccess('admin') && activeTab !== 'dashboard' && (
+          <div className="access-denied">
+            <div className="access-denied-content">
+              <div className="access-denied-icon">🚫</div>
+              <h2>Access Denied</h2>
+              <p>You don't have permission to access this section.</p>
+              <p>Contact an administrator if you need access to this feature.</p>
+              <button onClick={() => setActiveTab('dashboard')} className="btn-primary">
+                Return to Dashboard
+              </button>
+            </div>
+          </div>
+        )}
       </main>
       
       {/* Footer */}
@@ -1120,6 +1551,20 @@ const AdminDashboard = () => {
           display: flex;
           align-items: center;
           gap: 0.5rem;
+        }
+
+        .user-role {
+          background-color: #3f51b5;
+          color: white;
+          padding: 0.25rem 0.5rem;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+
+        .user-name {
+          font-weight: 500;
+          color: #333;
         }
         
         .user-avatar {
@@ -1191,6 +1636,35 @@ const AdminDashboard = () => {
           grid-area: main;
           padding: 2rem;
           overflow-y: auto;
+        }
+
+        /* Access Denied */
+        .access-denied {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 60vh;
+          text-align: center;
+        }
+
+        .access-denied-content {
+          max-width: 400px;
+        }
+
+        .access-denied-icon {
+          font-size: 4rem;
+          margin-bottom: 1rem;
+        }
+
+        .access-denied h2 {
+          color: #333;
+          margin-bottom: 1rem;
+        }
+
+        .access-denied p {
+          color: #666;
+          margin-bottom: 0.5rem;
+          line-height: 1.5;
         }
         
         /* Footer */
@@ -1321,6 +1795,19 @@ const AdminDashboard = () => {
           background-color: #3f51b5;
           color: #fff;
           border-color: #3f51b5;
+        }
+
+        .btn-action.pdf-export {
+          background: linear-gradient(135deg, #dc3545, #c82333);
+          color: white;
+          border: none;
+          font-weight: 600;
+        }
+
+        .btn-action.pdf-export:hover {
+          background: linear-gradient(135deg, #c82333, #a71e2a);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
         }
         
         /* Table Styles */
@@ -1519,6 +2006,51 @@ const AdminDashboard = () => {
           display: grid;
           gap: 1.5rem;
         }
+
+        .date-display {
+          background-color: #f8f9fa;
+          border: 1px solid #e9ecef;
+          border-radius: 8px;
+          padding: 1rem;
+          text-align: center;
+        }
+
+        .current-date {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          font-size: 1.1rem;
+          font-weight: 500;
+          color: #333;
+        }
+
+        .date-icon {
+          font-size: 1.2rem;
+        }
+
+        .date-text {
+          color: #495057;
+        }
+
+        .welcome-message {
+          background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%);
+          color: white;
+          padding: 1.5rem;
+          border-radius: 12px;
+          margin-bottom: 1rem;
+        }
+
+        .welcome-message h3 {
+          margin: 0 0 0.5rem 0;
+          font-size: 1.5rem;
+        }
+
+        .welcome-message p {
+          margin: 0;
+          opacity: 0.9;
+          line-height: 1.5;
+        }
         
         .overview-stats {
           display: grid;
@@ -1544,6 +2076,120 @@ const AdminDashboard = () => {
         .stat-label {
           color: #666;
           font-size: 0.875rem;
+        }
+
+        /* Leaderboards */
+        .leaderboards-section {
+          background-color: #fff;
+          border-radius: 12px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          padding: 1.5rem;
+          margin: 1.5rem 0;
+        }
+
+        .leaderboards-section h3 {
+          margin: 0 0 1.5rem 0;
+          color: #333;
+          font-size: 1.5rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .leaderboards-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 1.5rem;
+        }
+
+        .leaderboard-card {
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          border-radius: 8px;
+          padding: 1.25rem;
+          border: 1px solid #dee2e6;
+        }
+
+        .leaderboard-card h4 {
+          margin: 0 0 1rem 0;
+          color: #495057;
+          font-size: 1.1rem;
+          text-align: center;
+          padding-bottom: 0.5rem;
+          border-bottom: 2px solid #dee2e6;
+        }
+
+        .leaderboard-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .leaderboard-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.75rem;
+          background: white;
+          border-radius: 6px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          transition: transform 0.2s ease;
+        }
+
+        .leaderboard-item:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .rank {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 0.8rem;
+          color: white;
+          flex-shrink: 0;
+        }
+
+        .rank-1 {
+          background: linear-gradient(135deg, #ffd700, #ffed4e);
+          color: #8b5a00;
+          box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+        }
+
+        .rank-2 {
+          background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+          color: #666;
+          box-shadow: 0 2px 4px rgba(192, 192, 192, 0.3);
+        }
+
+        .rank-3 {
+          background: linear-gradient(135deg, #cd7f32, #daa852);
+          color: white;
+          box-shadow: 0 2px 4px rgba(205, 127, 50, 0.3);
+        }
+
+        .rank:not(.rank-1):not(.rank-2):not(.rank-3) {
+          background: linear-gradient(135deg, #6c757d, #858e96);
+        }
+
+        .leaderboard-item .name {
+          flex: 1;
+          margin: 0 1rem;
+          font-weight: 500;
+          color: #333;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .leaderboard-item .score {
+          color: #3f51b5;
+          font-weight: 600;
+          font-size: 0.9rem;
+          flex-shrink: 0;
         }
         
         .quick-actions, .recent-activity {

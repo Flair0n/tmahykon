@@ -1129,3 +1129,178 @@ h1, h2, h3, h4, h5, h6 {
     margin-left: 0;
   }
 }
+
+/* Modern Horizontal Timeline for IRP Section */
+.irp-timeline-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.modern-horizontal-timeline {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 40px 0;
+  overflow-x: auto;
+  gap: 20px;
+}
+
+.timeline-progress-bar {
+  position: absolute;
+  top: 70px;
+  left: 10%;
+  right: 10%;
+  height: 4px;
+  background: linear-gradient(to right, #BC3C88, #9E7DE7);
+  border-radius: 2px;
+  z-index: 1;
+}
+
+.timeline-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 180px;
+  z-index: 2;
+}
+
+.step-circle {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #BC3C88, #9E7DE7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(188, 60, 136, 0.3);
+  transition: all 0.3s ease;
+  border: 4px solid #ffffff;
+  margin-bottom: 20px;
+}
+
+.step-circle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 35px rgba(188, 60, 136, 0.4);
+}
+
+.step-number {
+  color: white;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.step-content {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-top: 3px solid #BC3C88;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 200px;
+}
+
+.step-content:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(188, 60, 136, 0.2);
+}
+
+.step-content h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.step-content p {
+  margin: 0;
+  color: #BC3C88;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* Progressive Animation */
+.timeline-step:nth-child(2) .step-circle {
+  animation-delay: 0.1s;
+}
+
+.timeline-step:nth-child(3) .step-circle {
+  animation-delay: 0.2s;
+}
+
+.timeline-step:nth-child(4) .step-circle {
+  animation-delay: 0.3s;
+}
+
+.timeline-step:nth-child(5) .step-circle {
+  animation-delay: 0.4s;
+}
+
+.timeline-step:nth-child(6) .step-circle {
+  animation-delay: 0.5s;
+}
+
+/* Mobile Responsive for Modern Horizontal Timeline */
+@media (max-width: 1024px) {
+  .modern-horizontal-timeline {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+  }
+  
+  .timeline-progress-bar {
+    display: none;
+  }
+  
+  .timeline-step {
+    min-width: 250px;
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .irp-timeline-container {
+    padding: 40px 15px;
+  }
+  
+  .modern-horizontal-timeline {
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+  }
+  
+  .timeline-step {
+    min-width: 100%;
+    max-width: 300px;
+  }
+  
+  .step-circle {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 15px;
+  }
+  
+  .step-number {
+    font-size: 1rem;
+  }
+  
+  .step-content {
+    padding: 15px 12px;
+    max-width: 100%;
+  }
+  
+  .step-content h4 {
+    font-size: 1rem;
+  }
+  
+  .step-content p {
+    font-size: 0.9rem;
+  }
+}

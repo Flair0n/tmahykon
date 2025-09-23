@@ -57,11 +57,71 @@
 .hero-title {
   font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.3;
   color: #ffffff;
   text-transform: uppercase;
   letter-spacing: clamp(1px, 0.2vw, 2px);
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.8rem, 1.5vw, 1.2rem);
+  text-align: center;
+}
+
+.title-line-1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  flex-wrap: wrap;
+}
+
+.title-line-2 {
+  font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.edition-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  width: clamp(55px, 7vw, 85px);
+  height: clamp(55px, 7vw, 85px);
+  color: #ffffff;
+  text-align: center;
+  position: relative;
+  flex-shrink: 0;
+  transform: rotate(-15deg);
+  transition: transform 0.3s ease;
+}
+
+.edition-badge:hover {
+  transform: rotate(-10deg) scale(1.05);
+}
+
+.edition-number {
+  font-size: clamp(0.9rem, 1.8vw, 1.3rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.edition-number sup {
+  font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+  vertical-align: super;
+}
+
+.edition-text {
+  font-size: clamp(0.55rem, 0.9vw, 0.7rem);
+  font-weight: 600;
+  line-height: 1;
+  margin-top: 2px;
+  letter-spacing: 0.5px;
 }
 
 .text-gradient {
@@ -183,6 +243,24 @@
   
   .hero-text-content {
     gap: 1.5rem;
+  }
+
+  .title-line-1 {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+  }
+
+  .hero-title {
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .edition-badge {
+    width: clamp(50px, 10vw, 65px);
+    height: clamp(50px, 10vw, 65px);
+    transform: rotate(-12deg);
   }
 }
 

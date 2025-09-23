@@ -46,6 +46,16 @@
   color: #df42b1;
 }
 
+.navbar-logo {
+  height: 60px;
+  width: auto;
+  transition: all 0.3s ease;
+}
+
+.navbar-logo:hover {
+  transform: scale(1.05);
+}
+
 .classy-navbar-toggler {
   display: none;
   cursor: pointer;

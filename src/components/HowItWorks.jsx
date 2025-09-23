@@ -229,45 +229,57 @@ const HowItWorks = () => {
           <div className="innovation-readiness-heading">
             <h2>Innovation Readiness Programme (IRP)</h2>
           </div>
-          <div className="midreview-timeline-area">
-            <div className="horizontal-timeline">
-              <div className="horizontal-timeline-event">
-                <div className="horizontal-timeline-dot"></div>
-                <div className="horizontal-timeline-content">
-                  <div className="horizontal-timeline-title">IRP Session 1</div>
-                  <div className="horizontal-timeline-date">Pitch Deck</div>
+          <div className="irp-timeline-container">
+            <div className="modern-horizontal-timeline">
+              <div className="timeline-progress-bar"></div>
+              
+              <div className="timeline-step">
+                <div className="step-circle">
+                  <span className="step-number">1</span>
+                </div>
+                <div className="step-content">
+                  <h4>IRP Session 1</h4>
+                  <p>21st October 2025</p>
                 </div>
               </div>
               
-              <div className="horizontal-timeline-event">
-                <div className="horizontal-timeline-dot"></div>
-                <div className="horizontal-timeline-content">
-                  <div className="horizontal-timeline-title">IRP Session 2</div>
-                  <div className="horizontal-timeline-date">Competitive Positioning</div>
+              <div className="timeline-step">
+                <div className="step-circle">
+                  <span className="step-number">2</span>
+                </div>
+                <div className="step-content">
+                  <h4>IRP Session 2</h4>
+                  <p>23rd October 2025</p>
                 </div>
               </div>
               
-              <div className="horizontal-timeline-event">
-                <div className="horizontal-timeline-dot"></div>
-                <div className="horizontal-timeline-content">
-                  <div className="horizontal-timeline-title">IRP Session 3</div>
-                  <div className="horizontal-timeline-date">Business Model</div>
+              <div className="timeline-step">
+                <div className="step-circle">
+                  <span className="step-number">3</span>
+                </div>
+                <div className="step-content">
+                  <h4>IRP Session 3</h4>
+                  <p>22nd November 2025</p>
                 </div>
               </div>
               
-              <div className="horizontal-timeline-event">
-                <div className="horizontal-timeline-dot"></div>
-                <div className="horizontal-timeline-content">
-                  <div className="horizontal-timeline-title">IRP Session 4</div>
-                  <div className="horizontal-timeline-date">Market Analysis</div>
+              <div className="timeline-step">
+                <div className="step-circle">
+                  <span className="step-number">4</span>
+                </div>
+                <div className="step-content">
+                  <h4>IRP Session 4</h4>
+                  <p>3rd January 2026</p>
                 </div>
               </div>
               
-              <div className="horizontal-timeline-event">
-                <div className="horizontal-timeline-dot"></div>
-                <div className="horizontal-timeline-content">
-                  <div className="horizontal-timeline-title">IRP Session 5</div>
-                  <div className="horizontal-timeline-date">Final Presentation</div>
+              <div className="timeline-step">
+                <div className="step-circle">
+                  <span className="step-number">5</span>
+                </div>
+                <div className="step-content">
+                  <h4>IRP Session 5</h4>
+                  <p>10th January 2026</p>
                 </div>
               </div>
             </div>

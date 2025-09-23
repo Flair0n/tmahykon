@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "../styles/Navbar.css";
+import logo from "../assets/logo.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const Navbar = () => {
         <div className="container">
           <div className="classy-navbar">
             <Link to="/" className="nav-brand">
-              TMA HYKON
+              <img src={logo} alt="TMA HYKON" className="navbar-logo" />
             </Link>
 
             <div className="classy-navbar-toggler" onClick={toggleMobileMenu}>
