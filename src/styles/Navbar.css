@@ -3,11 +3,12 @@
   position: fixed;
   z-index: 999;
   width: 100%;
+  top: 0;
+  left: 0;
   transition: all 0.3s ease-in-out;
   background-color: rgba(0, 0, 0, 0.6);
   /* transparent black by default */
-  overflow-x: hidden;
-  max-width: 100vw;
+  overflow: hidden;
 }
 
 .header-area.sticky {
@@ -25,6 +26,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 15px;
 }
 
 .classy-navbar {
@@ -175,12 +177,12 @@
 @media screen and (max-width: 991px) {
   html, body {
     overflow-x: hidden !important;
-    max-width: 100vw !important;
+    max-width: 100% !important;
   }
 
   .header-area {
     overflow-x: hidden;
-    max-width: 100vw;
+    max-width: 100%;
   }
 
   .classy-nav-container {
