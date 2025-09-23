@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { collection, addDoc, Timestamp, setDoc, doc } from "firebase/firestore";
+import { collection, addDoc, Timestamp, setDoc, doc, deleteDoc } from "firebase/firestore";
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import "./formScrollbar.css";
@@ -59,9 +59,21 @@ export default function App() {
     // Save form data to localStorage before payment
     localStorage.setItem("projectForm", JSON.stringify(formData));
     
-    setStatus("Processing payment...");
+    setStatus("Saving registration data...");
     
     try {
+      // First, save data to Firestore with pending payment status
+      const teamLeaderName = formData.FullName || "UnknownTeamLeader";
+      const pendingPayload = { 
+        ...formData, 
+        submittedAt: Timestamp.now(),
+        payment_status: "pending",
+        registration_id: teamLeaderName
+      };
+      
+      await setDoc(doc(db, "registrations", teamLeaderName), pendingPayload);
+      setStatus("Registration saved. Processing payment...");
+      
       // Create payment order via your backend
       const amount = formData.TMAMember && formData.TMAMember.startsWith("Yes") ? 500 : 1000;
       console.log('Creating payment order with amount:', amount);
@@ -84,6 +96,12 @@ export default function App() {
       console.log('Order response:', orderData);
       
       if (!orderData.success) {
+        // Update status to failed in Firestore
+        await setDoc(doc(db, "registrations", teamLeaderName), {
+          ...pendingPayload,
+          payment_status: "failed",
+          failure_reason: "Failed to create payment order"
+        });
         setStatus("❌ Failed to create payment order");
         return;
       }
@@ -97,8 +115,9 @@ export default function App() {
         description: "Registration Fee",
         order_id: orderData.order.id,
         handler: async function (response) {
-          // Payment successful, verify and submit form
-          await verifyPaymentAndSubmit(response.razorpay_payment_id, response.razorpay_order_id);
+          // Payment successful, verify and update status
+          // Payment successful, verify and update status
+          await verifyPaymentAndSubmit(response.razorpay_payment_id, response.razorpay_order_id, teamLeaderName);
         },
         prefill: {
           name: formData.FullName,
@@ -109,8 +128,14 @@ export default function App() {
           color: "#494DCA"
         },
         modal: {
-          ondismiss: function() {
-            setStatus("Payment cancelled");
+          ondismiss: async function() {
+            // Payment cancelled, update status to failed
+            await setDoc(doc(db, "registrations", teamLeaderName), {
+              ...pendingPayload,
+              payment_status: "cancelled",
+              failure_reason: "Payment cancelled by user"
+            });
+            setStatus("❌ Payment cancelled. You can retry payment or your registration will be deleted after 30 minutes.");
           }
         }
       };
@@ -119,13 +144,25 @@ export default function App() {
       razorpay.open();
       
     } catch (error) {
+      // Update status to failed in Firestore on error
+      const teamLeaderName = formData.FullName || "UnknownTeamLeader";
+      try {
+        await setDoc(doc(db, "registrations", teamLeaderName), {
+          ...formData,
+          submittedAt: Timestamp.now(),
+          payment_status: "failed",
+          failure_reason: "Error initiating payment: " + error.message
+        });
+      } catch (dbError) {
+        console.error("Failed to update database:", dbError);
+      }
       setStatus("❌ Error initiating payment");
       console.error(error);
     }
   };
 
-  // Verify payment and submit form
-  const verifyPaymentAndSubmit = async (paymentId, orderId) => {
+  // Verify payment and update status in Firestore
+  const verifyPaymentAndSubmit = async (paymentId, orderId, registrationId) => {
     setStatus("Verifying payment...");
     
     console.log('Verifying payment with:', { paymentId, orderId });
@@ -146,19 +183,20 @@ export default function App() {
       console.log('Verify response data:', verifyData);
       
       if (verifyData.success && (verifyData.status === "captured" || verifyData.status === "authorized")) {
-        // Payment verified, submit to Firebase
-        setStatus("Payment verified! Submitting registration...");
+        // Payment verified, update status to authorized in Firestore
+        setStatus("Payment verified! Updating registration...");
         
-        const payload = { 
+        const successPayload = { 
           ...formData, 
           submittedAt: Timestamp.now(),
           payment_id: paymentId,
           order_id: orderId,
-          payment_status: verifyData.status
+          payment_status: "authorized",
+          payment_verified_at: Timestamp.now(),
+          registration_id: registrationId
         };
         
-        const teamLeaderName = formData.FullName || "UnknownTeamLeader";
-        await setDoc(doc(db, "registrations", teamLeaderName), payload);
+        await setDoc(doc(db, "registrations", registrationId), successPayload);
         
         setStatus("✅ Registration and payment successful!");
         clearFormData();
@@ -166,13 +204,48 @@ export default function App() {
         setPaymentDone(true);
         
       } else {
-        setStatus("❌ Payment verification failed. Please contact support.");
+        // Payment verification failed, update status in Firestore
+        await setDoc(doc(db, "registrations", registrationId), {
+          ...formData,
+          submittedAt: Timestamp.now(),
+          payment_id: paymentId,
+          order_id: orderId,
+          payment_status: "failed",
+          failure_reason: "Payment verification failed",
+          verification_response: verifyData
+        });
+        setStatus("❌ Payment verification failed. Please contact support or retry payment.");
       }
       
     } catch (error) {
+      // Update status to failed in Firestore on verification error
+      try {
+        await setDoc(doc(db, "registrations", registrationId), {
+          ...formData,
+          submittedAt: Timestamp.now(),
+          payment_id: paymentId,
+          order_id: orderId,
+          payment_status: "failed",
+          failure_reason: "Error verifying payment: " + error.message
+        });
+      } catch (dbError) {
+        console.error("Failed to update database:", dbError);
+      }
       setStatus("❌ Error verifying payment. Please contact support.");
       console.error(error);
     }
+  };
+
+  // Add retry payment function for failed payments
+  const retryPayment = async () => {
+    if (!formData.FullName) {
+      setStatus("❌ No registration data found to retry payment.");
+      return;
+    }
+    
+    // Reset the form status and retry payment
+    setStatus("Retrying payment...");
+    await handlePayment({ preventDefault: () => {} });
   };
 
   // Form submission handler (only for already paid users)
@@ -258,6 +331,7 @@ export default function App() {
             <PaymentSection 
               paymentDone={paymentDone}
               handlePayment={handlePayment}
+              retryPayment={retryPayment}
               status={status}
               isFormComplete={isFormComplete}
             />

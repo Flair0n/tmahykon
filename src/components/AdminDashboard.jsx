@@ -410,7 +410,7 @@ const AdminDashboard = () => {
       ).sort(([,a], [,b]) => b - a);
 
       const tmaMembers = dataForPDF.reduce((acc, reg) => {
-        const isTMAMember = reg.TMAMember === 'Yes' || reg.TMAMember === true;
+        const isTMAMember = reg.TMAMember && (reg.TMAMember.toString().startsWith("Yes") || reg.TMAMember === true);
         const category = isTMAMember ? 'TMA Members' : 'Non-Members';
         acc[category] = (acc[category] || 0) + 1;
         return acc;
@@ -1374,7 +1374,7 @@ const AdminDashboard = () => {
                 <div className="leaderboard-list">
                   {Object.entries(
                     getFilteredRegistrations().reduce((acc, reg) => {
-                      const isTMAMember = reg.TMAMember === 'Yes' || reg.TMAMember === true;
+                      const isTMAMember = reg.TMAMember && (reg.TMAMember.toString().startsWith("Yes") || reg.TMAMember === true);
                       const category = isTMAMember ? 'TMA Members' : 'Non-Members';
                       acc[category] = (acc[category] || 0) + 1;
                       return acc;
@@ -1652,7 +1652,7 @@ const AdminDashboard = () => {
                   <h4>TMA Membership</h4>
                   <div className="insight-stats">
                     <span className="insight-value">
-                      {Math.round((getFilteredRegistrations().filter(r => r.TMAMember === 'Yes' || r.TMAMember === true).length / getFilteredRegistrations().length) * 100) || 0}%
+                      {Math.round((getFilteredRegistrations().filter(r => r.TMAMember && (r.TMAMember.toString().startsWith("Yes") || r.TMAMember === true)).length / getFilteredRegistrations().length) * 100) || 0}%
                     </span>
                     <span className="insight-label">are TMA members</span>
                   </div>
@@ -1750,7 +1750,7 @@ const AdminDashboard = () => {
                 <div className="leaderboard-list">
                   {Object.entries(
                     getFilteredRegistrations().reduce((acc, reg) => {
-                      const isTMAMember = reg.TMAMember === 'Yes' || reg.TMAMember === true;
+                      const isTMAMember = reg.TMAMember && (reg.TMAMember.toString().startsWith("Yes") || reg.TMAMember === true);
                       const category = isTMAMember ? 'TMA Members' : 'Non-Members';
                       acc[category] = (acc[category] || 0) + 1;
                       return acc;
