@@ -85,7 +85,7 @@ export default function App() {
       };
       console.log('Request body:', requestBody);
       
-      const response = await fetch('http://localhost:5001/api/create-order', {
+  const response = await fetch('https://tmahykon.onrender.com/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody)
@@ -169,7 +169,7 @@ export default function App() {
     
     try {
       // Verify payment with backend
-      const verifyResponse = await fetch('http://localhost:5001/api/verify-payment', {
+  const verifyResponse = await fetch('https://tmahykon.onrender.com/api/verify-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

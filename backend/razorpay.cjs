@@ -113,7 +113,7 @@ app.post('/api/create-payment-link', async (req, res) => {
         sms: true,
         email: true
       },
-      callback_url: 'http://localhost:3001/payment-success',
+  callback_url: 'https://tmahykon.inkeredu.com/payment-success',
       callback_method: 'get',
     });
     res.json({ url: paymentLink.short_url });

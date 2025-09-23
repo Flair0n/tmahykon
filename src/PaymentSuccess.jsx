@@ -23,7 +23,7 @@ export default function PaymentSuccess() {
     const verifyPayment = async () => {
       setStatus("Verifying payment with Razorpay...");
       try {
-        const res = await fetch(`http://localhost:5001/api/verify-payment-link?payment_id=${payment_id}`);
+  const res = await fetch(`https://tmahykon.onrender.com/api/verify-payment-link?payment_id=${payment_id}`);
         const data = await res.json();
         if (data.success && data.status === "captured") {
           // 4. Submit to Firebase
