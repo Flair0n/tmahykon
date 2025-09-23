@@ -48,7 +48,7 @@ const Home = () => {
   }, [location]);
 
   return (
-    <div className="App">
+    <div className="App" style={{ overflow: "hidden", width: "100%", maxWidth: "100vw" }}>
       <Navbar />
       <motion.div
         initial={{ opacity: 0, x: -40 }}
@@ -58,8 +58,9 @@ const Home = () => {
         className="home-page-wrapper"
         style={{ 
           minHeight: "100vh", 
-          overflowY: "auto",
-          width: "100%"
+          overflow: "hidden",
+          width: "100%",
+          maxWidth: "100vw"
         }}
       >
         <Hero />
