@@ -233,6 +233,13 @@ const AdminDashboard = () => {
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
   const [logs, setLogs] = useState([]);
   const [logsLoading, setLogsLoading] = useState(false);
+  
+  // Date filtering state
+  const [dateFilter, setDateFilter] = useState({
+    startDate: '',
+    endDate: '',
+    enabled: false
+  });
 
   // Add custom scrollbar styles for better horizontal scrolling
   useEffect(() => {
@@ -397,6 +404,52 @@ const AdminDashboard = () => {
     }
   };
 
+  // Date filtering utilities
+  const getFilteredRegistrations = () => {
+    if (!dateFilter.enabled || (!dateFilter.startDate && !dateFilter.endDate)) {
+      return registrations;
+    }
+
+    return registrations.filter(reg => {
+      if (!reg.submittedAt || !reg.submittedAt.seconds) {
+        return !dateFilter.enabled; // Include records without dates only if filter is disabled
+      }
+
+      const regDate = new Date(reg.submittedAt.seconds * 1000);
+      const startDate = dateFilter.startDate ? new Date(dateFilter.startDate) : null;
+      const endDate = dateFilter.endDate ? new Date(dateFilter.endDate + 'T23:59:59') : null;
+
+      if (startDate && endDate) {
+        return regDate >= startDate && regDate <= endDate;
+      } else if (startDate) {
+        return regDate >= startDate;
+      } else if (endDate) {
+        return regDate <= endDate;
+      }
+
+      return true;
+    });
+  };
+
+  const resetDateFilter = () => {
+    setDateFilter({
+      startDate: '',
+      endDate: '',
+      enabled: false
+    });
+    showNotification('Date filter cleared', 'success');
+  };
+
+  const applyDateFilter = () => {
+    if (dateFilter.startDate || dateFilter.endDate) {
+      setDateFilter(prev => ({ ...prev, enabled: true }));
+      const filteredCount = getFilteredRegistrations().length;
+      showNotification(`Date filter applied - showing ${filteredCount} registrations`, 'success');
+    } else {
+      showNotification('Please select at least one date', 'error');
+    }
+  };
+
   // Export to CSV
   const exportToCSV = () => {
     if (registrations.length === 0) {
@@ -404,10 +457,16 @@ const AdminDashboard = () => {
       return;
     }
 
+    const dataToExport = getFilteredRegistrations();
+    if (dataToExport.length === 0) {
+      showNotification('No data matches the current filter!', 'error');
+      return;
+    }
+
     const headers = ['Full Name', 'Email', 'Phone', 'Institution', 'Course', 'Year', 'Cohort', 'Track', 'Project Title', 'Problem Statement', 'Context', 'Stakeholders', 'Solution', 'Working Principle', 'Novelty', 'Impact', 'Budget', 'Timeline', 'Team Members', 'Has Mentor', 'Mentor Name', 'Mentor Email', 'Mentor Department', 'Mentor Institution', 'Mentor Phone', 'TMA Member', 'TMA Chapter', 'Payment Status', 'Payment ID', 'Order ID', 'Registration Date'];
     const csvContent = [
       headers.join(','),
-      ...registrations.map(reg => [
+      ...dataToExport.map(reg => [
         reg.FullName || '',
         reg.Email || '',
         reg.Phone || '',
@@ -446,12 +505,17 @@ const AdminDashboard = () => {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `registrations_${new Date().toISOString().split('T')[0]}.csv`);
+    
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filterSuffix = dateFilter.enabled ? 
+      `_${dateFilter.startDate || 'start'}_to_${dateFilter.endDate || 'end'}` : '';
+    link.setAttribute('download', `registrations_${timestamp}${filterSuffix}.csv`);
+    
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showNotification('CSV file downloaded successfully', 'success');
-    createLog('CSV export', `Exported ${registrations.length} registrations to CSV`);
+    showNotification(`CSV file downloaded successfully - ${dataToExport.length} registrations`, 'success');
+    createLog('CSV export', `Exported ${dataToExport.length} registrations to CSV`);
   };
 
   // Export Dashboard to PDF
@@ -460,31 +524,51 @@ const AdminDashboard = () => {
       // Create a new window for PDF generation
       const printWindow = window.open('', '_blank');
       
-      // Calculate statistics for PDF
-      const totalRegistrations = registrations.length;
-      const paidRegistrations = registrations.filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length;
-      const activeCohorts = new Set(registrations.map(r => r.Cohort)).size;
-      const pendingPayments = registrations.filter(r => !r.payment_status || r.payment_status === 'pending').length;
+      // Use filtered data for PDF export
+      const dataForPDF = getFilteredRegistrations();
+      
+      // Calculate comprehensive statistics for PDF
+      const totalRegistrations = dataForPDF.length;
+      const paidRegistrations = dataForPDF.filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length;
+      const activeCohorts = new Set(dataForPDF.map(r => r.Cohort)).size;
+      const pendingPayments = dataForPDF.filter(r => !r.payment_status || r.payment_status === 'pending').length;
+      const completionRate = totalRegistrations > 0 ? Math.round(paidRegistrations / totalRegistrations * 100) : 0;
+      const totalRevenue = dataForPDF.reduce((sum, reg) => sum + parseFloat(reg.payment_amount || reg.amount || 0), 0);
 
-      // Generate leaderboard data
+      // Generate comprehensive leaderboard data
       const topCohorts = Object.entries(
-        registrations.reduce((acc, reg) => {
+        dataForPDF.reduce((acc, reg) => {
           const cohort = reg.Cohort || 'Unknown';
           acc[cohort] = (acc[cohort] || 0) + 1;
           return acc;
         }, {})
-      ).sort(([,a], [,b]) => b - a).slice(0, 5);
+      ).sort(([,a], [,b]) => b - a);
+
+      const tmaMembers = dataForPDF.reduce((acc, reg) => {
+        const isTMAMember = reg.TMAMember === 'Yes' || reg.TMAMember === true;
+        const category = isTMAMember ? 'TMA Members' : 'Non-Members';
+        acc[category] = (acc[category] || 0) + 1;
+        return acc;
+      }, {});
+
+      const topInstitutions = Object.entries(
+        dataForPDF.reduce((acc, reg) => {
+          const institution = reg.Institution || reg.CollegeName || 'Unknown Institution';
+          acc[institution] = (acc[institution] || 0) + 1;
+          return acc;
+        }, {})
+      ).sort(([,a], [,b]) => b - a);
 
       const topStates = Object.entries(
-        registrations.reduce((acc, reg) => {
+        dataForPDF.reduce((acc, reg) => {
           const state = reg.State || reg.Region || 'Unknown State';
           acc[state] = (acc[state] || 0) + 1;
           return acc;
         }, {})
-      ).sort(([,a], [,b]) => b - a).slice(0, 5);
+      ).sort(([,a], [,b]) => b - a);
 
       const revenueByCohort = Object.entries(
-        registrations.reduce((acc, reg) => {
+        dataForPDF.reduce((acc, reg) => {
           const cohort = reg.Cohort || 'Unknown';
           const amount = parseFloat(reg.payment_amount || reg.amount || 0);
           if (!acc[cohort]) acc[cohort] = { count: 0, revenue: 0 };
@@ -492,90 +576,404 @@ const AdminDashboard = () => {
           acc[cohort].revenue += amount;
           return acc;
         }, {})
-      ).sort(([,a], [,b]) => b.revenue - a.revenue).slice(0, 5);
+      ).sort(([,a], [,b]) => b.revenue - a.revenue);
 
-      // Create PDF content
+      const academicYears = Object.entries(
+        dataForPDF.reduce((acc, reg) => {
+          const year = reg.AcademicYear || reg.Year || reg.CurrentYear || 'Unknown Year';
+          acc[year] = (acc[year] || 0) + 1;
+          return acc;
+        }, {})
+      ).sort(([,a], [,b]) => b - a);
+
+      const registrationTimeline = Object.entries(
+        dataForPDF.reduce((acc, reg) => {
+          if (reg.submittedAt && reg.submittedAt.seconds) {
+            const date = new Date(reg.submittedAt.seconds * 1000).toLocaleDateString();
+            acc[date] = (acc[date] || 0) + 1;
+          } else {
+            acc['Unknown Date'] = (acc['Unknown Date'] || 0) + 1;
+          }
+          return acc;
+        }, {})
+      ).sort(([,a], [,b]) => b - a);
+
+      // Create comprehensive PDF content
       const pdfContent = `
         <!DOCTYPE html>
         <html>
         <head>
           <title>TMA Hykon Dashboard Report - ${new Date().toLocaleDateString()}</title>
           <style>
-            body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
-            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #3f51b5; padding-bottom: 15px; }
-            .header h1 { color: #3f51b5; margin: 0; }
-            .header p { margin: 5px 0; color: #666; }
-            .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-            .stat-card { background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; border-left: 4px solid #3f51b5; }
-            .stat-value { font-size: 2rem; font-weight: bold; color: #3f51b5; margin: 10px 0; }
-            .stat-label { color: #666; font-size: 0.9rem; }
-            .leaderboard { margin-bottom: 30px; }
-            .leaderboard h3 { color: #3f51b5; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-            .leaderboard-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
-            .rank { font-weight: bold; color: #3f51b5; margin-right: 10px; }
-            .footer { margin-top: 40px; text-align: center; color: #666; font-size: 0.8rem; border-top: 1px solid #ddd; padding-top: 15px; }
-            @media print { body { margin: 0; } }
+            body { 
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+              margin: 0; 
+              padding: 20px; 
+              color: #333; 
+              line-height: 1.6;
+              background: #fff;
+            }
+            .page { 
+              max-width: 210mm; 
+              margin: 0 auto; 
+              background: white; 
+              box-shadow: 0 0 10px rgba(0,0,0,0.1);
+              padding: 20px;
+            }
+            .header { 
+              text-align: center; 
+              margin-bottom: 40px; 
+              border-bottom: 3px solid #3f51b5; 
+              padding-bottom: 20px; 
+            }
+            .header h1 { 
+              color: #3f51b5; 
+              margin: 0; 
+              font-size: 2.5rem;
+              font-weight: 700;
+            }
+            .header .subtitle {
+              font-size: 1.2rem;
+              color: #666;
+              margin: 10px 0;
+            }
+            .header p { 
+              margin: 5px 0; 
+              color: #888; 
+              font-size: 0.9rem;
+            }
+            
+            .overview-section {
+              margin-bottom: 40px;
+            }
+            .section-title {
+              color: #3f51b5;
+              font-size: 1.5rem;
+              font-weight: 600;
+              margin-bottom: 20px;
+              border-bottom: 2px solid #e9ecef;
+              padding-bottom: 10px;
+            }
+            
+            .stats-grid { 
+              display: grid; 
+              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+              gap: 20px; 
+              margin-bottom: 40px; 
+            }
+            .stat-card { 
+              background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
+              padding: 25px; 
+              border-radius: 12px; 
+              text-align: center; 
+              border-left: 5px solid #3f51b5;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            .stat-value { 
+              font-size: 2.5rem; 
+              font-weight: 700; 
+              color: #3f51b5; 
+              margin: 10px 0; 
+            }
+            .stat-label { 
+              color: #666; 
+              font-size: 1rem;
+              font-weight: 500;
+            }
+            
+            .leaderboards-grid {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: 30px;
+              margin-bottom: 30px;
+            }
+            
+            .leaderboard { 
+              background: #fff;
+              border: 1px solid #e9ecef;
+              border-radius: 12px;
+              overflow: hidden;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+            .leaderboard h3 { 
+              background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%);
+              color: white; 
+              margin: 0;
+              padding: 15px 20px;
+              font-size: 1.2rem;
+              font-weight: 600;
+            }
+            .leaderboard-content {
+              padding: 0;
+            }
+            .leaderboard-item { 
+              display: flex; 
+              justify-content: space-between; 
+              align-items: center;
+              padding: 12px 20px; 
+              border-bottom: 1px solid #f1f3f4;
+              transition: background-color 0.2s;
+            }
+            .leaderboard-item:last-child {
+              border-bottom: none;
+            }
+            .leaderboard-item:nth-child(even) {
+              background-color: #f8f9fa;
+            }
+            .leaderboard-item:hover {
+              background-color: #e3f2fd;
+            }
+            .rank { 
+              font-weight: 700; 
+              color: #3f51b5; 
+              margin-right: 12px;
+              min-width: 25px;
+              text-align: center;
+            }
+            .rank.gold { color: #ffc107; }
+            .rank.silver { color: #6c757d; }
+            .rank.bronze { color: #fd7e14; }
+            
+            .item-info {
+              display: flex;
+              align-items: center;
+              flex: 1;
+            }
+            .item-name {
+              font-weight: 500;
+              color: #333;
+            }
+            .item-value {
+              color: #3f51b5;
+              font-weight: 600;
+              font-size: 0.95rem;
+            }
+            
+            .summary-stats {
+              background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+              padding: 20px;
+              border-radius: 12px;
+              margin: 30px 0;
+              border-left: 5px solid #2196f3;
+            }
+            .summary-stats h3 {
+              color: #1976d2;
+              margin: 0 0 15px 0;
+            }
+            .summary-grid {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+              gap: 15px;
+            }
+            .summary-item {
+              text-align: center;
+            }
+            .summary-value {
+              font-size: 1.5rem;
+              font-weight: 700;
+              color: #1976d2;
+            }
+            .summary-label {
+              font-size: 0.9rem;
+              color: #666;
+            }
+            
+            .footer { 
+              margin-top: 50px; 
+              text-align: center; 
+              color: #666; 
+              font-size: 0.85rem; 
+              border-top: 2px solid #e9ecef; 
+              padding-top: 20px; 
+            }
+            .footer p {
+              margin: 5px 0;
+            }
+            
+            @media print { 
+              body { margin: 0; padding: 10px; }
+              .page { box-shadow: none; }
+              .leaderboard { break-inside: avoid; }
+            }
           </style>
         </head>
         <body>
-          <div class="header">
-            <h1>TMA Hykon Innovation Challenge Dashboard</h1>
-            <p>Generated on: ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-            <p>Report Time: ${new Date().toLocaleTimeString()}</p>
-          </div>
-
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-value">${totalRegistrations}</div>
-              <div class="stat-label">Total Registrations</div>
+          <div class="page">
+            <div class="header">
+              <h1>TMA Hykon Innovation Challenge</h1>
+              <div class="subtitle">Comprehensive Dashboard Report</div>
+              <p>Generated on: ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              <p>Report Time: ${new Date().toLocaleTimeString()} | Total Data Points: ${totalRegistrations}</p>
             </div>
-            <div class="stat-card">
-              <div class="stat-value">${paidRegistrations}</div>
-              <div class="stat-label">Paid Registrations</div>
+
+            <div class="overview-section">
+              <h2 class="section-title">📊 Key Performance Metrics</h2>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-value">${totalRegistrations}</div>
+                  <div class="stat-label">Total Registrations</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">${paidRegistrations}</div>
+                  <div class="stat-label">Paid Registrations</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">${completionRate}%</div>
+                  <div class="stat-label">Completion Rate</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">${activeCohorts}</div>
+                  <div class="stat-label">Active Cohorts</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">${pendingPayments}</div>
+                  <div class="stat-label">Pending Payments</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">₹${totalRevenue.toLocaleString()}</div>
+                  <div class="stat-label">Total Revenue</div>
+                </div>
+              </div>
             </div>
-            <div class="stat-card">
-              <div class="stat-value">${activeCohorts}</div>
-              <div class="stat-label">Active Cohorts</div>
+
+            <div class="summary-stats">
+              <h3>📈 Quick Summary</h3>
+              <div class="summary-grid">
+                <div class="summary-item">
+                  <div class="summary-value">${Object.keys(tmaMembers).length}</div>
+                  <div class="summary-label">Member Categories</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-value">${topInstitutions.length}</div>
+                  <div class="summary-label">Participating Institutions</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-value">${topStates.length}</div>
+                  <div class="summary-label">States/Regions</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-value">${academicYears.length}</div>
+                  <div class="summary-label">Academic Levels</div>
+                </div>
+              </div>
             </div>
-            <div class="stat-card">
-              <div class="stat-value">${pendingPayments}</div>
-              <div class="stat-label">Pending Payments</div>
+
+            <h2 class="section-title">🏆 Detailed Leaderboards</h2>
+            <div class="leaderboards-grid">
+              
+              <div class="leaderboard">
+                <h3>🏆 All Cohorts Performance</h3>
+                <div class="leaderboard-content">
+                  ${topCohorts.map(([cohort, count], index) => 
+                    `<div class="leaderboard-item">
+                      <div class="item-info">
+                        <span class="rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''}">${index + 1}.</span>
+                        <span class="item-name">${cohort}</span>
+                      </div>
+                      <span class="item-value">${count} registrations</span>
+                    </div>`
+                  ).join('')}
+                </div>
+              </div>
+
+              <div class="leaderboard">
+                <h3>👥 TMA Membership Distribution</h3>
+                <div class="leaderboard-content">
+                  ${Object.entries(tmaMembers).map(([category, count], index) => 
+                    `<div class="leaderboard-item">
+                      <div class="item-info">
+                        <span class="rank ${index === 0 ? 'gold' : 'silver'}">${index + 1}.</span>
+                        <span class="item-name">${category}</span>
+                      </div>
+                      <span class="item-value">${count} members</span>
+                    </div>`
+                  ).join('')}
+                </div>
+              </div>
+
+              <div class="leaderboard">
+                <h3>🏛️ All Participating Institutions</h3>
+                <div class="leaderboard-content">
+                  ${topInstitutions.map(([institution, count], index) => 
+                    `<div class="leaderboard-item">
+                      <div class="item-info">
+                        <span class="rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''}">${index + 1}.</span>
+                        <span class="item-name">${institution}</span>
+                      </div>
+                      <span class="item-value">${count} students</span>
+                    </div>`
+                  ).join('')}
+                </div>
+              </div>
+
+              <div class="leaderboard">
+                <h3>🌍 Geographic Distribution</h3>
+                <div class="leaderboard-content">
+                  ${topStates.map(([state, count], index) => 
+                    `<div class="leaderboard-item">
+                      <div class="item-info">
+                        <span class="rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''}">${index + 1}.</span>
+                        <span class="item-name">${state}</span>
+                      </div>
+                      <span class="item-value">${count} registrations</span>
+                    </div>`
+                  ).join('')}
+                </div>
+              </div>
+
+              <div class="leaderboard">
+                <h3>💵 Revenue Analysis by Cohort</h3>
+                <div class="leaderboard-content">
+                  ${revenueByCohort.map(([cohort, data], index) => 
+                    `<div class="leaderboard-item">
+                      <div class="item-info">
+                        <span class="rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''}">${index + 1}.</span>
+                        <span class="item-name">${cohort}</span>
+                      </div>
+                      <span class="item-value">₹${data.revenue.toLocaleString()} (${data.count} reg.)</span>
+                    </div>`
+                  ).join('')}
+                </div>
+              </div>
+
+              <div class="leaderboard">
+                <h3>🎓 Academic Year Distribution</h3>
+                <div class="leaderboard-content">
+                  ${academicYears.map(([year, count], index) => 
+                    `<div class="leaderboard-item">
+                      <div class="item-info">
+                        <span class="rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''}">${index + 1}.</span>
+                        <span class="item-name">${year}</span>
+                      </div>
+                      <span class="item-value">${count} students</span>
+                    </div>`
+                  ).join('')}
+                </div>
+              </div>
+
+              <div class="leaderboard">
+                <h3>📅 Registration Timeline</h3>
+                <div class="leaderboard-content">
+                  ${registrationTimeline.slice(0, 10).map(([date, count], index) => 
+                    `<div class="leaderboard-item">
+                      <div class="item-info">
+                        <span class="rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''}">${index + 1}.</span>
+                        <span class="item-name">${date}</span>
+                      </div>
+                      <span class="item-value">${count} registrations</span>
+                    </div>`
+                  ).join('')}
+                </div>
+              </div>
+
             </div>
-          </div>
 
-          <div class="leaderboard">
-            <h3>🏆 Top Cohorts</h3>
-            ${topCohorts.map(([cohort, count], index) => 
-              `<div class="leaderboard-item">
-                <span><span class="rank">${index + 1}.</span> ${cohort}</span>
-                <span>${count} registrations</span>
-              </div>`
-            ).join('')}
-          </div>
-
-          <div class="leaderboard">
-            <h3>🌍 Top States/Regions</h3>
-            ${topStates.map(([state, count], index) => 
-              `<div class="leaderboard-item">
-                <span><span class="rank">${index + 1}.</span> ${state}</span>
-                <span>${count} registrations</span>
-              </div>`
-            ).join('')}
-          </div>
-
-          <div class="leaderboard">
-            <h3>💵 Revenue by Cohort</h3>
-            ${revenueByCohort.map(([cohort, data], index) => 
-              `<div class="leaderboard-item">
-                <span><span class="rank">${index + 1}.</span> ${cohort}</span>
-                <span>₹${data.revenue.toLocaleString()}</span>
-              </div>`
-            ).join('')}
-          </div>
-
-          <div class="footer">
-            <p>This report was generated from the TMA Hykon Innovation Challenge Admin Dashboard</p>
-            <p>© ${new Date().getFullYear()} TMA Hykon - All rights reserved</p>
+            <div class="footer">
+              <p><strong>TMA Hykon Innovation Challenge - Comprehensive Analytics Report</strong></p>
+              <p>This report contains complete leaderboard data and performance metrics</p>
+              <p>Generated from Admin Dashboard | © ${new Date().getFullYear()} TMA Hykon - All rights reserved</p>
+              <p>For questions about this report, contact the admin team</p>
+            </div>
           </div>
         </body>
         </html>
@@ -587,9 +985,9 @@ const AdminDashboard = () => {
       // Wait for content to load then print
       setTimeout(() => {
         printWindow.print();
-        showNotification('PDF export initiated - check your downloads', 'success');
-        createLog('PDF export', `Exported dashboard report to PDF`);
-      }, 500);
+        showNotification('Comprehensive PDF report generated successfully!', 'success');
+        createLog('PDF export', `Exported comprehensive dashboard report with all leaderboard data`);
+      }, 1000);
 
     } catch (error) {
       console.error('Error exporting to PDF:', error);
@@ -972,36 +1370,116 @@ const AdminDashboard = () => {
         </div>
       ) : (
         <>
-          <div className="overview-stats">
-            <div className="stat-card">
-              <h3>Total Registrations</h3>
-              <div className="stat-value">{registrations.length}</div>
-              <div className="stat-label">All registrations</div>
-            </div>
-            <div className="stat-card">
-              <h3>Paid Registrations</h3>
-              <div className="stat-value">{registrations.filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length}</div>
-              <div className="stat-label">
-                {registrations.length > 0 
-                  ? Math.round(registrations.filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length / registrations.length * 100)
-                  : 0}% completion rate
+          {/* Date Filter Section - Only affects leaderboards */}
+          <div className="date-filter-section" style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            padding: '20px',
+            borderRadius: '12px',
+            marginBottom: '24px',
+            color: 'white'
+          }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.2rem' }}>
+              📅 Filter Leaderboards by Date Range
+            </h3>
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+              gap: '16px',
+              alignItems: 'end'
+            }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', opacity: '0.9' }}>
+                  From Date:
+                </label>
+                <input
+                  type="date"
+                  value={dateFilter.startDate}
+                  onChange={(e) => setDateFilter(prev => ({ ...prev, startDate: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontSize: '0.9rem'
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', opacity: '0.9' }}>
+                  To Date:
+                </label>
+                <input
+                  type="date"
+                  value={dateFilter.endDate}
+                  onChange={(e) => setDateFilter(prev => ({ ...prev, endDate: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontSize: '0.9rem'
+                  }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={applyDateFilter}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 16px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseOver={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
+                  onMouseOut={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+                >
+                  Apply Filter
+                </button>
+                <button
+                  onClick={resetDateFilter}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    padding: '10px 16px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseOver={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+                  onMouseOut={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.1)'}
+                >
+                  Clear Filter
+                </button>
               </div>
             </div>
-            <div className="stat-card">
-              <h3>Active Cohorts</h3>
-              <div className="stat-value">{new Set(registrations.map(r => r.Cohort)).size}</div>
-              <div className="stat-label">Different cohorts</div>
-            </div>
-            <div className="stat-card">
-              <h3>Pending Payments</h3>
-              <div className="stat-value">{registrations.filter(r => !r.payment_status || r.payment_status === 'pending').length}</div>
-              <div className="stat-label">Awaiting payment</div>
-            </div>
+            {dateFilter.enabled && (
+              <div style={{ 
+                marginTop: '12px', 
+                padding: '8px 12px', 
+                background: 'rgba(255, 255, 255, 0.1)', 
+                borderRadius: '6px',
+                fontSize: '0.85rem'
+              }}>
+                📊 Leaderboards showing {getFilteredRegistrations().length} of {registrations.length} registrations
+                {dateFilter.startDate && ` from ${dateFilter.startDate}`}
+                {dateFilter.endDate && ` to ${dateFilter.endDate}`}
+                <br />
+                <small style={{ opacity: '0.8' }}>
+                  💡 Note: Statistics above show all data, only leaderboards are filtered
+                </small>
+              </div>
+            )}
           </div>
-          
-          {/* Leaderboards Section */}
+
+          {/* Leaderboards Section - Uses filtered data */}
           <div className="leaderboards-section">
-            <h3>Leaderboards</h3>
+            <h3>Leaderboards {dateFilter.enabled ? '(Filtered by Date)' : ''}</h3>
             <div className="leaderboards-grid">
               
               {/* Cohorts Leaderboard */}
@@ -1009,7 +1487,7 @@ const AdminDashboard = () => {
                 <h4>🏆 Top Cohorts</h4>
                 <div className="leaderboard-list">
                   {Object.entries(
-                    registrations.reduce((acc, reg) => {
+                    getFilteredRegistrations().reduce((acc, reg) => {
                       const cohort = reg.Cohort || 'Unknown';
                       acc[cohort] = (acc[cohort] || 0) + 1;
                       return acc;
@@ -1032,7 +1510,7 @@ const AdminDashboard = () => {
                 <h4>👥 TMA Membership</h4>
                 <div className="leaderboard-list">
                   {Object.entries(
-                    registrations.reduce((acc, reg) => {
+                    getFilteredRegistrations().reduce((acc, reg) => {
                       const isTMAMember = reg.TMAMember === 'Yes' || reg.TMAMember === true;
                       const category = isTMAMember ? 'TMA Members' : 'Non-Members';
                       acc[category] = (acc[category] || 0) + 1;
@@ -1055,7 +1533,7 @@ const AdminDashboard = () => {
                 <h4>🏛️ Top Institutions</h4>
                 <div className="leaderboard-list">
                   {Object.entries(
-                    registrations.reduce((acc, reg) => {
+                    getFilteredRegistrations().reduce((acc, reg) => {
                       const institution = reg.Institution || reg.CollegeName || 'Unknown Institution';
                       acc[institution] = (acc[institution] || 0) + 1;
                       return acc;
@@ -1078,7 +1556,7 @@ const AdminDashboard = () => {
                 <h4>🌍 Top States/Regions</h4>
                 <div className="leaderboard-list">
                   {Object.entries(
-                    registrations.reduce((acc, reg) => {
+                    getFilteredRegistrations().reduce((acc, reg) => {
                       const state = reg.State || reg.Region || 'Unknown State';
                       acc[state] = (acc[state] || 0) + 1;
                       return acc;
@@ -1101,7 +1579,7 @@ const AdminDashboard = () => {
                 <h4>💵 Revenue by Cohort</h4>
                 <div className="leaderboard-list">
                   {Object.entries(
-                    registrations.reduce((acc, reg) => {
+                    getFilteredRegistrations().reduce((acc, reg) => {
                       const cohort = reg.Cohort || 'Unknown';
                       const amount = parseFloat(reg.payment_amount || reg.amount || 0);
                       if (!acc[cohort]) acc[cohort] = { count: 0, revenue: 0 };
@@ -1127,7 +1605,7 @@ const AdminDashboard = () => {
                 <h4>🎓 Academic Year/Level</h4>
                 <div className="leaderboard-list">
                   {Object.entries(
-                    registrations.reduce((acc, reg) => {
+                    getFilteredRegistrations().reduce((acc, reg) => {
                       const year = reg.AcademicYear || reg.Year || reg.CurrentYear || 'Unknown Year';
                       acc[year] = (acc[year] || 0) + 1;
                       return acc;
@@ -1150,7 +1628,7 @@ const AdminDashboard = () => {
                 <h4>📅 Registration Timeline</h4>
                 <div className="leaderboard-list">
                   {Object.entries(
-                    registrations.reduce((acc, reg) => {
+                    getFilteredRegistrations().reduce((acc, reg) => {
                       if (reg.submittedAt && reg.submittedAt.seconds) {
                         const date = new Date(reg.submittedAt.seconds * 1000).toLocaleDateString();
                         acc[date] = (acc[date] || 0) + 1;
@@ -1174,12 +1652,336 @@ const AdminDashboard = () => {
 
             </div>
           </div>
+          {/* Quick Actions section removed - moved to Tools */}
+        </>
+      )}
+    </div>
+  );
+
+  // Render Analytics Section
+  const renderAnalytics = () => (
+    <div className="section">
+      <h2>Analytics & Reports</h2>
+      
+      {/* Date Filter Section for Analytics */}
+      <div className="date-filter-section" style={{
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        padding: '20px',
+        borderRadius: '12px',
+        marginBottom: '24px',
+        color: 'white'
+      }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: '1.2rem' }}>
+          📅 Filter Analytics by Date Range
+        </h3>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+          gap: '16px',
+          alignItems: 'end'
+        }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', opacity: '0.9' }}>
+              From Date:
+            </label>
+            <input
+              type="date"
+              value={dateFilter.startDate}
+              onChange={(e) => setDateFilter(prev => ({ ...prev, startDate: e.target.value }))}
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '6px',
+                border: 'none',
+                fontSize: '0.9rem'
+              }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', opacity: '0.9' }}>
+              To Date:
+            </label>
+            <input
+              type="date"
+              value={dateFilter.endDate}
+              onChange={(e) => setDateFilter(prev => ({ ...prev, endDate: e.target.value }))}
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '6px',
+                border: 'none',
+                fontSize: '0.9rem'
+              }}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={applyDateFilter}
+              style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                border: 'none',
+                padding: '10px 16px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
+              onMouseOut={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+            >
+              Apply Filter
+            </button>
+            <button
+              onClick={resetDateFilter}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                padding: '10px 16px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+              onMouseOut={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.1)'}
+            >
+              Clear Filter
+            </button>
+          </div>
+        </div>
+        {dateFilter.enabled && (
+          <div style={{ 
+            marginTop: '12px', 
+            padding: '8px 12px', 
+            background: 'rgba(255, 255, 255, 0.1)', 
+            borderRadius: '6px',
+            fontSize: '0.85rem'
+          }}>
+            📊 Analyzing {getFilteredRegistrations().length} of {registrations.length} registrations
+            {dateFilter.startDate && ` from ${dateFilter.startDate}`}
+            {dateFilter.endDate && ` to ${dateFilter.endDate}`}
+          </div>
+        )}
+      </div>
+      
+      {loading ? (
+        <div className="loading">
+          <div className="spinner"></div>
+          Loading analytics from Firestore...
+        </div>
+      ) : (
+        <>
+          {/* Real-time Analytics KPIs based on filtered data */}
+          <div className="kpi-cards">
+            <div className="kpi-card">
+              <h3>Total Registrations</h3>
+              <div className="kpi-value">{getFilteredRegistrations().length}</div>
+              <div className="kpi-change positive">
+                {dateFilter.enabled ? 'Filtered Data' : 'All Data'}
+              </div>
+            </div>
+            <div className="kpi-card">
+              <h3>Completion Rate</h3>
+              <div className="kpi-value">
+                {getFilteredRegistrations().length > 0 
+                  ? Math.round(getFilteredRegistrations().filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length / getFilteredRegistrations().length * 100)
+                  : 0}%
+              </div>
+              <div className="kpi-change">
+                {getFilteredRegistrations().filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length} paid
+              </div>
+            </div>
+            <div className="kpi-card">
+              <h3>Total Revenue</h3>
+              <div className="kpi-value">
+                ₹{getFilteredRegistrations().reduce((sum, reg) => sum + parseFloat(reg.payment_amount || reg.amount || 0), 0).toLocaleString()}
+              </div>
+              <div className="kpi-change positive">
+                Revenue Generated
+              </div>
+            </div>
+            <div className="kpi-card">
+              <h3>Active Cohorts</h3>
+              <div className="kpi-value">{new Set(getFilteredRegistrations().map(r => r.Cohort)).size}</div>
+              <div className="kpi-change">
+                Different Programs
+              </div>
+            </div>
+          </div>
           
-          <div className="recent-activity">
-            <h3>Recent Registrations</h3>
-            {registrations.length > 0 ? (
+          <div className="cohort-distribution">
+            <h3>Cohort Distribution {dateFilter.enabled ? '(Filtered)' : ''}</h3>
+            {getFilteredRegistrations().length > 0 ? (
+              <div className="cohort-stats">
+                {Object.entries(
+                  getFilteredRegistrations().reduce((acc, reg) => {
+                    const cohort = reg.Cohort || 'Unknown';
+                    acc[cohort] = (acc[cohort] || 0) + 1;
+                    return acc;
+                  }, {})
+                )
+                .sort(([,a], [,b]) => b - a)
+                .map(([cohort, count]) => (
+                  <div key={cohort} className="cohort-item">
+                    <span className="cohort-name">{cohort}</span>
+                    <span className="cohort-count">{count} registrations</span>
+                    <div className="cohort-bar">
+                      <div 
+                        className="cohort-fill" 
+                        style={{ width: `${(count / Math.max(...Object.values(
+                          getFilteredRegistrations().reduce((acc, reg) => {
+                            const cohort = reg.Cohort || 'Unknown';
+                            acc[cohort] = (acc[cohort] || 0) + 1;
+                            return acc;
+                          }, {})
+                        ))) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>{dateFilter.enabled ? 'No registrations found for the selected date range' : 'No cohort data available'}</p>
+            )}
+          </div>
+
+          {/* Leaderboards Section for Analytics */}
+          <div className="leaderboards-section" style={{ marginTop: '30px' }}>
+            <h3>Detailed Analytics {dateFilter.enabled ? '(Filtered)' : ''}</h3>
+            <div className="leaderboards-grid">
+              
+              {/* TMA Members Analytics */}
+              <div className="leaderboard-card">
+                <h4>👥 TMA Membership Analysis</h4>
+                <div className="leaderboard-list">
+                  {Object.entries(
+                    getFilteredRegistrations().reduce((acc, reg) => {
+                      const isTMAMember = reg.TMAMember === 'Yes' || reg.TMAMember === true;
+                      const category = isTMAMember ? 'TMA Members' : 'Non-Members';
+                      acc[category] = (acc[category] || 0) + 1;
+                      return acc;
+                    }, {})
+                  )
+                  .sort(([,a], [,b]) => b - a)
+                  .map(([category, count], index) => (
+                    <div key={category} className="leaderboard-item">
+                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
+                      <span className="name">{category}</span>
+                      <span className="score">{count} registrations</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Revenue Analysis */}
+              <div className="leaderboard-card">
+                <h4>💵 Revenue by Cohort</h4>
+                <div className="leaderboard-list">
+                  {Object.entries(
+                    getFilteredRegistrations().reduce((acc, reg) => {
+                      const cohort = reg.Cohort || 'Unknown';
+                      const amount = parseFloat(reg.payment_amount || reg.amount || 0);
+                      if (!acc[cohort]) acc[cohort] = { count: 0, revenue: 0 };
+                      acc[cohort].count += 1;
+                      acc[cohort].revenue += amount;
+                      return acc;
+                    }, {})
+                  )
+                  .sort(([,a], [,b]) => b.revenue - a.revenue)
+                  .slice(0, 5)
+                  .map(([cohort, data], index) => (
+                    <div key={cohort} className="leaderboard-item">
+                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
+                      <span className="name">{cohort}</span>
+                      <span className="score">₹{data.revenue.toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Institution Analysis */}
+              <div className="leaderboard-card">
+                <h4>🏛️ Top Institutions</h4>
+                <div className="leaderboard-list">
+                  {Object.entries(
+                    getFilteredRegistrations().reduce((acc, reg) => {
+                      const institution = reg.Institution || reg.CollegeName || 'Unknown Institution';
+                      acc[institution] = (acc[institution] || 0) + 1;
+                      return acc;
+                    }, {})
+                  )
+                  .sort(([,a], [,b]) => b - a)
+                  .slice(0, 5)
+                  .map(([institution, count], index) => (
+                    <div key={institution} className="leaderboard-item">
+                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
+                      <span className="name">{institution}</span>
+                      <span className="score">{count} registrations</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Geographic Analysis */}
+              <div className="leaderboard-card">
+                <h4>🌍 Geographic Distribution</h4>
+                <div className="leaderboard-list">
+                  {Object.entries(
+                    getFilteredRegistrations().reduce((acc, reg) => {
+                      const state = reg.State || reg.Region || 'Unknown State';
+                      acc[state] = (acc[state] || 0) + 1;
+                      return acc;
+                    }, {})
+                  )
+                  .sort(([,a], [,b]) => b - a)
+                  .slice(0, 5)
+                  .map(([state, count], index) => (
+                    <div key={state} className="leaderboard-item">
+                      <span className={`rank rank-${index + 1}`}>{index + 1}</span>
+                      <span className="name">{state}</span>
+                      <span className="score">{count} registrations</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Recent Activity Section */}
+          <div className="recent-activity" style={{ marginTop: '30px' }}>
+            <h3>Recent Activity</h3>
+            {logsLoading ? (
+              <div className="loading">
+                <div className="spinner"></div>
+                Loading recent activities...
+              </div>
+            ) : logs.length > 0 ? (
+              <ul className="activity-list">
+                {logs.slice(0, 5).map(log => (
+                  <li key={log.id} className="activity-item">
+                    <span className="activity-time">
+                      {log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString() : 'Unknown time'}
+                    </span>
+                    <span className="activity-text">
+                      <strong>{log.action}</strong>: {log.details}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No recent activity found. Activity logs will appear here when actions are performed.</p>
+            )}
+          </div>
+
+          {/* Recent Registrations Section */}
+          <div className="recent-activity" style={{ marginTop: '30px' }}>
+            <h3>Recent Registrations {dateFilter.enabled ? '(Filtered)' : ''}</h3>
+            {getFilteredRegistrations().length > 0 ? (
               <div className="activity-list">
-                {registrations.slice(-5).reverse().map(reg => (
+                {getFilteredRegistrations().slice(-5).reverse().map(reg => (
                   <div key={reg.id} className="activity-item">
                     <div className="activity-info">
                       <strong>{reg.FullName || 'Unknown'}</strong> registered for <strong>{reg.Cohort || 'Unknown cohort'}</strong>
@@ -1194,93 +1996,7 @@ const AdminDashboard = () => {
                 ))}
               </div>
             ) : (
-              <p>No registrations found. The Firestore 'registrations' collection appears to be empty.</p>
-            )}
-          </div>
-          
-          {/* Quick Actions - Admin Only */}
-          {hasAccess('admin') && (
-            <div className="quick-actions">
-              <h3>Quick Actions</h3>
-              <div className="action-buttons">
-                <button className="btn-action" onClick={() => setActiveTab('users')}>Manage Registrations</button>
-                <button className="btn-action" onClick={() => setActiveTab('analytics')}>View Analytics</button>
-                <button className="btn-action" onClick={fetchRegistrations}>Refresh Data</button>
-                <button className="btn-action" onClick={exportToCSV}>Export CSV</button>
-                <button className="btn-action pdf-export" onClick={exportToPDF}>📄 Export PDF</button>
-              </div>
-            </div>
-          )}
-        </>
-      )}
-      
-      <div className="recent-activity">
-        <h3>Recent Activity</h3>
-        <ul className="activity-list">
-          <li className="activity-item">
-            <span className="activity-time">Just now</span>
-            <span className="activity-text">User login: admin@example.com</span>
-          </li>
-          <li className="activity-item">
-            <span className="activity-time">5 minutes ago</span>
-            <span className="activity-text">New user registered: guest@example.com</span>
-          </li>
-          <li className="activity-item">
-            <span className="activity-time">1 hour ago</span>
-            <span className="activity-text">System backup completed</span>
-          </li>
-          <li className="activity-item">
-            <span className="activity-time">3 hours ago</span>
-            <span className="activity-text">Database optimization performed</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-  );
-
-  // Render Analytics Section
-  const renderAnalytics = () => (
-    <div className="section">
-      <h2>Analytics & Reports</h2>
-      
-      {loading ? (
-        <div className="loading">
-          <div className="spinner"></div>
-          Loading analytics from Firestore...
-        </div>
-      ) : (
-        <>
-          <div className="kpi-cards">
-            {analytics.kpis && analytics.kpis.map((kpi, index) => (
-              <div className="kpi-card" key={index}>
-                <h3>{kpi.name}</h3>
-                <div className="kpi-value">{kpi.value}</div>
-                <div className={`kpi-change ${kpi.change.startsWith('+') ? 'positive' : 'negative'}`}>
-                  {kpi.change}
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="cohort-distribution">
-            <h3>Cohort Distribution</h3>
-            {analytics.cohortStats && Object.entries(analytics.cohortStats).length > 0 ? (
-              <div className="cohort-stats">
-                {Object.entries(analytics.cohortStats).map(([cohort, count]) => (
-                  <div key={cohort} className="cohort-item">
-                    <span className="cohort-name">{cohort}</span>
-                    <span className="cohort-count">{count} registrations</span>
-                    <div className="cohort-bar">
-                      <div 
-                        className="cohort-fill" 
-                        style={{ width: `${(count / Math.max(...Object.values(analytics.cohortStats))) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p>No cohort data available</p>
+              <p>{dateFilter.enabled ? 'No registrations found for the selected date range.' : 'No registrations found. The Firestore \'registrations\' collection appears to be empty.'}</p>
             )}
           </div>
         </>
@@ -1339,39 +2055,211 @@ const AdminDashboard = () => {
   // Render Tools Section
   const renderTools = () => (
     <div className="section">
-      <h2>Tools & Utilities</h2>
+      <h2>🛠️ Tools & Utilities</h2>
+      <p style={{ color: '#666', marginBottom: '24px' }}>
+        Administrative tools for data management, navigation, and system operations
+      </p>
       
       <div className="tools-grid">
+        {/* Navigation & Quick Actions */}
         <div className="tool-card">
-          <h3>Data Management</h3>
+          <div className="tool-header">
+            <h3>🚀 Quick Navigation</h3>
+            <p>Jump to different sections quickly</p>
+          </div>
           <div className="tool-actions">
-            <button className="btn-primary" onClick={fetchRegistrations}>
-              🔄 Refresh Firestore Data
+            <button className="btn-action" onClick={() => setActiveTab('overview')}>
+              📊 Dashboard Overview
             </button>
+            <button className="btn-action" onClick={() => setActiveTab('users')}>
+              👥 Manage Registrations
+            </button>
+            <button className="btn-action" onClick={() => setActiveTab('analytics')}>
+              📈 View Analytics
+            </button>
+            <button className="btn-action" onClick={() => setActiveTab('logs')}>
+              📋 Activity Logs
+            </button>
+          </div>
+        </div>
+
+        {/* Data Export Tools */}
+        <div className="tool-card">
+          <div className="tool-header">
+            <h3>📤 Data Export</h3>
+            <p>Export data in various formats</p>
+          </div>
+          <div className="tool-actions">
             <button className="btn-accent" onClick={exportToCSV}>
-              📊 Export All Data (CSV)
+              📊 Export CSV
+            </button>
+            <button className="btn-accent pdf-export" onClick={exportToPDF}>
+              📄 Export PDF Report
+            </button>
+            <button 
+              className="btn-secondary" 
+              onClick={() => {
+                const jsonData = JSON.stringify(registrations, null, 2);
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `registrations_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                showNotification('JSON export completed!', 'success');
+              }}
+            >
+              �️ Export JSON
             </button>
           </div>
         </div>
         
+        {/* Data Management */}
         <div className="tool-card">
-          <h3>System Information</h3>
+          <div className="tool-header">
+            <h3>�🔄 Data Management</h3>
+            <p>Refresh and manage database connections</p>
+          </div>
+          <div className="tool-actions">
+            <button className="btn-primary" onClick={fetchRegistrations}>
+              🔄 Refresh All Data
+            </button>
+            <button className="btn-secondary" onClick={fetchLogs}>
+              📋 Refresh Logs
+            </button>
+            <button 
+              className="btn-warning" 
+              onClick={() => {
+                if (window.confirm('This will clear all cached data and reload from Firestore. Continue?')) {
+                  setRegistrations([]);
+                  setLogs([]);
+                  fetchRegistrations();
+                  fetchLogs();
+                  showNotification('Data cache cleared and reloaded!', 'success');
+                }
+              }}
+            >
+              🧹 Clear Cache
+            </button>
+          </div>
+        </div>
+
+        {/* System Information */}
+        <div className="tool-card">
+          <div className="tool-header">
+            <h3>ℹ️ System Status</h3>
+            <p>Current system information and metrics</p>
+          </div>
           <div className="system-info">
-            <div className="info-item">
-              <span>Database:</span>
-              <strong>Firebase Firestore</strong>
+            <div className="info-grid">
+              <div className="info-item">
+                <span className="info-label">Database:</span>
+                <strong className="info-value">Firebase Firestore</strong>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Connection:</span>
+                <strong className="info-value" style={{color: '#10b981'}}>✅ Connected</strong>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Total Records:</span>
+                <strong className="info-value">{registrations.length.toLocaleString()}</strong>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Activity Logs:</span>
+                <strong className="info-value">{logs.length.toLocaleString()}</strong>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Paid Records:</span>
+                <strong className="info-value">
+                  {registrations.filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length}
+                </strong>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Last Updated:</span>
+                <strong className="info-value">{new Date().toLocaleString()}</strong>
+              </div>
             </div>
-            <div className="info-item">
-              <span>Connection Status:</span>
-              <strong style={{color: '#10b981'}}>Connected</strong>
+          </div>
+        </div>
+
+        {/* Advanced Tools */}
+        <div className="tool-card">
+          <div className="tool-header">
+            <h3>⚙️ Advanced Tools</h3>
+            <p>Advanced administrative operations</p>
+          </div>
+          <div className="tool-actions">
+            <button 
+              className="btn-secondary"
+              onClick={() => {
+                const stats = {
+                  totalRegistrations: registrations.length,
+                  paidRegistrations: registrations.filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length,
+                  totalRevenue: registrations.reduce((sum, reg) => sum + parseFloat(reg.payment_amount || reg.amount || 0), 0),
+                  cohorts: new Set(registrations.map(r => r.Cohort)).size,
+                  institutions: new Set(registrations.map(r => r.Institution || r.CollegeName)).size
+                };
+                alert(JSON.stringify(stats, null, 2));
+              }}
+            >
+              📊 Show Statistics
+            </button>
+            <button 
+              className="btn-secondary"
+              onClick={() => {
+                createLog('System Check', 'Manual system health check performed');
+                showNotification('System check completed!', 'success');
+              }}
+            >
+              🔧 System Check
+            </button>
+            <button 
+              className="btn-info"
+              onClick={() => {
+                const totalSize = JSON.stringify(registrations).length + JSON.stringify(logs).length;
+                const sizeInKB = (totalSize / 1024).toFixed(2);
+                showNotification(`Current data size: ${sizeInKB} KB`, 'info');
+              }}
+            >
+              📏 Data Size
+            </button>
+          </div>
+        </div>
+
+        {/* User Management */}
+        <div className="tool-card">
+          <div className="tool-header">
+            <h3>👤 User Management</h3>
+            <p>Current session and user information</p>
+          </div>
+          <div className="system-info">
+            <div className="info-grid">
+              <div className="info-item">
+                <span className="info-label">Current User:</span>
+                <strong className="info-value">{currentUser?.name || 'Unknown'}</strong>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Role:</span>
+                <strong className="info-value">{currentUser?.role || 'Unknown'}</strong>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Login Time:</span>
+                <strong className="info-value">{new Date().toLocaleTimeString()}</strong>
+              </div>
             </div>
-            <div className="info-item">
-              <span>Total Records:</span>
-              <strong>{registrations.length}</strong>
-            </div>
-            <div className="info-item">
-              <span>Last Updated:</span>
-              <strong>{new Date().toLocaleString()}</strong>
+            <div className="tool-actions" style={{ marginTop: '16px' }}>
+              <button 
+                className="btn-warning"
+                onClick={() => {
+                  if (window.confirm('Are you sure you want to logout?')) {
+                    setIsLoggedIn(false);
+                    setCurrentUser(null);
+                    showNotification('Logged out successfully', 'success');
+                  }
+                }}
+              >
+                🚪 Logout
+              </button>
             </div>
           </div>
         </div>
@@ -1985,20 +2873,122 @@ const AdminDashboard = () => {
         /* Tools Grid */
         .tools-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
           gap: 1.5rem;
         }
         
         .tool-card {
           background-color: #fff;
-          border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          border-radius: 12px;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
           padding: 1.5rem;
+          border: 1px solid #e5e7eb;
+          transition: all 0.3s ease;
+        }
+
+        .tool-card:hover {
+          box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+          transform: translateY(-2px);
         }
         
-        .tool-card h3 {
-          margin-bottom: 1rem;
+        .tool-header {
+          margin-bottom: 1.5rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid #f0f0f0;
+        }
+
+        .tool-header h3 {
+          margin: 0 0 0.5rem 0;
           color: #3f51b5;
+          font-size: 1.1rem;
+          font-weight: 600;
+        }
+
+        .tool-header p {
+          margin: 0;
+          color: #666;
+          font-size: 0.9rem;
+          line-height: 1.4;
+        }
+
+        .tool-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .info-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+        }
+
+        .info-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem 0;
+          border-bottom: 1px solid #f5f5f5;
+        }
+
+        .info-item:last-child {
+          border-bottom: none;
+        }
+
+        .info-label {
+          color: #666;
+          font-size: 0.9rem;
+        }
+
+        .info-value {
+          color: #333;
+          font-weight: 600;
+          font-size: 0.9rem;
+        }
+
+        .btn-secondary {
+          background-color: #6c757d;
+          color: white;
+          border: none;
+          padding: 0.6rem 1rem;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 0.9rem;
+          transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+          background-color: #5a6268;
+        }
+
+        .btn-warning {
+          background-color: #f59e0b;
+          color: white;
+          border: none;
+          padding: 0.6rem 1rem;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 0.9rem;
+          transition: all 0.2s;
+        }
+
+        .btn-warning:hover {
+          background-color: #d97706;
+        }
+
+        .btn-info {
+          background-color: #3b82f6;
+          color: white;
+          border: none;
+          padding: 0.6rem 1rem;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 0.9rem;
+          transition: all 0.2s;
+        }
+
+        .btn-info:hover {
+          background-color: #2563eb;
         }
         
         /* Dashboard Overview */
