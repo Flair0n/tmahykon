@@ -215,21 +215,99 @@ const capitalizeWords = (text) => {
     .join(' ');
 };
 
+// Institution-specific matching rules
+const INSTITUTION_MAPPINGS = {
+  // VIT variations
+  'vit': 'Vellore Institute of Technology',
+  'vit vellore': 'Vellore Institute of Technology',
+  'vellore institute of technology': 'Vellore Institute of Technology',
+  'vellore institute': 'Vellore Institute of Technology',
+  
+  // IIT variations
+  'iit delhi': 'Indian Institute of Technology Delhi',
+  'iitd': 'Indian Institute of Technology Delhi',
+  'iit bombay': 'Indian Institute of Technology Bombay',
+  'iitb': 'Indian Institute of Technology Bombay',
+  'iit madras': 'Indian Institute of Technology Madras',
+  'iitm': 'Indian Institute of Technology Madras',
+  'iit kanpur': 'Indian Institute of Technology Kanpur',
+  'iitk': 'Indian Institute of Technology Kanpur',
+  'iit kharagpur': 'Indian Institute of Technology Kharagpur',
+  'iit kgp': 'Indian Institute of Technology Kharagpur',
+  'iit roorkee': 'Indian Institute of Technology Roorkee',
+  'iitr': 'Indian Institute of Technology Roorkee',
+  'iit guwahati': 'Indian Institute of Technology Guwahati',
+  'iitg': 'Indian Institute of Technology Guwahati',
+  'iit hyderabad': 'Indian Institute of Technology Hyderabad',
+  'iith': 'Indian Institute of Technology Hyderabad',
+  
+  // NIT variations
+  'nit trichy': 'National Institute of Technology Trichy',
+  'nitt': 'National Institute of Technology Trichy',
+  'nit warangal': 'National Institute of Technology Warangal',
+  'nitw': 'National Institute of Technology Warangal',
+  'nit calicut': 'National Institute of Technology Calicut',
+  'nitc': 'National Institute of Technology Calicut',
+  
+  // Other common institutions
+  'srm': 'SRM Institute of Science and Technology',
+  'srm university': 'SRM Institute of Science and Technology',
+  'srm institute': 'SRM Institute of Science and Technology',
+  'manipal': 'Manipal Institute of Technology',
+  'manipal institute': 'Manipal Institute of Technology',
+  'pes': 'PES University',
+  'pes university': 'PES University',
+  'rv college': 'RV College of Engineering',
+  'rvce': 'RV College of Engineering',
+  'bms college': 'BMS College of Engineering',
+  'bmsce': 'BMS College of Engineering',
+  'bits pilani': 'Birla Institute of Technology and Science Pilani',
+  'bits': 'Birla Institute of Technology and Science Pilani',
+  'iisc': 'Indian Institute of Science Bangalore',
+  'iisc bangalore': 'Indian Institute of Science Bangalore'
+};
+
 // Fuzzy search functions
 export const fuzzySearchInstitution = (input) => {
   if (!input || input.length < 2) return { original: input, cleaned: input, confidence: 0 };
   
   const cleaned = cleanText(input);
-  const results = institutionFuse.search(cleaned);
+  console.log(`Institution search for "${input}" -> cleaned: "${cleaned}"`);
   
-  console.log(`Institution search for "${input}":`, results);
+  // First, check exact mappings
+  if (INSTITUTION_MAPPINGS[cleaned]) {
+    console.log(`Exact mapping found: ${cleaned} -> ${INSTITUTION_MAPPINGS[cleaned]}`);
+    return {
+      original: input,
+      cleaned: INSTITUTION_MAPPINGS[cleaned],
+      confidence: 95,
+      suggestions: [INSTITUTION_MAPPINGS[cleaned]]
+    };
+  }
+  
+  // Check partial mappings
+  for (const [key, value] of Object.entries(INSTITUTION_MAPPINGS)) {
+    if (cleaned.includes(key) || key.includes(cleaned)) {
+      console.log(`Partial mapping found: ${key} -> ${value}`);
+      return {
+        original: input,
+        cleaned: value,
+        confidence: 85,
+        suggestions: [value]
+      };
+    }
+  }
+  
+  // Fallback to fuzzy search with more restrictive scoring
+  const results = institutionFuse.search(cleaned);
+  console.log(`Fuzzy search results for "${cleaned}":`, results);
   
   if (results.length > 0) {
     const bestMatch = results[0];
     const score = bestMatch.score || 0;
     
-    // More lenient matching - accept matches with score < 0.6
-    if (score < 0.6) {
+    // More restrictive matching - only accept very good matches
+    if (score < 0.3) {
       return {
         original: input,
         cleaned: bestMatch.item.name,
@@ -239,25 +317,11 @@ export const fuzzySearchInstitution = (input) => {
     }
   }
   
-  // If no good match found, try partial matching
-  const partialMatches = MASTER_DATA.institutions.filter(inst => 
-    inst.toLowerCase().includes(cleaned.toLowerCase()) || 
-    cleaned.toLowerCase().includes(inst.toLowerCase())
-  );
-  
-  if (partialMatches.length > 0) {
-    return {
-      original: input,
-      cleaned: partialMatches[0],
-      confidence: 70,
-      suggestions: partialMatches.slice(0, 3)
-    };
-  }
-  
+  // If no good match found, just capitalize the original
   return {
     original: input,
     cleaned: capitalizeWords(input),
-    confidence: 30,
+    confidence: 40,
     suggestions: results.slice(0, 3).map(r => r.item.name)
   };
 };
@@ -331,12 +395,271 @@ export const fuzzySearchCity = (input) => {
   };
 };
 
-// Clean all form data
+// Enhanced institution search based on name and type
+export const fuzzySearchInstitutionWithType = (institutionName, institutionType) => {
+  if (!institutionName || institutionName.length < 2) {
+    return { original: institutionName, cleaned: institutionName, confidence: 0 };
+  }
+  
+  const cleanedName = cleanText(institutionName);
+  const cleanedType = cleanText(institutionType || '');
+  
+  console.log(`Institution search for "${institutionName}" (type: "${institutionType}")`);
+  
+  // First, check exact mappings
+  if (INSTITUTION_MAPPINGS[cleanedName]) {
+    const mapped = INSTITUTION_MAPPINGS[cleanedName];
+    console.log(`Exact mapping found: ${cleanedName} -> ${mapped}`);
+    return {
+      original: institutionName,
+      cleaned: mapped,
+      confidence: 95,
+      suggestions: [mapped]
+    };
+  }
+  
+  // Enhanced search considering both name and type
+  const searchQuery = `${cleanedName} ${cleanedType}`.trim();
+  
+  // Check if type gives us hints about the institution based on actual form values
+  if (cleanedType.includes('engineering college') || cleanedType.includes('technology institute')) {
+    // Look for IIT matches based on location name
+    const iitLocationHints = ['delhi', 'bombay', 'madras', 'kanpur', 'kharagpur', 'roorkee', 'guwahati', 'hyderabad'];
+    for (const location of iitLocationHints) {
+      if (cleanedName.includes(location)) {
+        const iitKey = `iit ${location}`;
+        if (INSTITUTION_MAPPINGS[iitKey]) {
+          return {
+            original: institutionName,
+            cleaned: INSTITUTION_MAPPINGS[iitKey],
+            confidence: 95,
+            suggestions: [INSTITUTION_MAPPINGS[iitKey]]
+          };
+        }
+      }
+    }
+    
+    // Look for NIT matches based on location name
+    const nitLocationHints = ['trichy', 'warangal', 'calicut', 'surathkal', 'durgapur', 'jaipur', 'kurukshetra'];
+    for (const location of nitLocationHints) {
+      if (cleanedName.includes(location)) {
+        const nitKey = `nit ${location}`;
+        if (INSTITUTION_MAPPINGS[nitKey]) {
+          return {
+            original: institutionName,
+            cleaned: INSTITUTION_MAPPINGS[nitKey],
+            confidence: 95,
+            suggestions: [INSTITUTION_MAPPINGS[nitKey]]
+          };
+        }
+      }
+    }
+    
+    // Common engineering colleges
+    if (cleanedName.includes('vit') || cleanedName.includes('vellore')) {
+      return {
+        original: institutionName,
+        cleaned: 'Vellore Institute of Technology',
+        confidence: 95,
+        suggestions: ['Vellore Institute of Technology']
+      };
+    }
+    if (cleanedName.includes('srm')) {
+      return {
+        original: institutionName,
+        cleaned: 'SRM Institute of Science and Technology',
+        confidence: 95,
+        suggestions: ['SRM Institute of Science and Technology']
+      };
+    }
+    if (cleanedName.includes('rv') || cleanedName.includes('rvce')) {
+      return {
+        original: institutionName,
+        cleaned: 'RV College of Engineering',
+        confidence: 95,
+        suggestions: ['RV College of Engineering']
+      };
+    }
+    if (cleanedName.includes('bms') || cleanedName.includes('bmsce')) {
+      return {
+        original: institutionName,
+        cleaned: 'BMS College of Engineering',
+        confidence: 95,
+        suggestions: ['BMS College of Engineering']
+      };
+    }
+  }
+  
+  if (cleanedType.includes('medical college')) {
+    // Medical colleges
+    if (cleanedName.includes('aiims')) {
+      if (cleanedName.includes('delhi')) {
+        return {
+          original: institutionName,
+          cleaned: 'All India Institute of Medical Sciences Delhi',
+          confidence: 95,
+          suggestions: ['All India Institute of Medical Sciences Delhi']
+        };
+      }
+      return {
+        original: institutionName,
+        cleaned: 'All India Institute of Medical Sciences',
+        confidence: 90,
+        suggestions: ['All India Institute of Medical Sciences Delhi']
+      };
+    }
+    if (cleanedName.includes('cmc') || cleanedName.includes('christian medical college')) {
+      return {
+        original: institutionName,
+        cleaned: 'Christian Medical College Vellore',
+        confidence: 95,
+        suggestions: ['Christian Medical College Vellore']
+      };
+    }
+  }
+  
+  if (cleanedType.includes('management institute')) {
+    // Management institutes
+    if (cleanedName.includes('iim')) {
+      const iimLocations = ['ahmedabad', 'bangalore', 'calcutta', 'lucknow', 'kozhikode', 'indore'];
+      for (const location of iimLocations) {
+        if (cleanedName.includes(location)) {
+          return {
+            original: institutionName,
+            cleaned: `Indian Institute of Management ${location.charAt(0).toUpperCase() + location.slice(1)}`,
+            confidence: 95,
+            suggestions: [`Indian Institute of Management ${location.charAt(0).toUpperCase() + location.slice(1)}`]
+          };
+        }
+      }
+    }
+    if (cleanedName.includes('isb')) {
+      return {
+        original: institutionName,
+        cleaned: 'Indian School of Business',
+        confidence: 95,
+        suggestions: ['Indian School of Business']
+      };
+    }
+  }
+  
+  if (cleanedType.includes('university')) {
+    // Universities
+    if (cleanedName.includes('manipal')) {
+      return {
+        original: institutionName,
+        cleaned: 'Manipal Institute of Technology',
+        confidence: 95,
+        suggestions: ['Manipal Institute of Technology']
+      };
+    }
+    if (cleanedName.includes('pes')) {
+      return {
+        original: institutionName,
+        cleaned: 'PES University',
+        confidence: 95,
+        suggestions: ['PES University']
+      };
+    }
+    if (cleanedName.includes('bits') || cleanedName.includes('pilani')) {
+      return {
+        original: institutionName,
+        cleaned: 'Birla Institute of Technology and Science Pilani',
+        confidence: 95,
+        suggestions: ['Birla Institute of Technology and Science Pilani']
+      };
+    }
+  }
+  
+  if (cleanedType.includes('research institute')) {
+    // Research institutes
+    if (cleanedName.includes('iisc') || cleanedName.includes('indian institute of science')) {
+      return {
+        original: institutionName,
+        cleaned: 'Indian Institute of Science Bangalore',
+        confidence: 95,
+        suggestions: ['Indian Institute of Science Bangalore']
+      };
+    }
+    if (cleanedName.includes('tifr') || cleanedName.includes('tata institute')) {
+      return {
+        original: institutionName,
+        cleaned: 'Tata Institute of Fundamental Research',
+        confidence: 95,
+        suggestions: ['Tata Institute of Fundamental Research']
+      };
+    }
+  }
+  
+  // Check partial mappings with name
+  for (const [key, value] of Object.entries(INSTITUTION_MAPPINGS)) {
+    if (cleanedName.includes(key) || key.includes(cleanedName)) {
+      console.log(`Partial mapping found: ${key} -> ${value}`);
+      return {
+        original: institutionName,
+        cleaned: value,
+        confidence: 85,
+        suggestions: [value]
+      };
+    }
+  }
+  
+  // Fallback to fuzzy search with restrictive scoring
+  const results = institutionFuse.search(searchQuery);
+  console.log(`Fuzzy search results for "${searchQuery}":`, results);
+  
+  if (results.length > 0) {
+    const bestMatch = results[0];
+    const score = bestMatch.score || 0;
+    
+    if (score < 0.3) {
+      return {
+        original: institutionName,
+        cleaned: bestMatch.item.name,
+        confidence: Math.round((1 - score) * 100),
+        suggestions: results.slice(0, 3).map(r => r.item.name)
+      };
+    }
+  }
+  
+  // If no good match found, just capitalize the original
+  return {
+    original: institutionName,
+    cleaned: capitalizeWords(institutionName),
+    confidence: 40,
+    suggestions: results.slice(0, 3).map(r => r.item.name)
+  };
+};
+
+// Clean all form data - enhanced institution search, simple state/city
 export const cleanFormData = (formData) => {
-  const institutionResult = fuzzySearchInstitution(formData.Institution);
-  const institutionTypeResult = fuzzySearchInstitutionType(formData.InstitutionType);
-  const stateResult = fuzzySearchState(formData.State);
-  const cityResult = fuzzySearchCity(formData.City);
+  // Enhanced institution cleaning using both name and type
+  const institutionResult = fuzzySearchInstitutionWithType(
+    formData.Institution, 
+    formData.InstitutionType
+  );
+  
+  // Simple cleaning for other fields - just capitalize properly (no fuzzy search)
+  const institutionTypeResult = {
+    original: formData.InstitutionType,
+    cleaned: capitalizeWords(formData.InstitutionType || ''),
+    confidence: 90,
+    suggestions: []
+  };
+  
+  const stateResult = {
+    original: formData.State,
+    cleaned: capitalizeWords(formData.State || ''),
+    confidence: 90,
+    suggestions: []
+  };
+  
+  const cityResult = {
+    original: formData.City,
+    cleaned: capitalizeWords(formData.City || ''),
+    confidence: 90,
+    suggestions: []
+  };
   
   return {
     original: {

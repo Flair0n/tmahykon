@@ -638,23 +638,44 @@ const DataCleaningPanel = ({ registrations, onNotification }) => {
 
                 <button
                   onClick={() => {
-                    // Test fuzzy search with sample data
-                    const { fuzzySearchInstitution } = require('../utils/fuzzySearch');
+                    // Test enhanced fuzzy search with name and type
+                    const { fuzzySearchInstitutionWithType, cleanFormData } = require('../utils/fuzzySearch');
+                    
                     const testCases = [
-                      'iit delhi',
-                      'IIT Bombay',
-                      'vit vellore',
-                      'srm university',
-                      'manipal institute'
+                      { name: 'vit', type: 'Engineering College' },
+                      { name: 'delhi', type: 'Technology Institute' },
+                      { name: 'bombay', type: 'Engineering College' },
+                      { name: 'trichy', type: 'Engineering College' },
+                      { name: 'warangal', type: 'Technology Institute' },
+                      { name: 'srm', type: 'Engineering College' },
+                      { name: 'manipal', type: 'University' },
+                      { name: 'bits pilani', type: 'University' },
+                      { name: 'iisc', type: 'Research Institute' },
+                      { name: 'aiims delhi', type: 'Medical College' },
+                      { name: 'iim ahmedabad', type: 'Management Institute' },
+                      { name: 'pes', type: 'University' },
+                      { name: 'rv college', type: 'Engineering College' },
+                      { name: 'vit vellore', type: '' }
                     ];
                     
-                    console.log('=== FUZZY SEARCH TEST ===');
+                    console.log('=== ENHANCED INSTITUTION SEARCH TEST ===');
                     testCases.forEach(test => {
-                      const result = fuzzySearchInstitution(test);
-                      console.log(`Input: "${test}" -> Output: "${result.cleaned}" (${result.confidence}% confidence)`);
+                      const result = fuzzySearchInstitutionWithType(test.name, test.type);
+                      console.log(`Input: "${test.name}" (type: "${test.type}") -> Output: "${result.cleaned}" (${result.confidence}% confidence)`);
                     });
                     
-                    onNotification?.('Check console for fuzzy search test results', 'info');
+                    console.log('\n=== FULL FORM DATA CLEANING TEST ===');
+                    const sampleFormData = {
+                      Institution: 'vit',
+                      InstitutionType: 'private university',
+                      State: 'tamil nadu',
+                      City: 'vellore'
+                    };
+                    
+                    const cleanedResult = cleanFormData(sampleFormData);
+                    console.log('Sample form data cleaning:', cleanedResult);
+                    
+                    onNotification?.('Check console for enhanced institution search test results', 'info');
                   }}
                   style={{
                     background: '#28a745',
