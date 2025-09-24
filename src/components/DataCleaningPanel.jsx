@@ -655,7 +655,11 @@ const DataCleaningPanel = ({ registrations, onNotification }) => {
                       { name: 'iim ahmedabad', type: 'Management Institute' },
                       { name: 'pes', type: 'University' },
                       { name: 'rv college', type: 'Engineering College' },
-                      { name: 'vit vellore', type: '' }
+                      { name: 'vit vellore', type: '' },
+                      // Test short inputs that should NOT match to IIT Madras
+                      { name: 'as', type: 'Engineering College' },
+                      { name: 'ab', type: 'University' },
+                      { name: 'xyz', type: 'Engineering College' }
                     ];
                     
                     console.log('=== ENHANCED INSTITUTION SEARCH TEST ===');
@@ -667,9 +671,7 @@ const DataCleaningPanel = ({ registrations, onNotification }) => {
                     console.log('\n=== FULL FORM DATA CLEANING TEST ===');
                     const sampleFormData = {
                       Institution: 'vit',
-                      InstitutionType: 'private university',
-                      State: 'tamil nadu',
-                      City: 'vellore'
+                      InstitutionType: 'Engineering College'
                     };
                     
                     const cleanedResult = cleanFormData(sampleFormData);
@@ -718,13 +720,7 @@ const DataCleaningPanel = ({ registrations, onNotification }) => {
                             Institution
                           </th>
                           <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e9ecef' }}>
-                            State
-                          </th>
-                          <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e9ecef' }}>
-                            City
-                          </th>
-                          <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e9ecef' }}>
-                            Type
+                            Institution Type
                           </th>
                           <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #e9ecef' }}>
                             Quality Score
@@ -765,44 +761,6 @@ const DataCleaningPanel = ({ registrations, onNotification }) => {
                                 marginTop: '4px'
                               }}>
                                 {item.confidence?.Institution || 0}% confidence
-                              </div>
-                            </td>
-                            <td style={{ padding: '12px' }}>
-                              <div style={{ marginBottom: '4px' }}>
-                                <strong>Cleaned:</strong> {item.cleanedData?.State || 'N/A'}
-                              </div>
-                              <div style={{ fontSize: '12px', color: '#666' }}>
-                                <strong>Original:</strong> {item.originalData?.State || 'N/A'}
-                              </div>
-                              <div style={{
-                                display: 'inline-block',
-                                background: getConfidenceColor(item.confidence?.State || 0),
-                                color: 'white',
-                                padding: '2px 6px',
-                                borderRadius: '10px',
-                                fontSize: '10px',
-                                marginTop: '4px'
-                              }}>
-                                {item.confidence?.State || 0}% confidence
-                              </div>
-                            </td>
-                            <td style={{ padding: '12px' }}>
-                              <div style={{ marginBottom: '4px' }}>
-                                <strong>Cleaned:</strong> {item.cleanedData?.City || 'N/A'}
-                              </div>
-                              <div style={{ fontSize: '12px', color: '#666' }}>
-                                <strong>Original:</strong> {item.originalData?.City || 'N/A'}
-                              </div>
-                              <div style={{
-                                display: 'inline-block',
-                                background: getConfidenceColor(item.confidence?.City || 0),
-                                color: 'white',
-                                padding: '2px 6px',
-                                borderRadius: '10px',
-                                fontSize: '10px',
-                                marginTop: '4px'
-                              }}>
-                                {item.confidence?.City || 0}% confidence
                               </div>
                             </td>
                             <td style={{ padding: '12px' }}>

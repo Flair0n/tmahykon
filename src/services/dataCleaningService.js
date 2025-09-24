@@ -10,8 +10,6 @@ export const saveCleanedData = async (originalData, cleanedResults) => {
       originalData: {
         Institution: originalData.Institution,
         InstitutionType: originalData.InstitutionType,
-        State: originalData.State,
-        City: originalData.City,
         FullName: originalData.FullName,
         Email: originalData.Email
       },
@@ -22,9 +20,7 @@ export const saveCleanedData = async (originalData, cleanedResults) => {
       dataQuality: {
         overallScore: Math.round(
           (cleanedResults.confidence.Institution + 
-           cleanedResults.confidence.InstitutionType + 
-           cleanedResults.confidence.State + 
-           cleanedResults.confidence.City) / 4
+           cleanedResults.confidence.InstitutionType) / 2
         ),
         needsReview: Object.values(cleanedResults.confidence).some(conf => conf < 70)
       }
@@ -69,9 +65,7 @@ export const processAllRegistrations = async (registrations) => {
         // Update summary statistics
         const overallScore = Math.round(
           (cleanedResults.confidence.Institution + 
-           cleanedResults.confidence.InstitutionType + 
-           cleanedResults.confidence.State + 
-           cleanedResults.confidence.City) / 4
+           cleanedResults.confidence.InstitutionType) / 2
         );
         
         if (overallScore >= 80) {

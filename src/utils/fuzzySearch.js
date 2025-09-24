@@ -401,6 +401,26 @@ export const fuzzySearchInstitutionWithType = (institutionName, institutionType)
     return { original: institutionName, cleaned: institutionName, confidence: 0 };
   }
   
+  // For very short inputs (2-3 characters), only do exact mapping, no fuzzy search
+  if (institutionName.length <= 3) {
+    const cleaned = cleanText(institutionName);
+    if (INSTITUTION_MAPPINGS[cleaned]) {
+      return {
+        original: institutionName,
+        cleaned: INSTITUTION_MAPPINGS[cleaned],
+        confidence: 95,
+        suggestions: [INSTITUTION_MAPPINGS[cleaned]]
+      };
+    }
+    // For very short inputs, just return capitalized original
+    return {
+      original: institutionName,
+      cleaned: capitalizeWords(institutionName),
+      confidence: 30,
+      suggestions: []
+    };
+  }
+  
   const cleanedName = cleanText(institutionName);
   const cleanedType = cleanText(institutionType || '');
   
@@ -591,9 +611,14 @@ export const fuzzySearchInstitutionWithType = (institutionName, institutionType)
     }
   }
   
-  // Check partial mappings with name
+  // Check partial mappings with name - but be more restrictive
   for (const [key, value] of Object.entries(INSTITUTION_MAPPINGS)) {
-    if (cleanedName.includes(key) || key.includes(cleanedName)) {
+    // Only match if the input is substantial enough or exact match
+    if (cleanedName.length >= 3 && (cleanedName.includes(key) || key.includes(cleanedName))) {
+      // Avoid matching very short inputs to long institution names
+      if (cleanedName.length < 4 && key.length > 10) {
+        continue; // Skip this match as it's likely a false positive
+      }
       console.log(`Partial mapping found: ${key} -> ${value}`);
       return {
         original: institutionName,
@@ -604,7 +629,7 @@ export const fuzzySearchInstitutionWithType = (institutionName, institutionType)
     }
   }
   
-  // Fallback to fuzzy search with restrictive scoring
+  // Fallback to fuzzy search with very restrictive scoring
   const results = institutionFuse.search(searchQuery);
   console.log(`Fuzzy search results for "${searchQuery}":`, results);
   
@@ -612,7 +637,8 @@ export const fuzzySearchInstitutionWithType = (institutionName, institutionType)
     const bestMatch = results[0];
     const score = bestMatch.score || 0;
     
-    if (score < 0.3) {
+    // Very restrictive - only accept very good matches and avoid short input matches
+    if (score < 0.2 && cleanedName.length >= 4) {
       return {
         original: institutionName,
         cleaned: bestMatch.item.name,
@@ -631,7 +657,7 @@ export const fuzzySearchInstitutionWithType = (institutionName, institutionType)
   };
 };
 
-// Clean all form data - enhanced institution search, simple state/city
+// Clean form data - only process institution names, keep others as-is
 export const cleanFormData = (formData) => {
   // Enhanced institution cleaning using both name and type
   const institutionResult = fuzzySearchInstitutionWithType(
@@ -639,57 +665,35 @@ export const cleanFormData = (formData) => {
     formData.InstitutionType
   );
   
-  // Simple cleaning for other fields - just capitalize properly (no fuzzy search)
+  // Keep other fields as-is (no processing)
   const institutionTypeResult = {
     original: formData.InstitutionType,
-    cleaned: capitalizeWords(formData.InstitutionType || ''),
-    confidence: 90,
-    suggestions: []
-  };
-  
-  const stateResult = {
-    original: formData.State,
-    cleaned: capitalizeWords(formData.State || ''),
-    confidence: 90,
-    suggestions: []
-  };
-  
-  const cityResult = {
-    original: formData.City,
-    cleaned: capitalizeWords(formData.City || ''),
-    confidence: 90,
+    cleaned: formData.InstitutionType || '',
+    confidence: 100,
     suggestions: []
   };
   
   return {
     original: {
       Institution: formData.Institution,
-      InstitutionType: formData.InstitutionType,
-      State: formData.State,
-      City: formData.City
+      InstitutionType: formData.InstitutionType
     },
     cleaned: {
       Institution: institutionResult.cleaned,
-      InstitutionType: institutionTypeResult.cleaned,
-      State: stateResult.cleaned,
-      City: cityResult.cleaned
+      InstitutionType: institutionTypeResult.cleaned
     },
     confidence: {
       Institution: institutionResult.confidence,
-      InstitutionType: institutionTypeResult.confidence,
-      State: stateResult.confidence,
-      City: cityResult.confidence
+      InstitutionType: institutionTypeResult.confidence
     },
     suggestions: {
       Institution: institutionResult.suggestions,
-      InstitutionType: institutionTypeResult.suggestions,
-      State: stateResult.suggestions,
-      City: cityResult.suggestions
+      InstitutionType: institutionTypeResult.suggestions
     }
   };
 };
 
-// Get statistics about data quality
+// Get statistics about data quality - only for institutions
 export const getDataQualityStats = (registrations) => {
   let totalRecords = registrations.length;
   let highConfidenceMatches = 0;
@@ -698,9 +702,7 @@ export const getDataQualityStats = (registrations) => {
   
   const fieldStats = {
     Institution: { exact: 0, fuzzy: 0, unknown: 0 },
-    InstitutionType: { exact: 0, fuzzy: 0, unknown: 0 },
-    State: { exact: 0, fuzzy: 0, unknown: 0 },
-    City: { exact: 0, fuzzy: 0, unknown: 0 }
+    InstitutionType: { exact: 0, fuzzy: 0, unknown: 0 }
   };
   
   registrations.forEach(reg => {
@@ -724,9 +726,9 @@ export const getDataQualityStats = (registrations) => {
   return {
     totalRecords,
     overallQuality: {
-      high: Math.round((highConfidenceMatches / (totalRecords * 4)) * 100),
-      medium: Math.round((mediumConfidenceMatches / (totalRecords * 4)) * 100),
-      low: Math.round((lowConfidenceMatches / (totalRecords * 4)) * 100)
+      high: Math.round((highConfidenceMatches / (totalRecords * 2)) * 100),
+      medium: Math.round((mediumConfidenceMatches / (totalRecords * 2)) * 100),
+      low: Math.round((lowConfidenceMatches / (totalRecords * 2)) * 100)
     },
     fieldStats
   };
