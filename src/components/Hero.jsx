@@ -5,6 +5,8 @@ import "../styles/HeroNew.css";
 import hykonLogo from "../assets/Hykon.png";
 import tmaLogo from "../assets/tma-removebg-preview.png";
 import aimaLogo from "../assets/aima.png";
+// Background image for the hero section
+import heroBg from "../assets/hero-background.jpg";
 
 const Hero = () => {
   const [timeLeft, setTimeLeft] = useState({
@@ -14,6 +16,7 @@ const Hero = () => {
     seconds: 0,
   });
 
+  // Registration deadline (used by countdown)
   const targetDate = new Date("2025-10-17T23:59:59");
 
   useEffect(() => {
@@ -39,7 +42,12 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="hero-container">
+    <section
+      className="hero-container"
+      style={{
+        backgroundImage: `url(${heroBg})`
+      }}
+    >
       <div className="hero-bg-overlay"></div>
       <div className="hero-content">
         <div className="hero-text-content">
