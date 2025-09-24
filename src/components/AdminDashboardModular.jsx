@@ -401,18 +401,45 @@ const AdminDashboard = () => {
       )}
 
       {/* Header */}
-      <header className="dashboard-header">
-        <div className="header-content">
+      <header className="header">
+        <div className="logo">
           <h1>TMA Hykon Admin Dashboard</h1>
-          <div className="user-info">
-            <span>Welcome, {currentUser?.name}</span>
-            <span className="user-role">({currentUser?.role})</span>
-          </div>
-          <button className="logout-btn" onClick={() => {
-            setIsLoggedIn(false);
-            setCurrentUser(null);
-            setActiveTab('dashboard');
-          }}>Logout</button>
+        </div>
+        <div className="user-info">
+          <span>Welcome, {currentUser?.name}</span>
+          <span className="user-role">({currentUser?.role})</span>
+          <button 
+            className="logout-btn" 
+            style={{
+              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+              transition: 'all 0.2s',
+              letterSpacing: '0.025em'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.background = 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)';
+              e.target.style.transform = 'translateY(-2px) scale(1.02)';
+              e.target.style.boxShadow = '0 6px 20px rgba(239, 68, 68, 0.4)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+              e.target.style.transform = 'none';
+              e.target.style.boxShadow = 'none';
+            }}
+            onClick={() => {
+              setIsLoggedIn(false);
+              setCurrentUser(null);
+              setActiveTab('dashboard');
+            }}
+          >
+            Logout
+          </button>
         </div>
       </header>
 
@@ -427,33 +454,31 @@ const AdminDashboard = () => {
               </button>
             </li>
           ))}
+          
+          {/* Admin-only navigation items */}
+          {hasAccess('admin') && (
+            <>
+              <li className={activeTab === 'users' ? 'active' : ''}>
+                <button onClick={() => setActiveTab('users')}>
+                  <span className="icon">👥</span>
+                  <span className="label">User Management</span>
+                </button>
+              </li>
+              <li className={activeTab === 'logs' ? 'active' : ''}>
+                <button onClick={() => setActiveTab('logs')}>
+                  <span className="icon">📝</span>
+                  <span className="label">System Logs</span>
+                </button>
+              </li>
+            </>
+          )}
         </ul>
-        
-        {/* Admin-only navigation items */}
-        {hasAccess('admin') && (
-          <>
-            <li className={activeTab === 'users' ? 'active' : ''}>
-              <button onClick={() => setActiveTab('users')}>
-                <span className="icon">👥</span>
-                <span className="label">User Management</span>
-              </button>
-            </li>
-            <li className={activeTab === 'logs' ? 'active' : ''}>
-              <button onClick={() => setActiveTab('logs')}>
-                <span className="icon">📝</span>
-                <span className="label">System Logs</span>
-              </button>
-            </li>
-          </>
-        )}
       </nav>
-      
       {/* Main Content */}
       <main className="main-content">
         {activeTab === 'dashboard' && (
           <DashboardOverview 
             currentUser={currentUser}
-            loading={loading}
             registrations={registrations}
             dateFilter={dateFilter}
             setDateFilter={setDateFilter}
