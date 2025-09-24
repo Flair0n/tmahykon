@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import FormSection from "./components/FormSection";
 import ProgressBar from "./components/ProgressBar";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import StatusMessage from "./components/StatusMessage";
 import PaymentSection from "./components/PaymentSection";
 import DisclaimerSection from "./components/DisclaimerSection";
