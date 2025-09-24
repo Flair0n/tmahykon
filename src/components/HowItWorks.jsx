@@ -99,46 +99,90 @@ const HowItWorks = () => {
           <div className="section-heading text-center">
             <h2>Our Process</h2>
           </div>
-          <div className="process-timeline">
-            <div className="timeline-item left">
-              <div className="timeline-card">
-                <h3>Idea Submission</h3>
-                <p>Participants submit their innovative ideas for renewable energy solutions.</p>
-              </div>
-            </div>
+          <div className="process-timeline-modern">
+            <div className="timeline-progress-line"></div>
             
-            <div className="timeline-item right">
-              <div className="timeline-card">
+            <div className="process-step" data-step="1">
+              <div className="step-circle-wrapper">
+                <div className="step-circle">
+                  <div className="step-icon">
+                    <i className="fas fa-user-plus"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="step-content">
                 <h3>Registration</h3>
-                <p>Teams or individuals register for the challenge through our online portal.</p>
+                <p>Teams register for the challenge through our online portal with their innovative ideas and team details.</p>
               </div>
             </div>
             
-            <div className="timeline-item left">
-              <div className="timeline-card">
-                <h3>Finalists Selection</h3>
-                <p>Top ideas are selected as finalists for the next round of the challenge.</p>
+            <div className="process-step" data-step="2">
+              <div className="step-circle-wrapper">
+                <div className="step-circle">
+                  <div className="step-icon">
+                    <i className="fas fa-lightbulb"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="step-content">
+                <h3>Idea Submission</h3>
+                <p>Submit detailed project proposals with problem statements, innovative solutions, and expected impact metrics.</p>
               </div>
             </div>
             
-            <div className="timeline-item right">
-              <div className="timeline-card">
-                <h3>Evaluation</h3>
-                <p>Our panel of experts evaluates submissions based on innovation, feasibility, and impact.</p>
+            <div className="process-step" data-step="3">
+              <div className="step-circle-wrapper">
+                <div className="step-circle">
+                  <div className="step-icon">
+                    <i className="fas fa-search"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="step-content">
+                <h3>Evaluation & Selection</h3>
+                <p>Expert panel evaluates submissions based on innovation, technical feasibility, market potential, and social impact.</p>
               </div>
             </div>
             
-            <div className="timeline-item left">
-              <div className="timeline-card">
-                <h3>Final Presentation</h3>
-                <p>Finalists present their prototypes to a panel of judges and industry experts.</p>
+            <div className="process-step" data-step="4">
+              <div className="step-circle-wrapper">
+                <div className="step-circle">
+                  <div className="step-icon">
+                    <i className="fas fa-users"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="step-content">
+                <h3>Mentorship Phase</h3>
+                <p>Selected teams receive guidance through Innovation Readiness Programme (IRP) sessions with industry experts.</p>
               </div>
             </div>
             
-            <div className="timeline-item right">
-              <div className="timeline-card">
+            <div className="process-step" data-step="5">
+              <div className="step-circle-wrapper">
+                <div className="step-circle">
+                  <div className="step-icon">
+                    <i className="fas fa-cogs"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="step-content">
                 <h3>Prototype Development</h3>
-                <p>Finalists receive resources and mentorship to develop prototypes of their solutions.</p>
+                <p>Teams build working prototypes with access to labs, resources, technical support, and seed funding.</p>
+              </div>
+            </div>
+            
+            <div className="process-step" data-step="6">
+              <div className="step-circle-wrapper">
+                <div className="step-circle">
+                  <div className="step-icon">
+                    <i className="fas fa-trophy"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="step-content">
+                <h3>Final Presentation</h3>
+                <p>Teams present their solutions to industry leaders, investors, and judges at the grand finale event.</p>
               </div>
             </div>
           </div>
