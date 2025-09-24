@@ -12,8 +12,9 @@
   width: 100%;
   max-width: 600px;
   text-align: left;
-  color: #ccc;
-  font-size: 14px;
+  color: #e2e8f0;
+  font-size: 15px;
+  font-weight: 500;
   margin-bottom: 12px;
   padding-left: 8px;
   padding-top: 12px;
@@ -25,66 +26,91 @@
 .fieldInput {
   width: 100%;
   max-width: 600px;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #444;
-  background-color: #222;
-  color: #eee;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid rgba(167, 78, 167, 0.3);
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%);
+  color: #ffffff;
   display: block;
-  height: 44px;
+  height: 48px;
   box-sizing: border-box;
   font-family: inherit;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .fieldInput:focus {
-  border-color: #528ff0;
-  box-shadow: 0 0 0 2px rgba(82, 143, 240, 0.2);
+  border-color: #A74EA7;
+  box-shadow: 0 0 0 3px rgba(167, 78, 167, 0.3), 0 0 20px rgba(167, 78, 167, 0.2);
   outline: none;
+  background: linear-gradient(135deg, rgba(167, 78, 167, 0.1) 0%, rgba(130, 79, 159, 0.1) 100%);
+  transform: translateY(-1px);
 }
 
 .fieldSelect {
   width: 100%;
   max-width: 600px;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #444;
-  background-color: #222;
-  color: #eee;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid rgba(167, 78, 167, 0.3);
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%);
+  color: #ffffff;
   display: block;
-  height: 44px;
+  height: 48px;
   box-sizing: border-box;
   font-family: inherit;
+  font-size: 14px;
   cursor: pointer;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.fieldSelect option {
+  background: #1a1a2e;
+  color: #ffffff;
+  padding: 8px;
+  border: none;
+}
+
+.fieldSelect option:hover {
+  background: #A74EA7;
+  color: #ffffff;
 }
 
 .fieldSelect:focus {
-  border-color: #528ff0;
-  box-shadow: 0 0 0 2px rgba(82, 143, 240, 0.2);
+  border-color: #A74EA7;
+  box-shadow: 0 0 0 3px rgba(167, 78, 167, 0.3), 0 0 20px rgba(167, 78, 167, 0.2);
   outline: none;
+  background: linear-gradient(135deg, rgba(167, 78, 167, 0.1) 0%, rgba(130, 79, 159, 0.1) 100%);
+  transform: translateY(-1px);
 }
 
 .fieldTextarea {
   width: 100%;
   max-width: 600px;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #444;
-  background-color: #222;
-  color: #eee;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid rgba(167, 78, 167, 0.3);
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%);
+  color: #ffffff;
   display: block;
   height: 44px;
   box-sizing: border-box;
-  resize: none;
+  resize: vertical;
   font-family: inherit;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .fieldTextarea:focus {
-  border-color: #528ff0;
-  box-shadow: 0 0 0 2px rgba(82, 143, 240, 0.2);
+  border-color: #A74EA7;
+  box-shadow: 0 0 0 3px rgba(167, 78, 167, 0.3), 0 0 20px rgba(167, 78, 167, 0.2);
   outline: none;
+  background: linear-gradient(135deg, rgba(167, 78, 167, 0.1) 0%, rgba(130, 79, 159, 0.1) 100%);
+  transform: translateY(-1px);
 }
 
 .fieldTextareaLarge {
@@ -94,8 +120,8 @@
 .wordCount {
   font-size: 12px;
   text-align: right;
-  margin-top: 2px;
-  color: #aaa;
+  margin-top: 4px;
+  color: #cbd5e1;
   transition: color 0.3s ease;
 }
 
@@ -108,12 +134,14 @@
 .fieldSelect.error,
 .fieldTextarea.error {
   border-color: #ff5252;
-  box-shadow: 0 0 0 2px rgba(255, 82, 82, 0.2);
+  box-shadow: 0 0 0 3px rgba(255, 82, 82, 0.3), 0 0 15px rgba(255, 82, 82, 0.2);
+  background: linear-gradient(135deg, rgba(255, 82, 82, 0.1) 0%, rgba(26, 26, 46, 0.8) 100%);
 }
 
 .fieldInput.success,
 .fieldSelect.success,
 .fieldTextarea.success {
   border-color: #4caf50;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3), 0 0 15px rgba(76, 175, 80, 0.2);
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(26, 26, 46, 0.8) 100%);
 }

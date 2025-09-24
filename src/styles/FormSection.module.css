@@ -4,20 +4,24 @@
 }
 
 .sectionHeader {
-  background: #333;
+  background: linear-gradient(135deg, #A74EA7 0%, #824F9F 100%);
   color: #fff;
-  padding: 10px;
+  padding: 12px 16px;
   width: 100%;
   max-width: 600px;
   margin: 10px auto;
-  border-radius: 5px;
+  border-radius: 8px;
   font-weight: bold;
   text-align: left;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(167, 78, 167, 0.3);
 }
 
 .sectionHeader:hover {
-  background: #404040;
+  background: linear-gradient(135deg, #C766C7 0%, #A74EA7 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(167, 78, 167, 0.4);
 }
 
 .sectionContent {

@@ -29,7 +29,7 @@
 .formContainer {
   max-width: 800px;
   margin: 100px auto 0;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #2d1b3d 100%);
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
@@ -60,7 +60,6 @@
 }
 
 .mentorLabel {
-  color: #e2e8f0;
   font-size: 16px;
   display: block;
   margin-bottom: 8px;
@@ -68,34 +67,73 @@
 
 .mentorSelect {
   width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid rgba(167, 78, 167, 0.3);
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%);
+  color: #ffffff;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.mentorSelect option {
+  background: #1a1a2e;
+  color: #ffffff;
   padding: 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
+  border: none;
+}
+
+.mentorSelect option:hover {
+  background: #A74EA7;
   color: #ffffff;
 }
 
-.tmaChapterContainer {
-  width: 100%;
-  max-width: 600px;
-  margin: 16px 0;
+.mentorSelect:focus {
+  border-color: #A74EA7;
+  box-shadow: 0 0 0 3px rgba(167, 78, 167, 0.3), 0 0 20px rgba(167, 78, 167, 0.2);
+  outline: none;
+  background: linear-gradient(135deg, rgba(167, 78, 167, 0.1) 0%, rgba(130, 79, 159, 0.1) 100%);
+  transform: translateY(-1px);
   text-align: left;
 }
 
 .tmaChapterLabel {
   color: #e2e8f0;
   font-size: 16px;
-  display: block;
   margin-bottom: 8px;
 }
 
 .tmaChapterSelect {
   width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid rgba(167, 78, 167, 0.3);
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%);
   color: #ffffff;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.tmaChapterSelect option {
+  background: #1a1a2e;
+  color: #ffffff;
+  padding: 8px;
+  border: none;
+}
+
+.tmaChapterSelect option:hover {
+  background: #A74EA7;
+  color: #ffffff;
+}
+
+.tmaChapterSelect:focus {
+  border-color: #A74EA7;
+  box-shadow: 0 0 0 3px rgba(167, 78, 167, 0.3), 0 0 20px rgba(167, 78, 167, 0.2);
+  outline: none;
+  background: linear-gradient(135deg, rgba(167, 78, 167, 0.1) 0%, rgba(130, 79, 159, 0.1) 100%);
+  transform: translateY(-1px);
 }
 
 .formActions {
