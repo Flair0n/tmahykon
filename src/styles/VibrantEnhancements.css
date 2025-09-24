@@ -1,0 +1,185 @@
+/* Vibrant Page Enhancements */
+
+/* Section Headers with Gradient Text */
+.section-title {
+  background: linear-gradient(135deg, #A74EA7, #7676BF, #A74EA7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #A74EA7, #7676BF);
+  border-radius: 2px;
+}
+
+/* Enhanced Card Styles */
+.feature-card, .award-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(167, 78, 167, 0.2);
+  border-radius: 16px;
+  padding: 2rem;
+  transition: all 0.4s ease;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before, .award-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(167, 78, 167, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.feature-card:hover::before, .award-card:hover::before {
+  left: 100%;
+}
+
+.feature-card:hover, .award-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(167, 78, 167, 0.4);
+  box-shadow: 0 15px 40px rgba(167, 78, 167, 0.2);
+}
+
+/* Vibrant Icons */
+.feature-icon, .award-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #A74EA7, #7676BF);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  box-shadow: 0 8px 20px rgba(167, 78, 167, 0.3);
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Enhanced Navigation */
+.nav-link {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #A74EA7, #7676BF);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Floating Action Elements */
+.floating-element {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Glowing Borders */
+.glow-border {
+  border: 2px solid transparent;
+  background: linear-gradient(45deg, rgba(167, 78, 167, 0.1), rgba(118, 118, 191, 0.1)) padding-box,
+              linear-gradient(45deg, #A74EA7, #7676BF) border-box;
+  border-radius: 12px;
+}
+
+/* Animated Background Patterns */
+.pattern-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.pattern-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 25% 25%, rgba(167, 78, 167, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(118, 118, 191, 0.05) 0%, transparent 50%);
+  animation: patternMove 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes patternMove {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Enhanced Buttons */
+.secondary-btn {
+  background: transparent;
+  border: 2px solid #A74EA7;
+  color: #A74EA7;
+  padding: 12px 24px;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.secondary-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #A74EA7, #7676BF);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.secondary-btn:hover::before {
+  left: 0;
+}
+
+.secondary-btn:hover {
+  color: white;
+  border-color: #7676BF;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(167, 78, 167, 0.3);
+}
+
+/* Responsive Glow Effects */
+@media (prefers-reduced-motion: reduce) {
+  .floating-element,
+  .pattern-bg::before,
+  .feature-icon {
+    animation: none;
+  }
+}
