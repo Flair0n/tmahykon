@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import FormField from "./FormField";
 import styles from "../styles/FormSection.module.css";
 
@@ -27,16 +27,24 @@ export default function FormSection({
   onChange,
   missingFields
 }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      ref={ref}
+      initial={{ opacity: 0, y: 50, rotateX: -15 }}
+      animate={isInView ? { opacity: 1, y: 0, rotateX: 0 } : { opacity: 0, y: 50, rotateX: -15 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
       className={styles.sectionContainer}
     >
       <motion.div
         layout
         className={styles.sectionHeader}
+        onClick={() => toggleSection(sectionName)}
+        whileHover={{ scale: 1.02, y: -2 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         {sectionName}
       </motion.div>

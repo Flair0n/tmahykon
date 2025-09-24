@@ -2,15 +2,9 @@ import React from "react";
 import { motion } from "framer-motion";
 
 export default function ProgressBar({ progress }) {
-  // Get progress-based gradient with high contrast colors
+  // Constant color gradient for progress bar
   const getProgressGradient = () => {
-    if (progress < 33) {
-      return "linear-gradient(to top, #2d1b3d 0%, #6a2c6a 50%, #A74EA7 100%)";
-    }
-    if (progress < 66) {
-      return "linear-gradient(to top, #6a2c6a 0%, #A74EA7 50%, #D866D8 100%)";
-    }
-    return "linear-gradient(to top, #A74EA7 0%, #D866D8 50%, #FF6BFF 100%)";
+    return "linear-gradient(to top, #A74EA7 0%, #D866D8 50%, #A74EA7 100%)";
   };
 
   return (
@@ -30,14 +24,29 @@ export default function ProgressBar({ progress }) {
       }}
     >
       <motion.div
-        initial={{ height: 0 }}
-        animate={{ height: `${progress}vh` }}
-        transition={{ duration: 0.5 }}
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ 
+          height: `${progress}vh`, 
+          opacity: 1,
+          boxShadow: [
+            "0 0 40px #D866D8AA, 0 0 80px #A74EA766",
+            "0 0 60px #D866D8CC, 0 0 120px #A74EA788",
+            "0 0 40px #D866D8AA, 0 0 80px #A74EA766"
+          ]
+        }}
+        transition={{ 
+          duration: 0.8, 
+          ease: "easeOut",
+          boxShadow: {
+            repeat: Infinity,
+            duration: 2,
+            ease: "easeInOut"
+          }
+        }}
         style={{
           width: "100vw",
           background: getProgressGradient(),
           borderRadius: 0,
-          boxShadow: "0 0 40px #D866D8AA, 0 0 80px #A74EA766",
           alignSelf: "flex-end",
         }}
       />

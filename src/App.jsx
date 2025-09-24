@@ -8,11 +8,15 @@ import { motion } from "framer-motion";
 import FormSection from "./components/FormSection";
 import ProgressBar from "./components/ProgressBar";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
 import StatusMessage from "./components/StatusMessage";
 import PaymentSection from "./components/PaymentSection";
 import DisclaimerSection from "./components/DisclaimerSection";
 import { MentorSection, TMAChapterSection } from "./components/FormSections";
+import AnimatedBackground from "./components/AnimatedBackground";
+import LoadingAnimation from "./components/LoadingAnimation";
+import MorphingShapes from "./components/MorphingShapes";
+import SuccessCelebration from "./components/SuccessCelebration";
+import ParticleExplosion from "./components/ParticleExplosion";
 
 // Custom hooks
 import { useFormData } from "./hooks/useFormData";
@@ -35,6 +39,9 @@ export default function App() {
   const [paymentDone, setPaymentDone] = useState(false);
   const [openSections, setOpenSections] = useState({});
   const [paymentTimeoutId, setPaymentTimeoutId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessCelebration, setShowSuccessCelebration] = useState(false);
+  const [particleExplosion, setParticleExplosion] = useState({ trigger: false, x: 50, y: 50 });
 
   const mentorFields = [
     "MentorName", "MentorEmail", "MentorDepartment", "MentorInstitution", "MentorPhone"
@@ -84,6 +91,7 @@ export default function App() {
     // Save form data to localStorage before payment
     localStorage.setItem("projectForm", JSON.stringify(formData));
     
+    setIsLoading(true);
     setStatus("Saving registration data...");
     
     try {
@@ -127,6 +135,7 @@ export default function App() {
           payment_status: "failed",
           failure_reason: "Failed to create payment order"
         });
+        setIsLoading(false);
         setStatus("❌ Failed to create payment order");
         return;
       }
@@ -168,6 +177,7 @@ export default function App() {
       };
 
       const razorpay = new window.Razorpay(options);
+      setIsLoading(false); // Hide loading before opening payment modal
       razorpay.open();
       
       // Set timeout to mark payment as abandoned after 30 minutes
@@ -244,6 +254,15 @@ export default function App() {
         localStorage.removeItem("projectForm");
         setPaymentDone(true);
         
+        // Trigger success celebration
+        setShowSuccessCelebration(true);
+        
+        // Trigger particle explosion at center
+        setParticleExplosion({ trigger: true, x: 50, y: 50 });
+        setTimeout(() => {
+          setParticleExplosion({ trigger: false, x: 50, y: 50 });
+        }, 100);
+        
       } else {
         // Payment verification failed, update status in Firestore
         await setDoc(doc(db, "registrations", registrationId), {
@@ -309,7 +328,18 @@ export default function App() {
 
   return (
     <div className={styles.appContainer}>
+      <MorphingShapes />
+      <AnimatedBackground />
       <Navbar />
+      
+      {/* Loading Animation Overlay */}
+      {isLoading && (
+        <LoadingAnimation 
+          message={status.includes("Saving") ? "Saving registration data..." : 
+                  status.includes("Processing") ? "Processing payment..." : 
+                  "Please wait..."}
+        />
+      )}
       
       {/* Progress bar */}
       {window.location.pathname === "/form" && (
@@ -319,14 +349,26 @@ export default function App() {
       )}
       
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
         className={styles.mainContent}
       >
         {/* Main Form Container */}
-        <div className={`${styles.formContainer} form-scrollbar`}>
-          <h1 className={styles.formTitle}>TMA-Hykon Application Form</h1>
+        <motion.div 
+          className={`${styles.formContainer} form-scrollbar`}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        >
+          <motion.h1 
+            className={styles.formTitle}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+          >
+            TMA-Hykon Application Form
+          </motion.h1>
           
           <form
             ref={formRef}
@@ -385,12 +427,24 @@ export default function App() {
 
             {/* Status message */}
             <StatusMessage status={status} />
-
             {/* Disclaimer */}
             <DisclaimerSection />
           </form>
-        </div>
-      </motion.div>
+        </motion.div>
+      </motion.div>      
+      {/* Success Celebration */}
+      <SuccessCelebration 
+        show={showSuccessCelebration}
+        onComplete={() => setShowSuccessCelebration(false)}
+      />
+      
+      {/* Particle Explosion Effects */}
+      <ParticleExplosion 
+        trigger={particleExplosion.trigger}
+        x={particleExplosion.x}
+        y={particleExplosion.y}
+        color="#A74EA7"
+      />
       
       <Footer />
     </div>
