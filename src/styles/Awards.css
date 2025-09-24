@@ -317,6 +317,11 @@
   z-index: 2;
 }
 
+/* Slightly smaller titles just for cohort cards to keep them on one line */
+.cohort-grid .premium-card h5 {
+  font-size: 18px;
+}
+
 .award-amount {
   font-size: 2.5rem;
   font-weight: 800;

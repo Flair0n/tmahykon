@@ -141,7 +141,7 @@ const Awards = () => {
                 <div className="award-icon">
                   <i className="fas fa-laptop-code"></i>
                 </div>
-                <h5>Cohort Champion — Coder</h5>
+                <h5>Cohort Champion - Coder</h5>
                 <p className="award-description">Excellence in software development</p>
                 <div className="award-benefits">
                   <span>Tech Industry Connections</span>
@@ -154,7 +154,7 @@ const Awards = () => {
                 <div className="award-icon">
                   <i className="fas fa-tools"></i>
                 </div>
-                <h5>Cohort Champion — Maker</h5>
+                <h5>Cohort Champion - Maker</h5>
                 <p className="award-description">Excellence in prototype creation</p>
                 <div className="award-benefits">
                   <span>Maker Space Access</span>
@@ -167,7 +167,7 @@ const Awards = () => {
                 <div className="award-icon">
                   <i className="fas fa-chess-king"></i>
                 </div>
-                <h5>Cohort Champion — Leader</h5>
+                <h5>Cohort Champion - Leader</h5>
                 <p className="award-description">Excellence in project management</p>
                 <div className="award-benefits">
                   <span>Leadership Programs</span>
