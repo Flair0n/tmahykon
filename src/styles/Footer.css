@@ -1,7 +1,7 @@
 .footer-area {
   position: relative;
   z-index: 1;
-  background-color: #0b0d29;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #2d1b69 100%);
   padding: 70px 0;
 }
 
@@ -17,7 +17,7 @@
   height: 100%;
   top: 0;
   left: 0;
-  background-color: #0b0d29;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #2d1b69 100%);
   opacity: 0.92;
   z-index: -1;
 }

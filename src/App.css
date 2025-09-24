@@ -14,21 +14,21 @@
   z-index: 1;
 }
 
-/* Remove gradient override and set alternating backgrounds */
+/* Consistent dark theme for all sections */
 .main-content-gradient .purpose-area {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #2d1b69 100%) !important;
 }
 
 .main-content-gradient .about-us-area {
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #2d1b69 100%) !important;
 }
 
 .main-content-gradient .awards-area {
-  background: linear-gradient(135deg, #f1f5f9 0%, #ffffff 100%) !important;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #2d1b69 100%) !important;
 }
 
 .main-content-gradient .partners-area {
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #2d1b69 100%) !important;
 }
 
 .logo {
