@@ -179,7 +179,7 @@ const Awards = () => {
 
           {/* Product Support Section */}
           <div className={`award-category-section support-services ${expandedSection === 'support' ? 'expanded' : ''}`}>
-            <div className="support-grid">
+            <div className="awards-grid support-grid">
               <div className="single-award premium-card support-tier">
                 <div className="card-glow"></div>
                 <div className="award-icon">
@@ -187,6 +187,10 @@ const Awards = () => {
                 </div>
                 <h5>Industry Internships</h5>
                 <p className="award-description">Opportunities at TMA member firms</p>
+                <div className="award-benefits">
+                  <span>Mentor-led</span>
+                  <span>Certificate</span>
+                </div>
               </div>
               <div className="single-award premium-card support-tier">
                 <div className="card-glow"></div>
@@ -195,6 +199,10 @@ const Awards = () => {
                 </div>
                 <h5>Fast-track Incubation</h5>
                 <p className="award-description">Access to Ecosystem Partners</p>
+                <div className="award-benefits">
+                  <span>Cloud credits</span>
+                  <span>Prototyping labs</span>
+                </div>
               </div>
               <div className="single-award premium-card support-tier">
                 <div className="card-glow"></div>
@@ -203,6 +211,10 @@ const Awards = () => {
                 </div>
                 <h5>IPR Support</h5>
                 <p className="award-description">Patent-drafting assistance</p>
+                <div className="award-benefits">
+                  <span>IP clinic</span>
+                  <span>Subsidized fees</span>
+                </div>
               </div>
               <div className="single-award premium-card support-tier">
                 <div className="card-glow"></div>
@@ -211,6 +223,10 @@ const Awards = () => {
                 </div>
                 <h5>Media Feature</h5>
                 <p className="award-description">Coverage in TMA journal & local press</p>
+                <div className="award-benefits">
+                  <span>Social boost</span>
+                  <span>Demo-day spotlight</span>
+                </div>
               </div>
               <div className="single-award premium-card support-tier">
                 <div className="card-glow"></div>
@@ -219,6 +235,10 @@ const Awards = () => {
                 </div>
                 <h5>Investor Access</h5>
                 <p className="award-description">Connect with potential investors</p>
+                <div className="award-benefits">
+                  <span>Pitch review</span>
+                  <span>Warm intros</span>
+                </div>
               </div>
             </div>
           </div>

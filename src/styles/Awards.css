@@ -380,17 +380,16 @@
   display: flex;
   justify-content: center;
   align-items: stretch;
-  row-gap: 16px;
-  column-gap: 14px;
+  gap: 20px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   width: 100%;
 }
 
-/* Tighter spacing just for support cards while keeping them centered */
+/* Ensure support cards align with other tabs */
 .support-grid .premium-card {
-  margin: 8px;
-  max-width: 280px;
+  margin: 12px;
+  max-width: 320px;
 }
 
 /* Consistent flexbox card sizing for ALL cards */
