@@ -103,7 +103,8 @@ const DataCleaningPanel = ({ registrations, onNotification }) => {
           { id: 'overview', label: '📊 Overview', icon: '📊' },
           { id: 'preview', label: '👁️ Preview', icon: '👁️' },
           { id: 'process', label: '⚙️ Process', icon: '⚙️' },
-          { id: 'results', label: '📈 Results', icon: '📈' }
+          { id: 'results', label: '📈 Results', icon: '📈' },
+          { id: 'cleaned', label: '✨ Cleaned Data', icon: '✨' }
         ].map(tab => (
           <motion.button
             key={tab.id}
@@ -543,6 +544,261 @@ const DataCleaningPanel = ({ registrations, onNotification }) => {
                 <p style={{ color: '#666' }}>No processing results yet. Run the data processing first.</p>
               </div>
             )}
+          </motion.div>
+        )}
+
+        {/* Cleaned Data Tab */}
+        {activeTab === 'cleaned' && (
+          <motion.div
+            key="cleaned"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+          >
+            <div style={{
+              background: 'white',
+              borderRadius: '12px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              overflow: 'hidden'
+            }}>
+              {/* Header */}
+              <div style={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                padding: '20px'
+              }}>
+                <h3 style={{ margin: '0 0 10px 0' }}>✨ Cleaned Registration Data</h3>
+                <p style={{ margin: 0, opacity: 0.9 }}>
+                  View standardized and cleaned registration data with confidence scores
+                </p>
+              </div>
+
+              {/* Controls */}
+              <div style={{
+                padding: '20px',
+                borderBottom: '1px solid #e9ecef',
+                display: 'flex',
+                gap: '15px',
+                alignItems: 'center',
+                flexWrap: 'wrap'
+              }}>
+                <button
+                  onClick={async () => {
+                    const result = await getCleanedData();
+                    if (result.success) {
+                      setCleanedData(result.data);
+                      onNotification?.(`Loaded ${result.data.length} cleaned records`, 'success');
+                    } else {
+                      onNotification?.('Error loading cleaned data: ' + result.error, 'error');
+                    }
+                  }}
+                  style={{
+                    background: '#667eea',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: '600'
+                  }}
+                >
+                  🔄 Load Cleaned Data
+                </button>
+                
+                <div style={{ color: '#666', fontSize: '14px' }}>
+                  {cleanedData.length} cleaned records available
+                </div>
+              </div>
+
+              {/* Cleaned Data Display */}
+              <div style={{ padding: '20px' }}>
+                {cleanedData.length > 0 ? (
+                  <div style={{ 
+                    maxHeight: '600px', 
+                    overflowY: 'auto',
+                    border: '1px solid #e9ecef',
+                    borderRadius: '8px'
+                  }}>
+                    <table style={{ 
+                      width: '100%', 
+                      borderCollapse: 'collapse',
+                      fontSize: '14px'
+                    }}>
+                      <thead>
+                        <tr style={{ background: '#f8f9fa' }}>
+                          <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e9ecef' }}>
+                            Name
+                          </th>
+                          <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e9ecef' }}>
+                            Institution
+                          </th>
+                          <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e9ecef' }}>
+                            State
+                          </th>
+                          <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e9ecef' }}>
+                            City
+                          </th>
+                          <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e9ecef' }}>
+                            Type
+                          </th>
+                          <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #e9ecef' }}>
+                            Quality Score
+                          </th>
+                          <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #e9ecef' }}>
+                            Status
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {cleanedData.map((item, index) => (
+                          <tr key={item.id} style={{ 
+                            borderBottom: '1px solid #f1f3f4',
+                            background: index % 2 === 0 ? 'white' : '#fafafa'
+                          }}>
+                            <td style={{ padding: '12px' }}>
+                              <div style={{ fontWeight: '600' }}>
+                                {item.originalData?.FullName || 'N/A'}
+                              </div>
+                              <div style={{ fontSize: '12px', color: '#666' }}>
+                                {item.originalData?.Email || 'N/A'}
+                              </div>
+                            </td>
+                            <td style={{ padding: '12px' }}>
+                              <div style={{ marginBottom: '4px' }}>
+                                <strong>Cleaned:</strong> {item.cleanedData?.Institution || 'N/A'}
+                              </div>
+                              <div style={{ fontSize: '12px', color: '#666' }}>
+                                <strong>Original:</strong> {item.originalData?.Institution || 'N/A'}
+                              </div>
+                              <div style={{
+                                display: 'inline-block',
+                                background: getConfidenceColor(item.confidence?.Institution || 0),
+                                color: 'white',
+                                padding: '2px 6px',
+                                borderRadius: '10px',
+                                fontSize: '10px',
+                                marginTop: '4px'
+                              }}>
+                                {item.confidence?.Institution || 0}% confidence
+                              </div>
+                            </td>
+                            <td style={{ padding: '12px' }}>
+                              <div style={{ marginBottom: '4px' }}>
+                                <strong>Cleaned:</strong> {item.cleanedData?.State || 'N/A'}
+                              </div>
+                              <div style={{ fontSize: '12px', color: '#666' }}>
+                                <strong>Original:</strong> {item.originalData?.State || 'N/A'}
+                              </div>
+                              <div style={{
+                                display: 'inline-block',
+                                background: getConfidenceColor(item.confidence?.State || 0),
+                                color: 'white',
+                                padding: '2px 6px',
+                                borderRadius: '10px',
+                                fontSize: '10px',
+                                marginTop: '4px'
+                              }}>
+                                {item.confidence?.State || 0}% confidence
+                              </div>
+                            </td>
+                            <td style={{ padding: '12px' }}>
+                              <div style={{ marginBottom: '4px' }}>
+                                <strong>Cleaned:</strong> {item.cleanedData?.City || 'N/A'}
+                              </div>
+                              <div style={{ fontSize: '12px', color: '#666' }}>
+                                <strong>Original:</strong> {item.originalData?.City || 'N/A'}
+                              </div>
+                              <div style={{
+                                display: 'inline-block',
+                                background: getConfidenceColor(item.confidence?.City || 0),
+                                color: 'white',
+                                padding: '2px 6px',
+                                borderRadius: '10px',
+                                fontSize: '10px',
+                                marginTop: '4px'
+                              }}>
+                                {item.confidence?.City || 0}% confidence
+                              </div>
+                            </td>
+                            <td style={{ padding: '12px' }}>
+                              <div style={{ marginBottom: '4px' }}>
+                                <strong>Cleaned:</strong> {item.cleanedData?.InstitutionType || 'N/A'}
+                              </div>
+                              <div style={{ fontSize: '12px', color: '#666' }}>
+                                <strong>Original:</strong> {item.originalData?.InstitutionType || 'N/A'}
+                              </div>
+                              <div style={{
+                                display: 'inline-block',
+                                background: getConfidenceColor(item.confidence?.InstitutionType || 0),
+                                color: 'white',
+                                padding: '2px 6px',
+                                borderRadius: '10px',
+                                fontSize: '10px',
+                                marginTop: '4px'
+                              }}>
+                                {item.confidence?.InstitutionType || 0}% confidence
+                              </div>
+                            </td>
+                            <td style={{ padding: '12px', textAlign: 'center' }}>
+                              <div style={{
+                                fontSize: '18px',
+                                fontWeight: '700',
+                                color: getConfidenceColor(item.dataQuality?.overallScore || 0)
+                              }}>
+                                {item.dataQuality?.overallScore || 0}%
+                              </div>
+                              <div style={{ fontSize: '12px', color: '#666' }}>
+                                Overall Quality
+                              </div>
+                            </td>
+                            <td style={{ padding: '12px', textAlign: 'center' }}>
+                              {item.dataQuality?.needsReview ? (
+                                <div style={{
+                                  background: '#fff3cd',
+                                  color: '#856404',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  fontSize: '12px',
+                                  fontWeight: '600'
+                                }}>
+                                  ⚠️ Needs Review
+                                </div>
+                              ) : (
+                                <div style={{
+                                  background: '#d4edda',
+                                  color: '#155724',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  fontSize: '12px',
+                                  fontWeight: '600'
+                                }}>
+                                  ✅ Good Quality
+                                </div>
+                              )}
+                              <div style={{ fontSize: '11px', color: '#666', marginTop: '4px' }}>
+                                {item.cleanedAt ? new Date(item.cleanedAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div style={{
+                    textAlign: 'center',
+                    padding: '60px 20px',
+                    color: '#666'
+                  }}>
+                    <div style={{ fontSize: '48px', marginBottom: '20px' }}>📋</div>
+                    <h3 style={{ margin: '0 0 10px 0', color: '#333' }}>No Cleaned Data Available</h3>
+                    <p style={{ margin: 0 }}>
+                      Process your registration data first to see cleaned results here.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
