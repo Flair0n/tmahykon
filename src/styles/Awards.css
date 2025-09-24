@@ -1,7 +1,7 @@
 /* Modern Awards Section with Enhanced Design */
 .awards-area {
   position: relative;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 55%, #0f3460 100%);
   min-height: 100vh;
   overflow: visible;
 }
@@ -13,9 +13,9 @@
   right: -20%;
   width: 800px;
   height: 800px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
   border-radius: 50%;
-  animation: float 20s ease-in-out infinite;
+  animation: float 26s ease-in-out infinite;
 }
 
 .awards-area::after {
@@ -25,9 +25,9 @@
   left: -10%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
   border-radius: 50%;
-  animation: float 25s ease-in-out infinite reverse;
+  animation: float 32s ease-in-out infinite reverse;
 }
 
 @keyframes float {
@@ -108,32 +108,32 @@
 }
 
 .tab-button {
-  background: rgba(167, 78, 167, 0.1);
-  border: 2px solid rgba(167, 78, 167, 0.3);
-  color: #e2e8f0;
+  background: rgba(118, 118, 191, 0.12);
+  border: 2px solid rgba(118, 118, 191, 0.35);
+  color: #e8edf5;
   padding: 12px 24px;
   border-radius: 25px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(6px);
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .tab-button:hover {
-  background: rgba(167, 78, 167, 0.2);
-  border-color: rgba(167, 78, 167, 0.5);
+  background: rgba(118, 118, 191, 0.22);
+  border-color: rgba(118, 118, 191, 0.55);
   transform: translateY(-2px);
   color: #ffffff;
 }
 
 .tab-button.active {
-  background: rgba(167, 78, 167, 0.8);
-  border-color: rgba(167, 78, 167, 1);
+  background: rgba(118, 118, 191, 0.9);
+  border-color: rgba(118, 118, 191, 1);
   color: white;
-  box-shadow: 0 8px 25px rgba(167, 78, 167, 0.3);
+  box-shadow: 0 8px 24px rgba(118, 118, 191, 0.35);
 }
 
 /* Award Category Sections */
@@ -154,30 +154,28 @@
 /* Premium Card Design with Flexbox */
 .premium-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 25px 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px 20px;
   text-align: center;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(20px);
+  transition: all 0.25s ease;
+  border: 1px solid rgba(15, 15, 15, 0.08);
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  height: 320px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+  min-height: 300px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  margin: 10px auto;
+  margin: 10px;
   width: 100%;
   max-width: 300px;
   flex-shrink: 0;
 }
 
 .premium-card:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
 }
 
 .card-glow {
@@ -246,7 +244,7 @@
 }
 
 .support-tier {
-  border-top: 4px solid #f59e0b;
+  border-top: 4px solid #7676BF;
 }
 
 /* Special styling for seed funding - make it longer and NO BORDER */
@@ -267,14 +265,14 @@
   justify-content: center;
   margin: 0 auto 20px;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(167, 78, 167, 0.3);
+  box-shadow: 0 6px 20px rgba(118, 118, 191, 0.25);
   flex-shrink: 0;
   aspect-ratio: 1 / 1;
 }
 
 .premium-card:hover .award-icon {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 12px 35px rgba(167, 78, 167, 0.4);
+  transform: scale(1.06) rotate(3deg);
+  box-shadow: 0 12px 30px rgba(118, 118, 191, 0.3);
 }
 
 .award-icon i {
@@ -352,10 +350,17 @@
   display: flex;
   justify-content: center;
   align-items: stretch;
-  gap: 20px;
+  row-gap: 16px;
+  column-gap: 14px;
   flex-wrap: wrap;
   margin-bottom: 20px;
   width: 100%;
+}
+
+/* Tighter spacing just for support cards while keeping them centered */
+.support-grid .premium-card {
+  margin: 8px;
+  max-width: 280px;
 }
 
 /* Consistent flexbox card sizing for ALL cards */
@@ -647,7 +652,7 @@
   z-index: 1;
   background-color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 2px 40px 8px rgba(15, 15, 15, 0.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
   padding: 30px;
   margin-bottom: 30px;
   text-align: center;
@@ -657,7 +662,7 @@
 
 .single-award:hover {
   transform: translateY(-10px);
-  box-shadow: 0 5px 40px 10px rgba(15, 15, 15, 0.2);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.18);
 }
 
 .highlight-award {
