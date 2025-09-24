@@ -1,6 +1,7 @@
 import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import './index.css';
 import App from './App.jsx';
 import PaymentSuccess from './PaymentSuccess.jsx';
@@ -17,6 +18,11 @@ function VercelAnalyticsListener() {
   return null;
 }
 
+function SpeedInsightsWithRoute() {
+  const location = useLocation();
+  return <SpeedInsights route={location.pathname} />;
+}
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
@@ -28,6 +34,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
+      <SpeedInsightsWithRoute />
     </BrowserRouter>
   </StrictMode>
 );
