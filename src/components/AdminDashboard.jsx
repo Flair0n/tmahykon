@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import '../styles/AdminDashboard.css';
 import { collection, getDocs, deleteDoc, doc, addDoc, query, orderBy, limit, Timestamp } from 'firebase/firestore';
+import DataCleaningPanel from './DataCleaningPanel';
 
 const LoginPage = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -2306,7 +2307,8 @@ const AdminDashboard = () => {
     const allTabs = [
       { id: 'dashboard', label: 'Dashboard', icon: '📊' },
       { id: 'analytics', label: 'Analytics', icon: '📈' },
-      { id: 'tools', label: 'Tools', icon: '🛠️' }
+      { id: 'tools', label: 'Tools', icon: '🛠️' },
+{ id: 'datacleaning', label: 'Data Cleaning', icon: '🧹' }
     ];
 
     if (currentUser?.role === 'admin') {
@@ -2387,6 +2389,12 @@ const AdminDashboard = () => {
         {activeTab === 'tools' && hasAccess('admin') && renderTools()}
         {activeTab === 'users' && hasAccess('admin') && renderUserManagement()}
         {activeTab === 'logs' && hasAccess('admin') && renderLogs()}
+        {activeTab === 'datacleaning' && hasAccess('admin') && (
+  <DataCleaningPanel 
+    registrations={registrations} 
+    onNotification={showNotification} 
+  />
+)}
         
         {/* Access Denied Message */}
         {!hasAccess('admin') && activeTab !== 'dashboard' && (

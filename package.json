@@ -18,6 +18,7 @@
     "express": "^5.1.0",
     "firebase": "^12.2.1",
     "framer-motion": "^12.23.13",
+    "fuse.js": "^7.1.0",
     "gsap": "^3.13.0",
     "razorpay": "^2.9.6",
     "react": "^19.1.1",
