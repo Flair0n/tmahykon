@@ -1,5 +1,5 @@
 import { db } from '../firebase';
-import { collection, addDoc, getDocs, doc, setDoc, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, setDoc, Timestamp, deleteDoc } from 'firebase/firestore';
 import { cleanFormData, getDataQualityStats } from '../utils/fuzzySearch';
 
 // Save cleaned data to a separate collection for testing
@@ -188,4 +188,24 @@ export const generateDataQualityReport = async (registrations) => {
 // Preview cleaning results without saving
 export const previewCleaning = (formData) => {
   return cleanFormData(formData);
+};
+
+// Clear all cleaned data from the collection
+export const clearCleanedData = async () => {
+  try {
+    const cleanedCollection = collection(db, 'cleaned_registrations');
+    const snapshot = await getDocs(cleanedCollection);
+    
+    const deletePromises = snapshot.docs.map(docSnapshot => 
+      deleteDoc(doc(db, 'cleaned_registrations', docSnapshot.id))
+    );
+    
+    await Promise.all(deletePromises);
+    
+    console.log(`Cleared ${snapshot.docs.length} cleaned records`);
+    return { success: true, deletedCount: snapshot.docs.length };
+  } catch (error) {
+    console.error('Error clearing cleaned data:', error);
+    return { success: false, error: error.message };
+  }
 };

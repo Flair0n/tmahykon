@@ -604,6 +604,70 @@ const DataCleaningPanel = ({ registrations, onNotification }) => {
                 >
                   🔄 Load Cleaned Data
                 </button>
+
+                <button
+                  onClick={async () => {
+                    if (window.confirm('Are you sure you want to clear all cleaned data? This action cannot be undone.')) {
+                      try {
+                        // Clear the cleaned data collection
+                        const { clearCleanedData } = await import('../services/dataCleaningService');
+                        const result = await clearCleanedData();
+                        if (result.success) {
+                          setCleanedData([]);
+                          onNotification?.('All cleaned data cleared successfully', 'success');
+                        } else {
+                          onNotification?.('Error clearing data: ' + result.error, 'error');
+                        }
+                      } catch (error) {
+                        onNotification?.('Error clearing data: ' + error.message, 'error');
+                      }
+                    }
+                  }}
+                  style={{
+                    background: '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: '600'
+                  }}
+                >
+                  🗑️ Clear All Data
+                </button>
+
+                <button
+                  onClick={() => {
+                    // Test fuzzy search with sample data
+                    const { fuzzySearchInstitution } = require('../utils/fuzzySearch');
+                    const testCases = [
+                      'iit delhi',
+                      'IIT Bombay',
+                      'vit vellore',
+                      'srm university',
+                      'manipal institute'
+                    ];
+                    
+                    console.log('=== FUZZY SEARCH TEST ===');
+                    testCases.forEach(test => {
+                      const result = fuzzySearchInstitution(test);
+                      console.log(`Input: "${test}" -> Output: "${result.cleaned}" (${result.confidence}% confidence)`);
+                    });
+                    
+                    onNotification?.('Check console for fuzzy search test results', 'info');
+                  }}
+                  style={{
+                    background: '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: '600'
+                  }}
+                >
+                  🧪 Test Fuzzy Search
+                </button>
                 
                 <div style={{ color: '#666', fontSize: '14px' }}>
                   {cleanedData.length} cleaned records available

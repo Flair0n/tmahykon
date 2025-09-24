@@ -4,19 +4,43 @@ import Fuse from 'fuse.js';
 // Master data for fuzzy matching
 const MASTER_DATA = {
   institutions: [
-    // Engineering Colleges
+    // Engineering Colleges - with variations
     'Indian Institute of Technology Delhi',
+    'IIT Delhi',
+    'IITD',
     'Indian Institute of Technology Bombay',
+    'IIT Bombay',
+    'IITB',
     'Indian Institute of Technology Madras',
+    'IIT Madras',
+    'IITM',
     'Indian Institute of Technology Kanpur',
+    'IIT Kanpur',
+    'IITK',
     'Indian Institute of Technology Kharagpur',
+    'IIT Kharagpur',
+    'IIT KGP',
     'Indian Institute of Technology Roorkee',
+    'IIT Roorkee',
+    'IITR',
     'Indian Institute of Technology Guwahati',
+    'IIT Guwahati',
+    'IITG',
     'Indian Institute of Technology Hyderabad',
+    'IIT Hyderabad',
+    'IITH',
     'Indian Institute of Science Bangalore',
+    'IISc Bangalore',
+    'IISc',
     'National Institute of Technology Trichy',
+    'NIT Trichy',
+    'NITT',
     'National Institute of Technology Warangal',
+    'NIT Warangal',
+    'NITW',
     'National Institute of Technology Calicut',
+    'NIT Calicut',
+    'NITC',
     'Delhi Technological University',
     'Netaji Subhas University of Technology',
     'Birla Institute of Technology and Science Pilani',
@@ -152,11 +176,14 @@ const MASTER_DATA = {
 
 // Fuzzy search configuration
 const FUSE_OPTIONS = {
-  threshold: 0.4, // Lower = more strict matching
+  threshold: 0.6, // Higher = more lenient matching
   distance: 100,
-  maxPatternLength: 32,
-  minMatchCharLength: 2,
-  keys: ['name']
+  maxPatternLength: 64,
+  minMatchCharLength: 3,
+  keys: ['name'],
+  includeScore: true,
+  shouldSort: true,
+  findAllMatches: false
 };
 
 // Create Fuse instances for each data type
@@ -195,19 +222,42 @@ export const fuzzySearchInstitution = (input) => {
   const cleaned = cleanText(input);
   const results = institutionFuse.search(cleaned);
   
-  if (results.length > 0 && results[0].score < 0.3) {
+  console.log(`Institution search for "${input}":`, results);
+  
+  if (results.length > 0) {
+    const bestMatch = results[0];
+    const score = bestMatch.score || 0;
+    
+    // More lenient matching - accept matches with score < 0.6
+    if (score < 0.6) {
+      return {
+        original: input,
+        cleaned: bestMatch.item.name,
+        confidence: Math.round((1 - score) * 100),
+        suggestions: results.slice(0, 3).map(r => r.item.name)
+      };
+    }
+  }
+  
+  // If no good match found, try partial matching
+  const partialMatches = MASTER_DATA.institutions.filter(inst => 
+    inst.toLowerCase().includes(cleaned.toLowerCase()) || 
+    cleaned.toLowerCase().includes(inst.toLowerCase())
+  );
+  
+  if (partialMatches.length > 0) {
     return {
       original: input,
-      cleaned: results[0].item.name,
-      confidence: Math.round((1 - results[0].score) * 100),
-      suggestions: results.slice(0, 3).map(r => r.item.name)
+      cleaned: partialMatches[0],
+      confidence: 70,
+      suggestions: partialMatches.slice(0, 3)
     };
   }
   
   return {
     original: input,
     cleaned: capitalizeWords(input),
-    confidence: 50,
+    confidence: 30,
     suggestions: results.slice(0, 3).map(r => r.item.name)
   };
 };
