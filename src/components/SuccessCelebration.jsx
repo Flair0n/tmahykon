@@ -15,10 +15,10 @@ const SuccessCelebration = ({ show, onComplete }) => {
       const timer2 = setTimeout(() => setStage(3), 1000);
       const timer3 = setTimeout(() => setShowFireworks(true), 1200);
       const timer4 = setTimeout(() => {
-        setShowFireworks(false);
         setStage(4);
       }, 4000);
       const timer5 = setTimeout(() => {
+        setShowFireworks(false);
         setStage(0);
         onComplete?.();
       }, 6000);
