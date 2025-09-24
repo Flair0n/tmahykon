@@ -2,7 +2,7 @@
 .awards-area {
   position: relative;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 55%, #0f3460 100%);
-  min-height: 100vh;
+  min-height: 70vh;
   overflow: visible;
 }
 
@@ -47,7 +47,7 @@
 }
 
 .awards-content-wrapper {
-  padding: 60px 0;
+  padding: 40px 0;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -56,7 +56,7 @@
 
 .section-heading {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 25px;
   width: 100%;
   max-width: 800px;
   display: flex;
@@ -78,7 +78,7 @@
 }
 
 .section-heading h2 {
-  font-size: 3rem;
+  font-size: 2.2rem;
   font-weight: 700;
   color: #ffffff !important;
   margin: 0 auto;
@@ -100,8 +100,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  margin: 0 auto 30px auto;
+  gap: 20px;
+  margin: 0 auto 20px auto;
   flex-wrap: wrap;
   width: 100%;
   text-align: center;
@@ -111,29 +111,49 @@
   background: rgba(118, 118, 191, 0.12);
   border: 2px solid rgba(118, 118, 191, 0.35);
   color: #e8edf5;
-  padding: 12px 24px;
+  padding: 10px 20px;
   border-radius: 25px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(6px);
-  font-size: 14px;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.tab-button:hover::before {
+  left: 100%;
 }
 
 .tab-button:hover {
   background: rgba(118, 118, 191, 0.22);
   border-color: rgba(118, 118, 191, 0.55);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.02);
   color: #ffffff;
+  box-shadow: 0 4px 15px rgba(118, 118, 191, 0.3);
 }
 
 .tab-button.active {
-  background: rgba(118, 118, 191, 0.9);
+  background: linear-gradient(135deg, rgba(118, 118, 191, 0.9), rgba(167, 78, 167, 0.9));
   border-color: rgba(118, 118, 191, 1);
   color: white;
   box-shadow: 0 8px 24px rgba(118, 118, 191, 0.35);
+  transform: translateY(-1px) scale(1.05);
+  animation: tabActivate 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Award Category Sections */
@@ -141,48 +161,55 @@
   opacity: 0;
   max-height: 0;
   overflow: hidden;
-  transition: all 0.5s ease;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   margin-bottom: 20px;
+  transform: scale(0.95);
+  filter: blur(2px);
 }
 
 .award-category-section.expanded {
   opacity: 1;
   max-height: 3000px;
   margin-bottom: 40px;
+  transform: scale(1);
+  filter: blur(0px);
 }
 
 /* Premium Card Design with Flexbox */
 .premium-card {
   position: relative;
   background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 20px;
-  padding: 28px 24px;
+  border-radius: 16px;
+  padding: 20px 18px;
   text-align: center;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid rgba(167, 78, 167, 0.1);
   overflow: hidden;
   box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.08),
-    0 4px 15px rgba(167, 78, 167, 0.05);
-  min-height: 320px;
+    0 8px 25px rgba(0, 0, 0, 0.08),
+    0 3px 12px rgba(167, 78, 167, 0.05);
+  min-height: 280px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  margin: 12px;
+  margin: 10px;
   width: 100%;
-  max-width: 320px;
+  max-width: 280px;
   flex-shrink: 0;
   backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: scale(0.9);
+  animation: cardFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .premium-card:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-12px) scale(1.03);
   border-color: rgba(167, 78, 167, 0.3);
   box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.15),
-    0 8px 25px rgba(167, 78, 167, 0.2),
-    0 0 0 1px rgba(167, 78, 167, 0.1);
+    0 25px 60px rgba(0, 0, 0, 0.18),
+    0 12px 30px rgba(167, 78, 167, 0.25),
+    0 0 0 1px rgba(167, 78, 167, 0.15);
 }
 
 .card-glow {
@@ -191,14 +218,19 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, transparent, rgba(167, 78, 167, 0.6), rgba(118, 118, 191, 0.6), transparent);
+  background: linear-gradient(90deg, transparent, rgba(167, 78, 167, 0.8), rgba(118, 118, 191, 0.8), transparent);
   transform: translateX(-100%);
-  transition: transform 0.8s ease;
-  border-radius: 20px 20px 0 0;
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px 16px 0 0;
 }
 
 .premium-card:hover .card-glow {
   transform: translateX(100%);
+}
+
+.premium-card.active .card-glow {
+  transform: translateX(100%);
+  animation: glowPulse 2s ease-in-out infinite;
 }
 
 .premium-card::before {
@@ -275,43 +307,44 @@
 
 /* Special styling for seed funding - make it longer and NO BORDER */
 .seed-funding {
-  height: 200px !important;
-  max-width: 900px;
-  margin: 20px auto 50px auto;
-  padding: 25px 30px;
+  height: 160px !important;
+  max-width: 700px;
+  margin: 15px auto 30px auto;
+  padding: 20px 25px;
 }
 /* Award Icons */
 .award-icon {
-  width: 80px;
-  height: 80px;
+  width: 65px;
+  height: 65px;
   background: linear-gradient(135deg, #A74EA7, #7676BF);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(118, 118, 191, 0.25);
+  margin: 0 auto 15px;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 5px 16px rgba(118, 118, 191, 0.25);
   flex-shrink: 0;
   aspect-ratio: 1 / 1;
 }
 
 .premium-card:hover .award-icon {
-  transform: scale(1.06) rotate(3deg);
-  box-shadow: 0 12px 30px rgba(118, 118, 191, 0.3);
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 15px 35px rgba(118, 118, 191, 0.4);
+  background: linear-gradient(135deg, #C766C7, #8B8BFF);
 }
 
 .award-icon i {
-  font-size: 36px;
+  font-size: 30px;
   color: white;
 }
 
 /* Typography */
 .premium-card h5 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #1e293b;
-  margin: 0 0 15px 0;
+  margin: 0 0 12px 0;
   line-height: 1.3;
   position: relative;
   z-index: 2;
@@ -323,22 +356,22 @@
 }
 
 .award-amount {
-  font-size: 2.5rem;
+  font-size: 2.1rem;
   font-weight: 800;
   color: #A74EA7; /* Fallback color */
   background: linear-gradient(135deg, #A74EA7, #7676BF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin: 0 0 15px 0;
+  margin: 0 0 12px 0;
   line-height: 1;
 }
 
 .award-description {
   color: #64748b;
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0 0 20px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0 0 15px 0;
   position: relative;
   z-index: 2;
 }
@@ -346,16 +379,16 @@
 .award-benefits {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 20px;
+  gap: 6px;
+  margin-top: 15px;
 }
 
 .award-benefits span {
   background: rgba(167, 78, 167, 0.1);
   color: #A74EA7;
-  padding: 6px 12px;
-  border-radius: 15px;
-  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 11px;
   font-weight: 600;
   border: 1px solid rgba(167, 78, 167, 0.2);
 }
@@ -365,8 +398,8 @@
   display: flex;
   justify-content: center;
   align-items: stretch;
-  gap: 20px;
-  margin-bottom: 30px;
+  gap: 16px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
   width: 100%;
 }
@@ -375,8 +408,8 @@
   display: flex;
   justify-content: center;
   align-items: stretch;
-  gap: 20px;
-  margin-bottom: 30px;
+  gap: 16px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
   width: 100%;
 }
@@ -385,9 +418,9 @@
   display: flex;
   justify-content: center;
   align-items: stretch;
-  gap: 20px;
+  gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   width: 100%;
 }
 
@@ -401,20 +434,20 @@
 .cash-grid .premium-card,
 .institutional-grid .premium-card,
 .support-grid .premium-card {
-  flex: 1 1 300px;
-  min-width: 300px;
-  max-width: 350px;
+  flex: 1 1 260px;
+  min-width: 260px;
+  max-width: 300px;
   width: auto;
-  height: 340px;
+  height: 300px;
 }
 
 /* Cohort cards need more height for the benefits section */
 .cohort-grid .premium-card {
-  flex: 1 1 300px;
-  min-width: 300px;
-  max-width: 350px;
+  flex: 1 1 260px;
+  min-width: 260px;
+  max-width: 300px;
   width: auto;
-  height: 380px;
+  height: 320px;
 }
 
 .seed-funding {
@@ -649,7 +682,7 @@
   }
 }
 
-/* Animation for scroll reveal */
+/* Enhanced Animations */
 @keyframes slideInUp {
   from {
     opacity: 0;
@@ -661,8 +694,46 @@
   }
 }
 
+@keyframes cardFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateX(100%) scaleX(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(100%) scaleX(1.2);
+  }
+}
+
+@keyframes tabActivate {
+  0% {
+    transform: translateY(-1px) scale(1);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.08);
+  }
+  100% {
+    transform: translateY(-1px) scale(1.05);
+  }
+}
+
 .premium-card {
-  animation: slideInUp 0.6s ease forwards;
+  animation: cardFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .premium-card:nth-child(2) {

@@ -2,7 +2,8 @@
   position: relative;
   z-index: 1;
   background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #2d1b69 100%);
-  padding: 70px 0;
+  padding: 40px 0;
+  margin-top: auto;
 }
 
 .footer-area.bg-img {
@@ -29,24 +30,24 @@
 }
 
 .footer-logo {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .footer-logo h3 {
-  font-size: 36px;
+  font-size: 28px;
   color: #ffffff;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
   font-weight: 700;
 }
 
 .footer-logo p {
   color: #A74EA7;
-  font-size: 18px;
+  font-size: 16px;
   margin-bottom: 0;
 }
 
 .footer-nav {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .footer-nav ul {
@@ -59,13 +60,13 @@
 }
 
 .footer-nav ul li {
-  margin: 0 15px;
+  margin: 0 12px;
 }
 
 .footer-nav ul li a {
   color: #ffffff;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   transition: all 0.3s;
 }
@@ -75,17 +76,17 @@
 }
 
 .contact-info {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .contact-info p {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 16px;
-  margin-bottom: 10px;
+  font-size: 15px;
+  margin-bottom: 8px;
 }
 
 .contact-info i {
-  margin-right: 10px;
+  margin-right: 8px;
   color: #A74EA7;
 }
 
@@ -97,15 +98,15 @@
 
 @media screen and (max-width: 767px) {
   .footer-area {
-    padding: 50px 0;
+    padding: 30px 0;
   }
 
   .footer-logo h3 {
-    font-size: 28px;
+    font-size: 24px;
   }
 
   .footer-logo p {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .footer-nav ul {

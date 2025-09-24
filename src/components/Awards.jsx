@@ -1,12 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../styles/Awards.css";
 
 const Awards = () => {
   const [expandedSection, setExpandedSection] = useState('cash');
+  const tabs = ['cash', 'institutional', 'cohort', 'support'];
+  const intervalRef = useRef(null);
 
   const toggleSection = (section) => {
     setExpandedSection(expandedSection === section ? null : section);
+    // Reset the auto-switch timer when user manually changes tabs
+    resetAutoSwitchTimer();
   };
+
+  const resetAutoSwitchTimer = () => {
+    // Clear existing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    
+    // Start new interval
+    intervalRef.current = setInterval(() => {
+      setExpandedSection(prevSection => {
+        const currentIndex = tabs.indexOf(prevSection);
+        const nextIndex = (currentIndex + 1) % tabs.length;
+        return tabs[nextIndex];
+      });
+    }, 4000);
+  };
+
+  // Auto-switch tabs every 4 seconds
+  useEffect(() => {
+    resetAutoSwitchTimer();
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
   return (
     <section className="awards-area section-padding-100" id="awards">
