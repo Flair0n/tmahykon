@@ -37,7 +37,7 @@
 }
 
 .login-form h1 {
-  background: linear-gradient(to right, #df42b1, #505add);
+  background: linear-gradient(to right, #A74EA7, #7676BF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -81,7 +81,7 @@
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #df42b1;
+  border-color: #A74EA7;
   box-shadow: 0 0 0 3px rgba(223, 66, 177, 0.2);
   background: rgba(255, 255, 255, 0.95);
 }
@@ -121,7 +121,7 @@
   background: linear-gradient(135deg, rgba(223, 66, 177, 0.1), rgba(80, 90, 221, 0.1));
   padding: 1rem;
   border-radius: 8px;
-  border-left: 4px solid #df42b1;
+  border-left: 4px solid #A74EA7;
   backdrop-filter: blur(5px);
 }
 
@@ -182,7 +182,7 @@
 }
 
 .firebase-error .error-title {
-  background: linear-gradient(to right, #df42b1, #505add);
+  background: linear-gradient(to right, #A74EA7, #7676BF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -901,7 +901,7 @@
 .table-title {
   font-size: 18px;
   font-weight: 600;
-  background: linear-gradient(to right, #df42b1, #505add);
+  background: linear-gradient(to right, #A74EA7, #7676BF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -965,12 +965,12 @@
 }
 
 .table-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #df42b1, #505add);
+  background: linear-gradient(135deg, #A74EA7, #7676BF);
   border-radius: 4px;
 }
 
 .table-scroll::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #505add, #df42b1);
+  background: linear-gradient(135deg, #7676BF, #A74EA7);
 }
 
 /* Loading States */
@@ -988,7 +988,7 @@
   width: 20px;
   height: 20px;
   border: 2px solid rgba(223, 66, 177, 0.2);
-  border-top: 2px solid #df42b1;
+  border-top: 2px solid #A74EA7;
   border-radius: 50%;
   margin-right: 10px;
   animation: spin 1s linear infinite;
@@ -1026,7 +1026,7 @@
 }
 
 .notification.info {
-  background: linear-gradient(135deg, #df42b1, #505add);
+  background: linear-gradient(135deg, #A74EA7, #7676BF);
   color: white;
   border: 1px solid rgba(223, 66, 177, 0.3);
 }
@@ -1057,7 +1057,7 @@
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 15px;
-  background: linear-gradient(to right, #df42b1, #505add);
+  background: linear-gradient(to right, #A74EA7, #7676BF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1094,7 +1094,7 @@
 
 .date-input-group input:focus {
   outline: none;
-  border-color: #df42b1;
+  border-color: #A74EA7;
   box-shadow: 0 0 0 3px rgba(223, 66, 177, 0.2);
 }
 
@@ -1125,7 +1125,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(to right, #df42b1, #505add);
+  background: linear-gradient(to right, #A74EA7, #7676BF);
 }
 
 .tool-card:hover {
@@ -1136,7 +1136,7 @@
 
 .tool-card h3 {
   margin: 0 0 10px 0;
-  background: linear-gradient(to right, #df42b1, #505add);
+  background: linear-gradient(to right, #A74EA7, #7676BF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1162,7 +1162,7 @@
 
 .system-info h3 {
   margin: 0 0 20px 0;
-  background: linear-gradient(to right, #df42b1, #505add);
+  background: linear-gradient(to right, #A74EA7, #7676BF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

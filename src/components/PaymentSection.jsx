@@ -25,7 +25,7 @@ const PaymentSection = ({ paymentDone, handlePayment, retryPayment, status, isFo
               onClick={retryPayment}
               style={{
                 marginLeft: '10px',
-                background: '#f39c12',
+                background: '#B9AFD5',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '5px',

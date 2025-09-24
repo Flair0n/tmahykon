@@ -103,7 +103,7 @@
 
 .submitButton {
   padding: 10px 20px;
-  background: #528ff0;
+  background: #A74EA7;
   color: white;
   border: none;
   border-radius: 5px;
@@ -115,7 +115,7 @@
 }
 
 .submitButton:hover {
-  background: #4681e0;
+  background: #824F9F;
 }
 
 .submitButton:disabled {

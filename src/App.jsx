@@ -150,7 +150,7 @@ export default function App() {
           contact: formData.Phone
         },
         theme: {
-          color: "#494DCA"
+          color: "#A74EA7"
         },
         modal: {
           ondismiss: async function() {

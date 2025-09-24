@@ -19,7 +19,7 @@ const RazorpayButton = ({ isTmaMember, onPayment }) => {
     <button
       type="button"
       style={{
-        background: "#494DCA",
+        background: "#A74EA7",
         color: "#fff",
         border: "none",
         borderRadius: "5px",

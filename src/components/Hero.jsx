@@ -42,9 +42,7 @@ const Hero = () => {
     <section className="hero-container">
       <div className="hero-bg-overlay"></div>
       <div className="hero-content">
-        <div className="hero-wrapper">
-          <div className="hero-main">
-            <div className="hero-text-content">
+        <div className="hero-text-content">
               <motion.h1
                 className="hero-title"
                 initial={{ opacity: 0, y: 50 }}
@@ -142,8 +140,6 @@ const Hero = () => {
                   <img src={aimaLogo} alt="AIMA Logo" className="sponsor-logo" />
                 </div>
               </motion.div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

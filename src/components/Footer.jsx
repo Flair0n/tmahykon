@@ -84,7 +84,7 @@ const Footer = () => {
                 </p>
                 <p style={{ color: '#bdbdbd', marginTop: 8 }}>
                   If you have any doubts, contact: <i className="fa fa-phone" style={{ marginLeft: 6, marginRight: 4 }}></i>
-                  <a href="tel:9895760505" style={{ color: '#528FF0', textDecoration: 'underline', marginLeft: 2 }}>9895760505</a>
+                  <a href="tel:9895760505" style={{ color: '#7676BF', textDecoration: 'underline', marginLeft: 2 }}>9895760505</a>
                 </p>
               </div>
 

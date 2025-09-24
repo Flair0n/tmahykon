@@ -120,13 +120,13 @@ const Navbar = () => {
                       href="/form"
                       className="register-now-btn"
                       style={{
-                        background: '#494DCA',
+                        background: '#A74EA7',
                         color: '#fff',
                         borderRadius: '30px',
                         padding: '8px 18px',
                         fontWeight: 600,
                         textDecoration: 'none',
-                        boxShadow: '0 2px 8px #0002',
+                        boxShadow: '0 2px 8px rgba(167, 78, 167, 0.3)',
                         transition: 'background 0.2s',
                         display: 'inline-block',
                         marginRight: 0,
