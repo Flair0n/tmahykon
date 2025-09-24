@@ -196,7 +196,7 @@ const AdminDashboard = () => {
           'WorkingPrinciple', 'Novelty', 'Impact', 'Budget', 'Timeline', 'TeamMembers',
           'HasMentor', 'MentorName', 'MentorEmail', 'MentorDepartment', 'MentorInstitution', 
           'MentorPhone', 'TMAMember', 'TMAChapter', 'payment_status', 'payment_id', 
-          'order_id', 'submittedAt'
+          'order_id', 'submittedAt', 'failure_reason', 'abandoned_at'
         ];
         
         const missingFields = expectedFields.filter(field => !(field in regsData[0]));
@@ -213,7 +213,8 @@ const AdminDashboard = () => {
         kpis: [
           { name: 'Total Registrations', value: regsData.length, change: '+' + Math.round(regsData.length * 0.1) + '%' },
           { name: 'Paid Registrations', value: regsData.filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length, change: '+5%' },
-          { name: 'Pending Payments', value: regsData.filter(r => !r.payment_status || r.payment_status === 'pending').length, change: '-2%' },
+          { name: 'Failed Payments', value: regsData.filter(r => r.payment_status === 'failed').length, change: '+0%' },
+          { name: 'Pending Payments', value: regsData.filter(r => (!r.payment_status || r.payment_status === 'pending')).length, change: '-2%' },
           { name: 'Success Rate', value: regsData.length > 0 ? Math.round((regsData.filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length / regsData.length) * 100) + '%' : '0%', change: '+8%' }
         ],
         cohortStats: regsData.reduce((acc, reg) => {
@@ -328,7 +329,7 @@ const AdminDashboard = () => {
       return;
     }
 
-    const headers = ['Full Name', 'Email', 'Phone', 'Institution', 'Institution Type', 'Course', 'Year', 'City', 'State', 'Cohort', 'Track', 'Project Title', 'Problem Statement', 'Context', 'Stakeholders', 'Solution', 'Working Principle', 'Novelty', 'Impact', 'Budget', 'Timeline', 'Team Members', 'Has Mentor', 'Mentor Name', 'Mentor Email', 'Mentor Department', 'Mentor Institution', 'Mentor Phone', 'TMA Member', 'TMA Chapter', 'Payment Status', 'Payment ID', 'Order ID', 'Registration Date'];
+    const headers = ['Full Name', 'Email', 'Phone', 'Institution', 'Institution Type', 'Course', 'Year', 'City', 'State', 'Cohort', 'Track', 'Project Title', 'Problem Statement', 'Context', 'Stakeholders', 'Solution', 'Working Principle', 'Novelty', 'Impact', 'Budget', 'Timeline', 'Team Members', 'Has Mentor', 'Mentor Name', 'Mentor Email', 'Mentor Department', 'Mentor Institution', 'Mentor Phone', 'TMA Member', 'TMA Chapter', 'Payment Status', 'Payment ID', 'Order ID', 'Failure Reason', 'Abandoned At', 'Registration Date'];
     const csvContent = [
       headers.join(','),
       ...dataToExport.map(reg => [
@@ -365,6 +366,8 @@ const AdminDashboard = () => {
         reg.payment_status || 'Pending',
         reg.payment_id || '',
         reg.order_id || '',
+        reg.failure_reason || '',
+        reg.abandoned_at ? new Date(reg.abandoned_at.seconds * 1000).toLocaleDateString() : '',
         reg.submittedAt ? new Date(reg.submittedAt.seconds * 1000).toLocaleDateString() : ''
       ].map(field => `"${field.toString().replace(/"/g, '""')}"`).join(','))
     ].join('\n');
@@ -399,7 +402,7 @@ const AdminDashboard = () => {
       const totalRegistrations = dataForPDF.length;
       const paidRegistrations = dataForPDF.filter(r => r.payment_status === 'captured' || r.payment_status === 'authorized').length;
       const activeCohorts = new Set(dataForPDF.map(r => r.Cohort)).size;
-      const pendingPayments = dataForPDF.filter(r => !r.payment_status || r.payment_status === 'pending').length;
+      const pendingPayments = dataForPDF.filter(r => (!r.payment_status || r.payment_status === 'pending')).length;
       const completionRate = totalRegistrations > 0 ? Math.round(paidRegistrations / totalRegistrations * 100) : 0;
       const totalRevenue = dataForPDF.reduce((sum, reg) => sum + parseFloat(reg.payment_amount || reg.amount || 0), 0);
 
@@ -1025,7 +1028,7 @@ const AdminDashboard = () => {
         </div>
         <div className="stats-item">
           <div className="stats-value">
-            {(searchTerm ? filteredRegistrations : registrations).filter(r => !r.payment_status || r.payment_status === 'pending').length}
+            {(searchTerm ? filteredRegistrations : registrations).filter(r => (!r.payment_status || r.payment_status === 'pending')).length}
           </div>
           <div className="stats-label">Pending</div>
         </div>
@@ -1145,6 +1148,8 @@ const AdminDashboard = () => {
                   <th className="payment-info">Payment Status</th>
                   <th className="payment-info">Payment ID</th>
                   <th className="payment-info">Order ID</th>
+                  <th className="payment-info">Failure Reason</th>
+                  <th className="payment-info">Abandoned At</th>
                   <th className="payment-info">Reg. Date</th>
                   <th className="actions">Actions</th>
                 </tr>
@@ -1199,15 +1204,19 @@ const AdminDashboard = () => {
                           : reg.payment_status === 'failed' 
                           ? 'status-failed' 
                           : 'status-pending'
-                      }`}>
+                      }`} title={reg.failure_reason ? `Reason: ${reg.failure_reason}` : ''}>
                         {reg.payment_status === 'captured' && '✓ Paid'}
                         {reg.payment_status === 'authorized' && '✓ Auth'}
-                        {reg.payment_status === 'failed' && '✗ Failed'}
+                        {reg.payment_status === 'failed' && (reg.failure_reason?.toLowerCase().includes('abandon') ? '✗ Abandoned' : '✗ Failed')}
                         {(!reg.payment_status || reg.payment_status === 'pending') && '⏳ Pending'}
                       </span>
                     </td>
                     <td title={reg.payment_id}>{reg.payment_id || 'N/A'}</td>
                     <td title={reg.order_id}>{reg.order_id || 'N/A'}</td>
+                    <td title={reg.failure_reason}>{reg.failure_reason || '—'}</td>
+                    <td title={reg.abandoned_at ? new Date(reg.abandoned_at.seconds * 1000).toLocaleString() : ''}>
+                      {reg.abandoned_at ? new Date(reg.abandoned_at.seconds * 1000).toLocaleDateString() : '—'}
+                    </td>
                     <td>
                       {reg.submittedAt ? new Date(reg.submittedAt.seconds * 1000).toLocaleDateString() : 'N/A'}
                     </td>

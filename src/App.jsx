@@ -34,6 +34,7 @@ export default function App() {
   const [status, setStatus] = useState("");
   const [paymentDone, setPaymentDone] = useState(false);
   const [openSections, setOpenSections] = useState({});
+  const [paymentTimeoutId, setPaymentTimeoutId] = useState(null);
 
   const mentorFields = [
     "MentorName", "MentorEmail", "MentorDepartment", "MentorInstitution", "MentorPhone"
@@ -43,8 +44,32 @@ export default function App() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Cleanup payment timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (paymentTimeoutId) {
+        clearTimeout(paymentTimeoutId);
+      }
+    };
+  }, [paymentTimeoutId]);
+
   const toggleSection = (section) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
+
+  // Function to mark payment as abandoned/failed
+  const markPaymentAsAbandoned = async (registrationId, reason = "Payment abandoned - timeout") => {
+    try {
+      const docRef = doc(db, "registrations", registrationId);
+      await setDoc(docRef, {
+        payment_status: "failed",
+        failure_reason: reason,
+        abandoned_at: Timestamp.now()
+      }, { merge: true });
+      console.log(`Payment marked as abandoned for registration: ${registrationId}`);
+    } catch (error) {
+      console.error("Failed to mark payment as abandoned:", error);
+    }
   };
 
   // Payment handler with verification
@@ -129,19 +154,29 @@ export default function App() {
         },
         modal: {
           ondismiss: async function() {
-            // Payment cancelled, update status to failed
-            await setDoc(doc(db, "registrations", teamLeaderName), {
-              ...pendingPayload,
-              payment_status: "cancelled",
-              failure_reason: "Payment cancelled by user"
-            });
-            setStatus("❌ Payment cancelled. You can retry payment or your registration will be deleted after 30 minutes.");
+            // Clear the timeout since user dismissed the modal
+            if (paymentTimeoutId) {
+              clearTimeout(paymentTimeoutId);
+              setPaymentTimeoutId(null);
+            }
+            
+            // Mark payment as failed (abandoned)
+            await markPaymentAsAbandoned(teamLeaderName, "Payment abandoned - user dismissed modal");
+            setStatus("❌ Payment abandoned. You can retry payment anytime.");
           }
         }
       };
 
       const razorpay = new window.Razorpay(options);
       razorpay.open();
+      
+      // Set timeout to mark payment as abandoned after 30 minutes
+      const timeoutId = setTimeout(async () => {
+        await markPaymentAsAbandoned(teamLeaderName, "Payment abandoned - 30 minute timeout");
+        setStatus("❌ Payment session expired. Please retry payment.");
+      }, 30 * 60 * 1000); // 30 minutes
+      
+      setPaymentTimeoutId(timeoutId);
       
     } catch (error) {
       // Update status to failed in Firestore on error
@@ -163,6 +198,12 @@ export default function App() {
 
   // Verify payment and update status in Firestore
   const verifyPaymentAndSubmit = async (paymentId, orderId, registrationId) => {
+    // Clear the timeout since payment is being processed
+    if (paymentTimeoutId) {
+      clearTimeout(paymentTimeoutId);
+      setPaymentTimeoutId(null);
+    }
+    
     setStatus("Verifying payment...");
     
     console.log('Verifying payment with:', { paymentId, orderId });
@@ -241,6 +282,12 @@ export default function App() {
     if (!formData.FullName) {
       setStatus("❌ No registration data found to retry payment.");
       return;
+    }
+    
+    // Clear any existing timeout
+    if (paymentTimeoutId) {
+      clearTimeout(paymentTimeoutId);
+      setPaymentTimeoutId(null);
     }
     
     // Reset the form status and retry payment

@@ -2,8 +2,8 @@ import React from 'react';
 import styles from '../styles/App.module.css';
 
 const PaymentSection = ({ paymentDone, handlePayment, retryPayment, status, isFormComplete }) => {
-  // Check if payment failed or was cancelled
-  const isPaymentFailed = status.includes("cancelled") || status.includes("verification failed") || status.includes("Failed to create");
+  // Check if payment failed, was cancelled, or abandoned
+  const isPaymentFailed = status.includes("cancelled") || status.includes("verification failed") || status.includes("Failed to create") || status.includes("abandoned") || status.includes("expired");
   
   return (
     <div className={styles.formActions}>
