@@ -3,7 +3,6 @@ import { db } from '../firebase';
 import '../styles/AdminDashboard.css';
 import { collection, getDocs, deleteDoc, doc, addDoc, query, orderBy, limit, Timestamp } from 'firebase/firestore';
 
-// Login Component
 const LoginPage = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -11,8 +10,8 @@ const LoginPage = ({ onLogin }) => {
 
   // User credentials with roles
   const users = {
-    'admin': { password: 'tma@2025', role: 'admin', name: 'Administrator' },
-    'dashboard': { password: 'dashboard@2025', role: 'dashboard', name: 'Dashboard User' }
+    'admin': { password: 'admin@tma', role: 'admin', name: 'Administrator' },
+    'user': { password: 'user@inker', role: 'dashboard', name: 'Dashboard User' }
   };
 
   const handleLogin = (e) => {
@@ -59,19 +58,7 @@ const LoginPage = ({ onLogin }) => {
           <button type="submit" className="btn-primary login-btn">Login</button>
         </form>
         <div className="login-info">
-          <p>Use one of the following credentials:</p>
-          <div className="user-credentials">
-            <div className="credential-item">
-              <h4>Full Access User</h4>
-              <p><strong>Username:</strong> admin</p>
-              <p><strong>Password:</strong> tma@2025</p>
-            </div>
-            <div className="credential-item">
-              <h4>Dashboard User (View Only)</h4>
-              <p><strong>Username:</strong> dashboard</p>
-              <p><strong>Password:</strong> dashboard@2025</p>
-            </div>
-          </div>
+          <p>Please enter your credentials to access the dashboard.</p>
         </div>
       </div>
     </div>
