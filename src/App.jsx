@@ -119,7 +119,7 @@ export default function App() {
       };
       console.log('Request body:', requestBody);
       
-  const response = await fetch('https://tmahykon.onrender.com/api/create-order', {
+  const response = await fetch('https://backendtest-production-8e64.up.railway.app/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody)
@@ -221,7 +221,7 @@ export default function App() {
     
     try {
       // Verify payment with backend
-  const verifyResponse = await fetch('https://tmahykon.onrender.com/api/verify-payment', {
+  const verifyResponse = await fetch('https://backendtest-production-8e64.up.railway.app/api/verify-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
