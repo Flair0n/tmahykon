@@ -693,14 +693,19 @@
   }
 }
 
-@keyframes cardFadeIn {
+
+@keyframes cardSlideInUp {
   0% {
     opacity: 0;
-    transform: scale(0.98);
+    transform: translateY(40px) scale(0.96);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.03);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -727,24 +732,22 @@
   }
 }
 
+
 .premium-card {
-  animation: cardFadeIn 0.4s ease-out forwards;
+  animation: cardSlideInUp 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .premium-card:nth-child(2) {
-  animation-delay: 0.1s;
+  animation-delay: 0.08s;
 }
-
 .premium-card:nth-child(3) {
-  animation-delay: 0.2s;
+  animation-delay: 0.16s;
 }
-
 .premium-card:nth-child(4) {
-  animation-delay: 0.3s;
+  animation-delay: 0.24s;
 }
-
 .premium-card:nth-child(5) {
-  animation-delay: 0.4s;
+  animation-delay: 0.32s;
 }
 
 .single-award {

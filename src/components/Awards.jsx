@@ -7,9 +7,11 @@ const Awards = () => {
   const intervalRef = useRef(null);
 
   const toggleSection = (section) => {
-    setExpandedSection(expandedSection === section ? null : section);
-    // Reset the auto-switch timer when user manually changes tabs
-    resetAutoSwitchTimer();
+    if (expandedSection !== section) {
+      setExpandedSection(section);
+      // Reset the auto-switch timer when user manually changes tabs
+      resetAutoSwitchTimer();
+    }
   };
 
   const resetAutoSwitchTimer = () => {
