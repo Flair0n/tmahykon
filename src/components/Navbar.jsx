@@ -119,18 +119,6 @@ const Navbar = () => {
                     <a
                       href="/form"
                       className="register-now-btn"
-                      style={{
-                        background: '#A74EA7',
-                        color: '#fff',
-                        borderRadius: '30px',
-                        padding: '8px 18px',
-                        fontWeight: 600,
-                        textDecoration: 'none',
-                        boxShadow: '0 2px 8px rgba(167, 78, 167, 0.3)',
-                        transition: 'background 0.2s',
-                        display: 'inline-block',
-                        marginRight: 0,
-                      }}
                       onClick={e => {
                         e.preventDefault();
                         if (location.pathname !== "/form") {
