@@ -425,14 +425,14 @@
   height: clamp(100px, 12vw, 140px);
   width: clamp(100px, 12vw, 140px);
   object-fit: contain;
-  opacity: 0.9;
+  opacity: 0.95;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   filter: none;
-  background: rgba(255, 255, 255, 0.8); /* more transparent white */
-  border-radius: 50%;
-  padding: 15px;
+  background: rgba(255, 255, 255, 0.85);
+    border-radius: 50%; /* make it a perfect circle */
+    padding: 10px; /* balanced padding for circle */
+  overflow: visible;
   backdrop-filter: none;
-  /* Brand-like border and subtle glow similar to clock */
   border: 3px solid rgba(167, 78, 167, 0.35);
   box-shadow:
     0 8px 22px rgba(167, 78, 167, 0.22),
@@ -460,8 +460,10 @@
   }
   
   .sponsor-logo {
-    height: clamp(80px, 10vw, 100px);
-    width: clamp(80px, 10vw, 100px);
+  height: clamp(80px, 10vw, 100px);
+  width: clamp(80px, 10vw, 100px);
+    border-radius: 50%;
+    padding: 7px;
   }
 }
 
@@ -473,7 +475,9 @@
   }
   
   .sponsor-logo {
-    height: 80px;
-    width: 80px;
+  height: 80px;
+  width: 80px;
+    border-radius: 50%;
+    padding: 4px;
   }
 }
