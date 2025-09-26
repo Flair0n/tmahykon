@@ -147,7 +147,6 @@ const Awards = () => {
                 <p className="award-description">Institution with most valid project submissions</p>
                 <div className="award-benefits">
                   <span>Recognition Certificate</span>
-                  <span>Media Coverage</span>
                 </div>
               </div>
 
@@ -160,7 +159,6 @@ const Awards = () => {
                 <p className="award-description">TMA Chapter with most valid project submissions</p>
                 <div className="award-benefits">
                   <span>Chapter Recognition</span>
-                  <span>Special Mention</span>
                 </div>
               </div>
             </div>
