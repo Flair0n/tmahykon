@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase';
+import { db } from '../../../firebase';
 import '../styles/AdminDashboard.css';
 import { collection, getDocs, deleteDoc, doc, addDoc, query, orderBy, limit, Timestamp } from 'firebase/firestore';
 
 // Import modular components
-import LoginPage from './admin/LoginPage';
-import DashboardOverview from './admin/DashboardOverview';
-import Analytics from './admin/Analytics';
-import UserManagement from './admin/UserManagement';
-import Tools from './admin/Tools';
-import Logs from './admin/Logs';
-import DataCleaningPanel from './DataCleaningPanel';
+import LoginPage from './LoginPage';
+import DashboardOverview from './DashboardOverview';
+import Analytics from './Analytics';
+import UserManagement from './UserManagement';
+import Tools from './Tools';
+import Logs from './Logs';
+import DataCleaningPanel from '../../DataCleaningPanel';
 
 // Main Admin Dashboard Component
 const AdminDashboard = () => {
