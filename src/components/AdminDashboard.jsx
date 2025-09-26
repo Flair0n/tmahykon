@@ -97,6 +97,43 @@ const AdminDashboard = () => {
   const [analytics, setAnalytics] = useState({});
   const [currentUser, setCurrentUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [editUserId, setEditUserId] = useState(null);
+  const [editForm, setEditForm] = useState({});
+
+  // Handle edit button click
+  const handleEditClick = (user) => {
+    setEditUserId(user.id);
+    setEditForm({ ...user });
+    setIsEditing(true);
+  };
+
+  // Handle form field change
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Save edited user data to Firestore
+  const handleEditSave = async () => {
+    try {
+      const userRef = doc(db, 'registrations', editUserId);
+      await import('firebase/firestore').then(({ updateDoc }) => updateDoc(userRef, editForm));
+      showNotification('User updated successfully', 'success');
+      setIsEditing(false);
+      setEditUserId(null);
+      setEditForm({});
+      fetchRegistrations();
+    } catch (error) {
+      showNotification('Error updating user: ' + error.message, 'error');
+    }
+  };
+
+  // Cancel editing
+  const handleEditCancel = () => {
+    setIsEditing(false);
+    setEditUserId(null);
+    setEditForm({});
+  };
   const [emailContent, setEmailContent] = useState('');
   const [emailRecipients, setEmailRecipients] = useState('');
   const [dbOperation, setDbOperation] = useState('');
@@ -1144,80 +1181,139 @@ const AdminDashboard = () => {
               </thead>
               <tbody>
                 {filteredRegistrations.map((reg, index) => (
-                  <tr key={reg.id}>
-                    <td title={reg.FullName}>{reg.FullName || 'N/A'}</td>
-                    <td title={reg.Email}>{reg.Email || 'N/A'}</td>
-                    <td title={reg.Phone}>{reg.Phone || 'N/A'}</td>
-                    <td title={reg.Institution}>{reg.Institution || 'N/A'}</td>
-                    <td title={reg.InstitutionType}>{reg.InstitutionType || 'N/A'}</td>
-                    <td title={reg.Course}>{reg.Course || 'N/A'}</td>
-                    <td title={reg.Year}>{reg.Year || 'N/A'}</td>
-                    <td title={reg.City}>{reg.City || 'N/A'}</td>
-                    <td title={reg.State}>{reg.State || 'N/A'}</td>
-                    <td title={reg.Cohort}>{reg.Cohort || 'N/A'}</td>
-                    <td title={reg.Track}>{reg.Track || 'N/A'}</td>
-                    
-                    <td title={reg.ProjectTitle}>{reg.ProjectTitle || 'N/A'}</td>
-                    <td title={reg.ProblemStatement}>{reg.ProblemStatement || 'N/A'}</td>
-                    <td title={reg.Context}>{reg.Context || 'N/A'}</td>
-                    <td title={reg.Stakeholders}>{reg.Stakeholders || 'N/A'}</td>
-                    <td title={reg.Solution}>{reg.Solution || 'N/A'}</td>
-                    <td title={reg.WorkingPrinciple}>{reg.WorkingPrinciple || 'N/A'}</td>
-                    <td title={reg.Novelty}>{reg.Novelty || 'N/A'}</td>
-                    <td title={reg.Impact}>{reg.Impact || 'N/A'}</td>
-                    <td title={reg.Budget}>{reg.Budget || 'N/A'}</td>
-                    <td title={reg.Timeline}>{reg.Timeline || 'N/A'}</td>
-                    
-                    <td title={reg.TeamMembers}>{reg.TeamMembers || 'N/A'}</td>
-                    <td title={reg.HasMentor}>{reg.HasMentor || 'N/A'}</td>
-                    {hasMentorData && (
-                      <>
-                        <td title={reg.MentorName}>{reg.MentorName || 'N/A'}</td>
-                        <td title={reg.MentorEmail}>{reg.MentorEmail || 'N/A'}</td>
-                        <td title={reg.MentorDepartment}>{reg.MentorDepartment || 'N/A'}</td>
-                        <td title={reg.MentorInstitution}>{reg.MentorInstitution || 'N/A'}</td>
-                        <td title={reg.MentorPhone}>{reg.MentorPhone || 'N/A'}</td>
-                      </>
-                    )}
-                    
-                    <td title={reg.TMAMember}>{reg.TMAMember || 'N/A'}</td>
-                    {hasTMAChapterData && (
-                      <td title={reg.TMAChapter}>{reg.TMAChapter || 'N/A'}</td>
-                    )}
-                    
-                    <td className="center">
-                      <span className={`status-badge ${
-                        reg.payment_status === 'captured' || reg.payment_status === 'authorized' 
-                          ? 'status-completed' 
-                          : reg.payment_status === 'failed' 
-                          ? 'status-failed' 
-                          : 'status-pending'
-                      }`} title={reg.failure_reason ? `Reason: ${reg.failure_reason}` : ''}>
-                        {reg.payment_status === 'captured' && '✓ Paid'}
-                        {reg.payment_status === 'authorized' && '✓ Auth'}
-                        {reg.payment_status === 'failed' && (reg.failure_reason?.toLowerCase().includes('abandon') ? '✗ Abandoned' : '✗ Failed')}
-                        {(!reg.payment_status || reg.payment_status === 'pending') && '⏳ Pending'}
-                      </span>
-                    </td>
-                    <td title={reg.payment_id}>{reg.payment_id || 'N/A'}</td>
-                    <td title={reg.order_id}>{reg.order_id || 'N/A'}</td>
-                    <td title={reg.failure_reason}>{reg.failure_reason || '—'}</td>
-                    <td title={reg.abandoned_at ? new Date(reg.abandoned_at.seconds * 1000).toLocaleString() : ''}>
-                      {reg.abandoned_at ? new Date(reg.abandoned_at.seconds * 1000).toLocaleDateString() : '—'}
-                    </td>
-                    <td>
-                      {reg.submittedAt ? new Date(reg.submittedAt.seconds * 1000).toLocaleDateString() : 'N/A'}
-                    </td>
-                    <td className="center">
-                      <button 
-                        className="btn-table-action btn-delete" 
-                        onClick={() => removeUser(reg.id)}
-                        title="Delete Registration"
-                      >
-                        🗑️ Delete
-                      </button>
-                    </td>
-                  </tr>
+                  editUserId === reg.id && isEditing ? (
+                    <tr key={reg.id} className="edit-row">
+                      {/* Basic Information Section */}
+                      <td><input name="FullName" value={editForm.FullName || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Email" value={editForm.Email || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Phone" value={editForm.Phone || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Institution" value={editForm.Institution || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="InstitutionType" value={editForm.InstitutionType || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Course" value={editForm.Course || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Year" value={editForm.Year || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="City" value={editForm.City || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="State" value={editForm.State || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Cohort" value={editForm.Cohort || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Track" value={editForm.Track || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      {/* Project Information Section */}
+                      <td><input name="ProjectTitle" value={editForm.ProjectTitle || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="ProblemStatement" value={editForm.ProblemStatement || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Context" value={editForm.Context || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Stakeholders" value={editForm.Stakeholders || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Solution" value={editForm.Solution || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="WorkingPrinciple" value={editForm.WorkingPrinciple || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Novelty" value={editForm.Novelty || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Impact" value={editForm.Impact || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Budget" value={editForm.Budget || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="Timeline" value={editForm.Timeline || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      {/* Team & Mentor Section */}
+                      <td><input name="TeamMembers" value={editForm.TeamMembers || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      <td><input name="HasMentor" value={editForm.HasMentor || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      {hasMentorData && (
+                        <>
+                          <td><input name="MentorName" value={editForm.MentorName || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                          <td><input name="MentorEmail" value={editForm.MentorEmail || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                          <td><input name="MentorDepartment" value={editForm.MentorDepartment || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                          <td><input name="MentorInstitution" value={editForm.MentorInstitution || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                          <td><input name="MentorPhone" value={editForm.MentorPhone || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                        </>
+                      )}
+                      {/* Membership Section */}
+                      <td><input name="TMAMember" value={editForm.TMAMember || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      {hasTMAChapterData && (
+                        <td><input name="TMAChapter" value={editForm.TMAChapter || ''} onChange={handleEditFormChange} className="edit-input" /></td>
+                      )}
+                      {/* System/Payment Section (read-only or hidden in edit) */}
+                      <td className="center">{reg.payment_status || ''}</td>
+                      <td className="center">{reg.payment_id || ''}</td>
+                      <td className="center">{reg.order_id || ''}</td>
+                      <td className="center">{reg.failure_reason || ''}</td>
+                      <td className="center">{reg.abandoned_at ? new Date(reg.abandoned_at.seconds * 1000).toLocaleDateString() : ''}</td>
+                      <td className="center">{reg.submittedAt ? new Date(reg.submittedAt.seconds * 1000).toLocaleDateString() : ''}</td>
+                      <td className="center">
+                        <button className="btn-table-action btn-save btn-primary" onClick={handleEditSave} title="Save">💾 Save</button>
+                        <button className="btn-table-action btn-cancel btn-warning" onClick={handleEditCancel} title="Cancel">✖ Cancel</button>
+                      </td>
+                    </tr>
+                  ) : (
+                    <tr key={reg.id}>
+                      <td title={reg.FullName}>{reg.FullName || 'N/A'}</td>
+                      <td title={reg.Email}>{reg.Email || 'N/A'}</td>
+                      <td title={reg.Phone}>{reg.Phone || 'N/A'}</td>
+                      <td title={reg.Institution}>{reg.Institution || 'N/A'}</td>
+                      <td title={reg.InstitutionType}>{reg.InstitutionType || 'N/A'}</td>
+                      <td title={reg.Course}>{reg.Course || 'N/A'}</td>
+                      <td title={reg.Year}>{reg.Year || 'N/A'}</td>
+                      <td title={reg.City}>{reg.City || 'N/A'}</td>
+                      <td title={reg.State}>{reg.State || 'N/A'}</td>
+                      <td title={reg.Cohort}>{reg.Cohort || 'N/A'}</td>
+                      <td title={reg.Track}>{reg.Track || 'N/A'}</td>
+                      <td title={reg.ProjectTitle}>{reg.ProjectTitle || 'N/A'}</td>
+                      <td title={reg.ProblemStatement}>{reg.ProblemStatement || 'N/A'}</td>
+                      <td title={reg.Context}>{reg.Context || 'N/A'}</td>
+                      <td title={reg.Stakeholders}>{reg.Stakeholders || 'N/A'}</td>
+                      <td title={reg.Solution}>{reg.Solution || 'N/A'}</td>
+                      <td title={reg.WorkingPrinciple}>{reg.WorkingPrinciple || 'N/A'}</td>
+                      <td title={reg.Novelty}>{reg.Novelty || 'N/A'}</td>
+                      <td title={reg.Impact}>{reg.Impact || 'N/A'}</td>
+                      <td title={reg.Budget}>{reg.Budget || 'N/A'}</td>
+                      <td title={reg.Timeline}>{reg.Timeline || 'N/A'}</td>
+                      <td title={reg.TeamMembers}>{reg.TeamMembers || 'N/A'}</td>
+                      <td title={reg.HasMentor}>{reg.HasMentor || 'N/A'}</td>
+                      {hasMentorData && (
+                        <>
+                          <td title={reg.MentorName}>{reg.MentorName || 'N/A'}</td>
+                          <td title={reg.MentorEmail}>{reg.MentorEmail || 'N/A'}</td>
+                          <td title={reg.MentorDepartment}>{reg.MentorDepartment || 'N/A'}</td>
+                          <td title={reg.MentorInstitution}>{reg.MentorInstitution || 'N/A'}</td>
+                          <td title={reg.MentorPhone}>{reg.MentorPhone || 'N/A'}</td>
+                        </>
+                      )}
+                      <td title={reg.TMAMember}>{reg.TMAMember || 'N/A'}</td>
+                      {hasTMAChapterData && (
+                        <td title={reg.TMAChapter}>{reg.TMAChapter || 'N/A'}</td>
+                      )}
+                      <td className="center">
+                        <span className={`status-badge ${
+                          reg.payment_status === 'captured' || reg.payment_status === 'authorized' 
+                            ? 'status-completed' 
+                            : reg.payment_status === 'failed' 
+                            ? 'status-failed' 
+                            : 'status-pending'
+                        }`} title={reg.failure_reason ? `Reason: ${reg.failure_reason}` : ''}>
+                          {reg.payment_status === 'captured' && '✓ Paid'}
+                          {reg.payment_status === 'authorized' && '✓ Auth'}
+                          {reg.payment_status === 'failed' && (reg.failure_reason?.toLowerCase().includes('abandon') ? '✗ Abandoned' : '✗ Failed')}
+                          {(!reg.payment_status || reg.payment_status === 'pending') && '⏳ Pending'}
+                        </span>
+                      </td>
+                      <td title={reg.payment_id}>{reg.payment_id || 'N/A'}</td>
+                      <td title={reg.order_id}>{reg.order_id || 'N/A'}</td>
+                      <td title={reg.failure_reason}>{reg.failure_reason || '—'}</td>
+                      <td title={reg.abandoned_at ? new Date(reg.abandoned_at.seconds * 1000).toLocaleString() : ''}>
+                        {reg.abandoned_at ? new Date(reg.abandoned_at.seconds * 1000).toLocaleDateString() : '—'}
+                      </td>
+                      <td>
+                        {reg.submittedAt ? new Date(reg.submittedAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+                      </td>
+                      <td className="center">
+                        <button 
+                          className="btn-table-action btn-edit" 
+                          onClick={() => handleEditClick(reg)}
+                          title="Edit Registration"
+                        >
+                          ✏️ Edit
+                        </button>
+                        <button 
+                          className="btn-table-action btn-delete" 
+                          onClick={() => removeUser(reg.id)}
+                          title="Delete Registration"
+                        >
+                          🗑️ Delete
+                        </button>
+                      </td>
+                    </tr>
+                  )
                 ))}
               </tbody>
             </table>
