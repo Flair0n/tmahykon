@@ -22,7 +22,8 @@ const PaymentSection = ({ paymentDone, handlePayment, retryPayment, status, isFo
             type="button"
             className={styles.submitButton}
             onClick={handlePayment}
-            disabled={!isFormComplete}
+            // Always enabled
+            disabled={false}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}

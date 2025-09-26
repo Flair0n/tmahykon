@@ -2,11 +2,17 @@ import React from "react";
 import { motion } from "framer-motion";
 import styles from "../styles/FormField.module.css";
 
+// Helper to check if a field is missing
+function isMissing(field, missingFields) {
+  return missingFields && missingFields.includes(field.name);
+}
+
 export default function FormField({
   field,
   question,
   value,
-  onChange
+  onChange,
+  missingFields
 }) {
   // Custom onChange to restrict phone fields to numbers only
   const handleChange = (e) => {
@@ -43,7 +49,9 @@ export default function FormField({
           value={value}
           onChange={onChange}
           whileFocus={{ scale: 1.02 }}
-          className={styles.fieldSelect}
+          className={
+            styles.fieldSelect + (isMissing(field, missingFields) ? ' ' + styles.missingField : '')
+          }
         >
           {field.options.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -57,7 +65,9 @@ export default function FormField({
             value={value}
             onChange={onChange}
             whileFocus={{ scale: 1.02 }}
-            className={`${styles.fieldTextarea} ${isWordLimit ? styles.fieldTextareaLarge : ''}`}
+            className={
+              styles.fieldTextarea + (isWordLimit ? ' ' + styles.fieldTextareaLarge : '') + (isMissing(field, missingFields) ? ' ' + styles.missingField : '')
+            }
             {...(isWordLimit ? { maxLength: 2000 } : {})}
           />
           {isWordLimit && (
@@ -72,13 +82,15 @@ export default function FormField({
         </>
       ) : (
         <motion.input
-          type={(["Phone", "MentorPhone"].includes(field.name)) ? "tel" : field.type}
+          type={( ["Phone", "MentorPhone"].includes(field.name)) ? "tel" : field.type}
           name={field.name}
           required
           value={value}
           onChange={handleChange}
           whileFocus={{ scale: 1.02 }}
-          className={styles.fieldInput}
+          className={
+            styles.fieldInput + (isMissing(field, missingFields) ? ' ' + styles.missingField : '')
+          }
           {...(["Phone", "MentorPhone"].includes(field.name) ? {
             minLength: 10,
             maxLength: 10,

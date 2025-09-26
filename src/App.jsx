@@ -83,9 +83,17 @@ export default function App() {
   // Payment handler with verification
   const handlePayment = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
+    const valid = validateForm();
+    if (!valid) {
       setStatus("❌ Please fill all required fields before payment.");
+      // Scroll to first missing field
+      if (missingFields && missingFields.length > 0) {
+        const firstMissing = document.querySelector(`[name='${missingFields[0]}']`);
+        if (firstMissing) {
+          firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstMissing.focus();
+        }
+      }
       return;
     }
 
@@ -423,7 +431,7 @@ export default function App() {
               handlePayment={handlePayment}
               retryPayment={retryPayment}
               status={status}
-              isFormComplete={isFormComplete}
+              isFormComplete={true} // Always enabled
             />
 
             {/* Status message */}

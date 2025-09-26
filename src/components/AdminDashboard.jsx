@@ -175,9 +175,9 @@ const AdminDashboard = () => {
   const fetchLogs = async () => {
     setLogsLoading(true);
     try {
-  const logsCollection = collection(db, 'logs');
-  const q = query(logsCollection, orderBy('timestamp', 'desc'));
-  const snapshot = await getDocs(q);
+      const logsCollection = collection(db, 'logs');
+      const q = query(logsCollection, orderBy('timestamp', 'desc'), limit(50)); // Get latest 50 logs
+      const snapshot = await getDocs(q);
       
       const logsData = snapshot.docs.map(doc => ({
         id: doc.id,

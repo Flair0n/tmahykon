@@ -1,3 +1,17 @@
+.missingField {
+  border-color: #ff5252 !important;
+  box-shadow: 0 0 0 2px #ff5252 !important;
+  background: rgba(255, 82, 82, 0.08) !important;
+  animation: shake 0.2s 1;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
 /* Form Field Styles */
 .fieldContainer {
   width: 100%;
