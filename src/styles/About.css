@@ -1,3 +1,19 @@
+.about-chlngdets-img {
+  /* ...existing styles... */
+  animation: floatY 3.5s ease-in-out infinite;
+}
+
+@keyframes floatY {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
 /* Challenge Details Illustration Image */
 .about-chlngdets-img {
   display: block;
