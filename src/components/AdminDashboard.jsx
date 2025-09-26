@@ -28,7 +28,7 @@ const LoginPage = ({ onLogin }) => {
       setError('Invalid username or password');
     }
   };
-
+//this is a new comment
   return (
     <div className="login-container">
       <div className="login-form">
