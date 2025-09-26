@@ -457,7 +457,8 @@
 }
 
 .seed-funding {
-  max-width: 500px;
+  max-width: 850px;
+  max-height: 400px;
   margin: 0 auto;
 }
 
@@ -808,20 +809,35 @@
 }
 
 .seed-funding {
-  background-color: #f8f9fa;
-  border-radius: 10px;
-  padding: 20px;
-  margin-top: 20px;
+  background: linear-gradient(135deg, #f8f9fa 60%, #e9e6f8 100%);
+  border-radius: 18px;
+  padding: 32px 28px 28px 28px;
+  margin-top: 28px;
   text-align: center;
-  border-left: 5px solid #505add;
+  border-left: 0;
+  border-top: 4px solid #a855f7;
+  box-shadow: 0 8px 32px rgba(80, 90, 221, 0.10), 0 2px 8px rgba(167, 78, 167, 0.08);
+  position: relative;
+  transition: box-shadow 0.3s;
+}
+
+.seed-funding:hover {
+  box-shadow: 0 12px 40px rgba(168, 85, 247, 0.18), 0 4px 16px rgba(167, 78, 167, 0.13);
 }
 
 .seed-funding .award-icon {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 15px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 18px;
+  background: linear-gradient(135deg, #a855f7 60%, #505add 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(168, 85, 247, 0.13);
 }
 
 .seed-funding .award-icon i {
-  font-size: 28px;
+  font-size: 32px;
+  color: #fff;
 }
