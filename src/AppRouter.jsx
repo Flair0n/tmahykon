@@ -5,7 +5,7 @@ import App from "./App.jsx";
 import PaymentSuccess from "./PaymentSuccess.jsx";
 import Home from "./Home.jsx";
 import HowItWorks from "./components/HowItWorks.jsx";
-import AdminDashboard from "./components/AdminDashboard.jsx";
+import AdminDashboard from "./components/AdminDashboardModular.jsx";
 
 export default function AppRouter() {
   return (

@@ -4,6 +4,20 @@ import '../styles/AdminDashboard.css';
 import { collection, getDocs, deleteDoc, doc, addDoc, query, orderBy, limit, Timestamp } from 'firebase/firestore';
 import DataCleaningPanel from './DataCleaningPanel';
 
+// Import modular components
+import LoginPage from './admin/LoginPage';
+import DashboardOverview from './admin/DashboardOverview';
+import AnalyticsSection from './admin/AnalyticsSection';
+import UserManagement from './admin/UserManagement';
+import LogsSection from './admin/LogsSection';
+import ToolsSection from './admin/ToolsSection';
+
+// Import custom hook
+import { useAdminData } from '../hooks/useAdminData';
+
+// Import utilities
+import { exportToCSV, exportToPDF } from '../utils/exportUtils';
+
 const LoginPage = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

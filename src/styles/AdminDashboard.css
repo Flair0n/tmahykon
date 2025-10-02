@@ -273,9 +273,9 @@
 
 /* Navigation Sidebar */
 .nav-tabs {
-  position: fixed;
+  position: fixed !important;
   left: 0;
-  top: 88px;
+  top: 96px;
   bottom: 0;
   width: 280px;
   background: linear-gradient(180deg, 
@@ -290,6 +290,11 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.nav-tabs-always-visible {
+  position: fixed !important;
+  transform: translateX(0) !important;
 }
 
 .nav-tab {
@@ -337,16 +342,24 @@
   border-radius: 0 2px 2px 0;
 }
 
+.nav-tab .tab-icon {
+  margin-right: 12px;
+  font-size: 1.1rem;
+}
+
 /* Content Area */
 .tab-content {
-  margin-left: 280px;
+  margin-left: 280px !important;
+  margin-top: 0;
   padding: 40px 48px;
-  max-width: calc(1440px - 280px);
-  min-height: calc(100vh - 88px);
+  max-width: calc(100vw - 280px);
+  min-height: calc(100vh - 96px);
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   border-radius: 24px 0 0 0;
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.04);
+  position: relative;
+  z-index: 1;
 }
 
 /* Stats Grid */
@@ -1314,7 +1327,7 @@
 }
 
 .legend-payment {
-  background-color: #f3e5f5;
+  background-color: #f3e8ff;
   padding: 4px 8px;
   border-radius: 4px;
 }
@@ -1335,16 +1348,44 @@ body {
   line-height: 1.6;
 }
 
-/* Layout */
-.admin-dashboard {
-  display: grid;
-  grid-template-areas:
-    "header header"
-    "sidebar main"
-    "footer footer";
-  grid-template-columns: 240px 1fr;
-  grid-template-rows: auto 1fr auto;
-  min-height: 100vh;
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .nav-tabs {
+    width: 240px !important;
+    position: fixed !important;
+  }
+  
+  .tab-content {
+    margin-left: 240px !important;
+    padding: 20px 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-tabs {
+    width: 200px !important;
+    position: fixed !important;
+    transform: translateX(0) !important;
+    transition: transform 0.3s ease;
+  }
+  
+  .nav-tabs-always-visible {
+    transform: translateX(0) !important;
+    position: fixed !important;
+  }
+  
+  .tab-content {
+    margin-left: 200px !important;
+    padding: 16px;
+  }
+  
+  .dashboard-header {
+    padding: 16px 20px;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 24px;
+  }
 }
 
 /* Header */
