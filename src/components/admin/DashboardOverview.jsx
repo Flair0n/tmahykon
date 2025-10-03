@@ -174,7 +174,7 @@ const DashboardOverview = ({
                     <div key={cohort} className="leaderboard-item">
                       <span className={`rank rank-${index + 1}`}>{index + 1}</span>
                       <span className="name">{cohort}</span>
-                      <span className="score">{count} registrations</span>
+                      <span className="score">{count}</span>
                     </div>
                   ))}
                 </div>
@@ -196,8 +196,8 @@ const DashboardOverview = ({
                   .map(([category, count], index) => (
                     <div key={category} className="leaderboard-item">
                       <span className={`rank rank-${index + 1}`}>{index + 1}</span>
-                      <span className="name">{category}</span>
-                      <span className="score">{count} registrations</span>
+                      <span className="name">{category === 'TMA Members' ? 'TMA Member' : 'Non TMA Member'}</span>
+                      <span className="score">{count}</span>
                     </div>
                   ))}
                 </div>
@@ -220,7 +220,7 @@ const DashboardOverview = ({
                     <div key={institution} className="leaderboard-item">
                       <span className={`rank rank-${index + 1}`}>{index + 1}</span>
                       <span className="name">{institution}</span>
-                      <span className="score">{count} registrations</span>
+                      <span className="score">{count}</span>
                     </div>
                   ))}
                 </div>
@@ -243,7 +243,7 @@ const DashboardOverview = ({
                     <div key={state} className="leaderboard-item">
                       <span className={`rank rank-${index + 1}`}>{index + 1}</span>
                       <span className="name">{state}</span>
-                      <span className="score">{count} registrations</span>
+                      <span className="score">{count}</span>
                     </div>
                   ))}
                 </div>
@@ -266,7 +266,7 @@ const DashboardOverview = ({
                     <div key={year} className="leaderboard-item">
                       <span className={`rank rank-${index + 1}`}>{index + 1}</span>
                       <span className="name">{year}</span>
-                      <span className="score">{count} students</span>
+                      <span className="score">{count}</span>
                     </div>
                   ))}
                 </div>
@@ -293,7 +293,7 @@ const DashboardOverview = ({
                     <div key={date} className="leaderboard-item">
                       <span className={`rank rank-${index + 1}`}>{index + 1}</span>
                       <span className="name">{date}</span>
-                      <span className="score">{count} registrations</span>
+                      <span className="score">{count}</span>
                     </div>
                   ))}
                 </div>
