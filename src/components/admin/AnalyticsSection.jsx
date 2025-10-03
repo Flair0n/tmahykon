@@ -233,7 +233,7 @@ const AnalyticsSection = ({
                 .map(([cohort, count]) => (
                   <div key={cohort} className="cohort-item">
                     <span className="cohort-name">{cohort}</span>
-                    <span className="cohort-count">{count} registrations</span>
+                    <span className="cohort-count">{count}</span>
                     <div className="cohort-bar">
                       <div 
                         className="cohort-fill" 
@@ -275,8 +275,8 @@ const AnalyticsSection = ({
                   .map(([category, count], index) => (
                     <div key={category} className="leaderboard-item">
                       <span className={`rank rank-${index + 1}`}>{index + 1}</span>
-                      <span className="name">{category}</span>
-                      <span className="score">{count} registrations</span>
+                      <span className="name">{category === 'TMA Members' ? 'TMA Member' : 'Non TMA Member'}</span>
+                      <span className="score">{count}</span>
                     </div>
                   ))}
                 </div>
@@ -299,7 +299,7 @@ const AnalyticsSection = ({
                     <div key={institution} className="leaderboard-item">
                       <span className={`rank rank-${index + 1}`}>{index + 1}</span>
                       <span className="name">{institution}</span>
-                      <span className="score">{count} registrations</span>
+                      <span className="score">{count}</span>
                     </div>
                   ))}
                 </div>
@@ -322,7 +322,7 @@ const AnalyticsSection = ({
                     <div key={state} className="leaderboard-item">
                       <span className={`rank rank-${index + 1}`}>{index + 1}</span>
                       <span className="name">{state}</span>
-                      <span className="score">{count} registrations</span>
+                      <span className="score">{count}</span>
                     </div>
                   ))}
                 </div>
