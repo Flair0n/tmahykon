@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "fallback/fallbackfolder/AdminDashboardEnhanced.jsx", "fallback/fallbackfolder/AdminDashboard.jsx"  ]
 }

@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase';
+import { db } from '../../src/firebase';
 import '../styles/AdminDashboard.css';
 import { collection, getDocs, deleteDoc, doc, addDoc, query, orderBy, limit, Timestamp } from 'firebase/firestore';
-import DataCleaningPanel from './DataCleaningPanel';
+import DataCleaningPanel from '../../src/components/DataCleaningPanel';
 
 // Import modular components
-import LoginPage from './admin/LoginPage';
-import DashboardOverview from './admin/DashboardOverview';
-import AnalyticsSection from './admin/AnalyticsSection';
-import UserManagement from './admin/UserManagement';
-import LogsSection from './admin/LogsSection';
-import ToolsSection from './admin/ToolsSection';
+import LoginPage from '../../src/components/admin/LoginPage';
+import DashboardOverview from '../../src/components/admin/DashboardOverview';
+import AnalyticsSection from '../../src/components/admin/AnalyticsSection';
+import UserManagement from '../../src/components/admin/UserManagement';
+import LogsSection from '../../src/components/admin/LogsSection';
+import ToolsSection from '../../src/components/admin/ToolsSection';
 
 // Import custom hook
-import { useAdminData } from '../hooks/useAdminData';
+import { useAdminData } from '../../src/hooks/useAdminData';
 
 // Import utilities
-import { exportToCSV, exportToPDF } from '../utils/exportUtils';
+import { exportToCSV, exportToPDF } from '../../src/utils/exportUtils';
 
 const LoginPage = ({ onLogin }) => {
   const [username, setUsername] = useState('');
